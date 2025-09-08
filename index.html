@@ -8,7 +8,6 @@
     body {
       margin: 0;
       font-family: sans-serif;
-      overflow: hidden;
       background-color: #0f0f0f;
       background-image: radial-gradient(#222 1px, transparent 1px);
       background-size: 20px 20px;
@@ -29,31 +28,19 @@
 
     .workspace {
       width: 100vw;
-      height: 100vh;
-      overflow: hidden;
+      min-height: 100vh;
+      overflow-y: auto;
       position: relative;
     }
 
-    /* KEY CHANGE: canvas becomes a grid container */
+    /* Сетка */
     .canvas {
-      position: absolute;
-      top: 0;
-      left: 0;
-      transform-origin: top left;
-      transition: transform 0.1s ease;
-
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      /* gap: row column (vertical horizontal) */
-      row-gap: 400px;
-      column-gap: 450px;
-
-      /* Inner padding to match your initial offsets */
-      padding: 100px 40px 200px 40px;
-
-      /* Allow plenty of space for panning/zooming if needed */
-      width: 400vw;
-      min-height: 200vh;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+      padding: 40px;
+      width: 100%;
+      box-sizing: border-box;
     }
 
     .tile {
@@ -61,32 +48,17 @@
       border: 4px solid transparent;
       transition: transform 0.2s ease, box-shadow 0.3s ease;
       background-color: #111;
-      position: relative; /* IMPORTANT: relative in grid mode */
       cursor: default;
       overflow: hidden;
-      z-index: 1;
-      will-change: transform;
     }
 
     .tile:hover {
       box-shadow: 0 0 12px rgba(255, 255, 255, 0.2);
     }
 
-    .tile.dragging {
-      transform: scale(1.05) translateY(-5px);
-      box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
-    }
-
     .tile.sound-on {
       border-color: #ff6b6b !important;
       box-shadow: 0 0 15px rgba(255, 107, 107, 0.4);
-    }
-
-    /* When a tile is lifted from the grid for manual placement */
-    .tile.floating {
-      position: absolute !important;
-      z-index: 2001;
-      /* keep size as set by content */
     }
 
     .sound-indicator {
@@ -109,11 +81,10 @@
     .tile img,
     .tile video {
       display: block;
-      border-radius: 8px;
-      pointer-events: none;
       width: 100%;
-      height: 100%;
-      object-fit: contain;
+      height: auto;
+      border-radius: 8px;
+      object-fit: cover;
     }
 
     .error-placeholder {
@@ -121,7 +92,7 @@
       align-items: center;
       justify-content: center;
       width: 100%;
-      height: 100%;
+      height: 200px;
       color: #666;
       font-size: 14px;
       text-align: center;
@@ -129,7 +100,7 @@
       background: #222;
     }
 
-    /* Futuristic Welcome Screen */
+    /* Welcome overlay (оставил твой красивый экран входа) */
     .welcome-overlay {
       position: fixed;
       top: 0; left: 0;
@@ -176,97 +147,16 @@
       pointer-events: none;
     }
 
-    .enter-text:hover {
-      transform: scale(1.02);
-      filter: contrast(1.4) brightness(1.1);
-      text-shadow: 0 0 25px rgba(0, 255, 255, 0.4);
-    }
-
-    .circuit-lines {
-      position: absolute;
-      width: 800px; height: 300px;
-      top: 50%; left: 50%; transform: translate(-50%, -50%);
-      pointer-events: none;
-    }
-
-    .circuit-line {
-      position: absolute;
-      background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.3), transparent);
-      height: 1px; animation: circuitFlow 6s ease-in-out infinite;
-    }
-
-    .circuit-line:nth-child(1) { top: 30%; left: 0; width: 100%; animation-delay: 0s; }
-    .circuit-line:nth-child(2) { top: 70%; left: 0; width: 100%; animation-delay: 2s; }
-    .circuit-line:nth-child(3) {
-      left: 25%; top: 0; height: 100%; width: 1px;
-      background: linear-gradient(180deg, transparent, rgba(0, 255, 255, 0.2), transparent);
-      animation-delay: 4s;
-    }
-    .circuit-line:nth-child(4) {
-      right: 25%; top: 0; height: 100%; width: 1px;
-      background: linear-gradient(180deg, transparent, rgba(0, 255, 255, 0.2), transparent);
-      animation-delay: 1s;
-    }
-
-    .particles {
-      position: absolute; inset: 0;
-      overflow: hidden; pointer-events: none;
-    }
-
-    .particle {
-      position: absolute; width: 3px; height: 3px;
-      background: rgba(0, 255, 255, 0.7); border-radius: 50%;
-      animation: particleFloat 12s linear infinite;
-      box-shadow: 0 0 8px rgba(0, 255, 255, 0.5);
-    }
-
-    /* Dissolution Animation */
-    @keyframes dissolve {
-      0% { opacity: 1; transform: scale(1) rotate(0deg); filter: blur(0px); }
-      50% { opacity: 0.7; transform: scale(1.2) rotate(5deg); filter: blur(2px); }
-      100% { opacity: 0; transform: scale(2) rotate(15deg); filter: blur(10px); }
-    }
-
-    @keyframes particleExplode {
-      0% { opacity: 1; transform: translate(0, 0) scale(1); }
-      100% { opacity: 0; transform: translate(var(--random-x), var(--random-y)) scale(0); }
-    }
-
-    .dissolving { animation: dissolve 1s ease-out forwards; }
-    .exploding .particle { animation: particleExplode 1s ease-out forwards; }
-
-    /* Keyframes */
     @keyframes textShimmer { 0%,100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
     @keyframes isolationPulse { 0%,100% { transform: scale(1); opacity: 0.9; } 50% { transform: scale(1.01); opacity: 1; } }
     @keyframes isolationScan { 0%,100% { background-position: -200% 0; } 50% { background-position: 200% 0; } }
     @keyframes dataStream { 0% { transform: translateX(-100%); opacity: 0; } 50% { opacity: 1; } 100% { transform: translateX(100%); opacity: 0; } }
-    @keyframes circuitFlow { 0% { opacity: 0; transform: scaleX(0); } 30% { opacity: 0.6; transform: scaleX(1); } 70% { opacity: 0.6; transform: scaleX(1); } 100% { opacity: 0; transform: scaleX(0); } }
-    @keyframes particleFloat {
-      0% { transform: translateY(100vh) translateX(0px) rotate(0deg); opacity: 0; }
-      10% { opacity: 1; } 90% { opacity: 1; }
-      100% { transform: translateY(-100px) translateX(100px) rotate(360deg); opacity: 0; }
-    }
-
-    /* Responsive column tuning if you ever want tighter behavior on narrow screens */
-    @media (max-width: 1400px) {
-      .canvas { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
-    }
-    @media (max-width: 900px) {
-      .canvas { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); row-gap: 320px; column-gap: 260px; }
-    }
   </style>
 </head>
 <body>
 
-  <!-- Futuristic Welcome Screen -->
+  <!-- Welcome Screen -->
   <div class="welcome-overlay" id="welcomeOverlay">
-    <div class="particles" id="particles"></div>
-    <div class="circuit-lines">
-      <div class="circuit-line"></div>
-      <div class="circuit-line"></div>
-      <div class="circuit-line"></div>
-      <div class="circuit-line"></div>
-    </div>
     <div class="welcome-container">
       <div class="enter-text" id="enterText">ACCESS ISOLATION</div>
     </div>
@@ -286,105 +176,27 @@
       { type: 'video', src: 'thumbs/balenciaga.mp4' },
       { type: 'video', src: 'thumbs/brds.mp4' },
       { type: 'image', src: 'thumbs/mkc.png' },
-      { type: 'video', src: 'thumbs/sora11.mp4' } // <- новый файл
+      { type: 'video', src: 'thumbs/sora11.mp4' } // пример нового файла
     ];
 
-    let audioUnlocked = false;
     const canvas = document.getElementById('canvas');
-
-    /* Particles for welcome screen */
-    function createParticles() {
-      const particlesContainer = document.getElementById('particles');
-      for (let i = 0; i < 30; i++) {
-        const p = document.createElement('div');
-        p.className = 'particle';
-        p.style.left = Math.random() * 100 + '%';
-        p.style.animationDelay = Math.random() * 12 + 's';
-        p.style.animationDuration = (Math.random() * 6 + 8) + 's';
-        particlesContainer.appendChild(p);
-      }
-    }
-    createParticles();
 
     function enterSite() {
       const overlay = document.getElementById('welcomeOverlay');
-      const particles = overlay.querySelectorAll('.particle');
-
-      particles.forEach(p => {
-        const randomX = (Math.random() - 0.5) * 2000 + 'px';
-        const randomY = (Math.random() - 0.5) * 2000 + 'px';
-        p.style.setProperty('--random-x', randomX);
-        p.style.setProperty('--random-y', randomY);
-      });
-
-      overlay.classList.add('exploding', 'dissolving');
-
-      setTimeout(() => overlay.remove(), 1000);
-      unlockAudio();
+      overlay.remove();
     }
     document.getElementById('enterText').addEventListener('click', enterSite);
 
-    async function unlockAudio() {
-      if (audioUnlocked) return;
-      try {
-        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        const oscillator = audioContext.createOscillator();
-        const gainNode = audioContext.createGain();
-        oscillator.connect(gainNode); gainNode.connect(audioContext.destination);
-        gainNode.gain.setValueAtTime(0, audioContext.currentTime);
-        oscillator.start(audioContext.currentTime);
-        oscillator.stop(audioContext.currentTime + 0.01);
-        audioUnlocked = true;
-        const menu = document.querySelector('.menu');
-        menu.innerHTML = 'Menu | <span style="color: #6ecf9f;">🔊 Audio Enabled</span>';
-      } catch (e) {
-        console.log('Could not unlock audio:', e);
-      }
-    }
-
-    /* Build tiles in a grid — no manual left/top */
+    /* Добавляем работы в сетку */
     works.forEach(work => {
       const tile = document.createElement('div');
       tile.className = 'tile';
       tile.style.borderColor = frameColors[Math.floor(Math.random() * frameColors.length)];
 
       let content;
-
       if (work.type === 'image') {
         content = document.createElement('img');
         content.src = work.src;
-
-        content.onload = function () {
-          const aspectRatio = this.naturalWidth / this.naturalHeight;
-          const maxWidth = 400;
-          const maxHeight = 600;
-          let width, height;
-
-          if (aspectRatio > 1) {
-            width = Math.min(maxWidth, this.naturalWidth * 0.5);
-            height = width / aspectRatio;
-          } else {
-            height = Math.min(maxHeight, this.naturalHeight * 0.5);
-            width = height * aspectRatio;
-          }
-
-          width = Math.max(200, width);
-          height = Math.max(200, height);
-
-          tile.style.width = width + 'px';
-          tile.style.height = height + 'px';
-        };
-
-        content.onerror = function () {
-          tile.style.width = '300px';
-          tile.style.height = '300px';
-          this.style.display = 'none';
-          const errorDiv = document.createElement('div');
-          errorDiv.className = 'error-placeholder';
-          errorDiv.textContent = `Loading error:\n${work.src}`;
-          tile.appendChild(errorDiv);
-        };
-
       } else if (work.type === 'video') {
         content = document.createElement('video');
         content.src = work.src;
@@ -392,192 +204,11 @@
         content.muted = true;
         content.loop = true;
         content.playsInline = true;
-
-        const soundIndicator = document.createElement('div');
-        soundIndicator.className = 'sound-indicator';
-        soundIndicator.innerHTML = '🔊';
-        tile.appendChild(soundIndicator);
-
-        content.onloadedmetadata = function () {
-          const aspectRatio = this.videoWidth / this.videoHeight;
-          const maxWidth = 400;
-          const maxHeight = 600;
-          let width, height;
-
-          if (aspectRatio > 1) {
-            width = Math.min(maxWidth, this.videoWidth * 0.3);
-            height = width / aspectRatio;
-          } else {
-            height = Math.min(maxHeight, this.videoHeight * 0.3);
-            width = height * aspectRatio;
-          }
-
-          width = Math.max(200, width);
-          height = Math.max(200, height);
-
-          tile.style.width = width + 'px';
-          tile.style.height = height + 'px';
-        };
-
-        let fadeInterval = null;
-
-        tile.addEventListener('mouseenter', () => {
-          if (!audioUnlocked) return;
-          tile.classList.add('sound-on');
-          soundIndicator.style.display = 'flex';
-          content.muted = false;
-          content.volume = 0;
-          let vol = 0;
-          clearInterval(fadeInterval);
-          fadeInterval = setInterval(() => {
-            if (vol < 0.6) {
-              vol += 0.04;
-              content.volume = Math.min(vol, 0.6);
-            } else {
-              clearInterval(fadeInterval);
-            }
-          }, 25);
-        });
-
-        tile.addEventListener('mouseleave', () => {
-          let vol = content.volume;
-          clearInterval(fadeInterval);
-          tile.classList.remove('sound-on');
-          soundIndicator.style.display = 'none';
-          fadeInterval = setInterval(() => {
-            if (vol > 0) {
-              vol -= 0.08;
-              content.volume = Math.max(vol, 0);
-            } else {
-              content.muted = true;
-              clearInterval(fadeInterval);
-            }
-          }, 25);
-        });
-
-        content.onerror = function () {
-          tile.style.width = '300px';
-          tile.style.height = '300px';
-          this.style.display = 'none';
-          const errorDiv = document.createElement('div');
-          errorDiv.className = 'error-placeholder';
-          errorDiv.textContent = `Loading error:\n${work.src}`;
-          tile.appendChild(errorDiv);
-        };
       }
 
       tile.appendChild(content);
       canvas.appendChild(tile);
     });
-
-    /* Drag tiles (hybrid): lift from grid to absolute on drag */
-    let activeTile = null;
-    let offsetX = 0;
-    let offsetY = 0;
-    let isDraggingCanvas = false;
-    let dragStartX = 0;
-    let dragStartY = 0;
-
-    // Pan and zoom state
-    let canvasX = 0;
-    let canvasY = 0;
-    let canvasScale = 1;
-
-    function updateCanvasTransform() {
-      canvas.style.transform = `translate(${canvasX}px, ${canvasY}px) scale(${canvasScale})`;
-    }
-    updateCanvasTransform();
-
-    // Lift a tile from grid to absolute at its current visual position
-    function liftTile(tile, pointerClientX, pointerClientY) {
-      if (tile.classList.contains('floating')) return;
-
-      const canvasRect = canvas.getBoundingClientRect();
-      const tileRect = tile.getBoundingClientRect();
-
-      // Convert screen coords to canvas local coords (inverse of current transform)
-      const localLeft = (tileRect.left - canvasRect.left) / canvasScale;
-      const localTop  = (tileRect.top  - canvasRect.top)  / canvasScale;
-
-      // Fix width/height to avoid reflow jumps
-      const w = tileRect.width / canvasScale;
-      const h = tileRect.height / canvasScale;
-
-      tile.style.width = w + 'px';
-      tile.style.height = h + 'px';
-
-      tile.classList.add('floating'); // switches to position:absolute
-
-      tile.style.left = localLeft + 'px';
-      tile.style.top = localTop + 'px';
-
-      // Compute offsets so the pointer stays anchored
-      offsetX = (pointerClientX - tileRect.left) / canvasScale;
-      offsetY = (pointerClientY - tileRect.top) / canvasScale;
-    }
-
-    document.addEventListener('mousedown', e => {
-      const tile = e.target.closest('.tile');
-      if (tile) {
-        // Lift into absolute space if not already
-        liftTile(tile, e.clientX, e.clientY);
-        activeTile = tile;
-        tile.classList.add('dragging');
-        tile.style.zIndex = 2002;
-        e.preventDefault();
-      } else {
-        isDraggingCanvas = true;
-        dragStartX = e.clientX;
-        dragStartY = e.clientY;
-      }
-    });
-
-    document.addEventListener('mousemove', e => {
-      if (activeTile) {
-        const canvasRect = canvas.getBoundingClientRect();
-        const newX = (e.clientX - canvasRect.left) / canvasScale - offsetX;
-        const newY = (e.clientY - canvasRect.top) / canvasScale - offsetY;
-        activeTile.style.left = `${newX}px`;
-        activeTile.style.top = `${newY}px`;
-      } else if (isDraggingCanvas) {
-        const dx = e.clientX - dragStartX;
-        const dy = e.clientY - dragStartY;
-        canvasX += dx;
-        canvasY += dy;
-        dragStartX = e.clientX;
-        dragStartY = e.clientY;
-        updateCanvasTransform();
-      }
-    });
-
-    document.addEventListener('mouseup', () => {
-      if (activeTile) {
-        activeTile.classList.remove('dragging');
-        activeTile.style.zIndex = 2001;
-        // stays floating where you placed it (manual override retained)
-        activeTile = null;
-      }
-      isDraggingCanvas = false;
-    });
-
-    // Pan and zoom with mouse wheel
-    document.addEventListener('wheel', e => {
-      e.preventDefault();
-      const rect = canvas.getBoundingClientRect();
-      const mouseX = e.clientX - rect.left;
-      const mouseY = e.clientY - rect.top;
-
-      const oldScale = canvasScale;
-      const scaleAmount = e.deltaY > 0 ? 0.95 : 1.05;
-      canvasScale *= scaleAmount;
-      canvasScale = Math.max(0.2, Math.min(canvasScale, 3));
-
-      const scaleChange = canvasScale / oldScale;
-      canvasX = mouseX - (mouseX - canvasX) * scaleChange;
-      canvasY = mouseY - (mouseY - canvasY) * scaleChange;
-
-      updateCanvasTransform();
-    }, { passive: false });
   </script>
 </body>
 </html>
