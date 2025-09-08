@@ -19,8 +19,8 @@
       position: fixed;
       top: 20px;
       left: 20px;
-      width: 40px;
-      height: 40px;
+      width: 80px; /* Увеличен в 2 раза */
+      height: 80px; /* Увеличен в 2 раза */
       background: rgba(255, 255, 255, 0.05);
       border-radius: 8px;
       display: flex;
@@ -38,28 +38,28 @@
 
     /* Sound Wave Icon */
     .sound-wave {
-      width: 20px;
-      height: 16px;
+      width: 40px; /* Увеличен в 2 раза */
+      height: 32px; /* Увеличен в 2 раза */
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 2px;
+      gap: 4px; /* Увеличен интервал между линиями */
     }
 
     .sound-wave span {
-      width: 2px;
-      height: 8px;
+      width: 4px; /* Увеличена толщина линий */
+      height: 16px; /* Увеличена высота линий */
       background: white;
       border-radius: 2px;
       opacity: 0.8;
       animation: pulse 1.5s infinite alternate;
     }
 
-    .sound-wave span:nth-child(1) { height: 12px; animation-delay: 0s; }
-    .sound-wave span:nth-child(2) { height: 8px; animation-delay: 0.1s; }
-    .sound-wave span:nth-child(3) { height: 4px; animation-delay: 0.2s; }
-    .sound-wave span:nth-child(4) { height: 8px; animation-delay: 0.3s; }
-    .sound-wave span:nth-child(5) { height: 12px; animation-delay: 0.4s; }
+    .sound-wave span:nth-child(1) { height: 24px; animation-delay: 0s; } /* Увеличено */
+    .sound-wave span:nth-child(2) { height: 16px; animation-delay: 0.1s; } /* Увеличено */
+    .sound-wave span:nth-child(3) { height: 8px; animation-delay: 0.2s; }
+    .sound-wave span:nth-child(4) { height: 16px; animation-delay: 0.3s; } /* Увеличено */
+    .sound-wave span:nth-child(5) { height: 24px; animation-delay: 0.4s; } /* Увеличено */
 
     @keyframes pulse {
       0% { opacity: 0.5; }
@@ -69,7 +69,7 @@
     /* Dropdown Menu */
     .dropdown-menu {
       position: absolute;
-      top: 60px;
+      top: 100px; /* Изменен отступ сверху */
       left: 20px;
       width: 200px;
       background: rgba(0, 0, 0, 0.9);
@@ -83,7 +83,9 @@
       z-index: 1001;
     }
 
-    .dropdown-menu.active {
+    /* Добавлено поведение для hover */
+    .menu-button:hover + .dropdown-menu,
+    .dropdown-menu:hover {
       opacity: 1;
       visibility: visible;
       transform: translateY(0);
@@ -97,8 +99,8 @@
     }
 
     .dropdown-menu-header .sound-wave {
-      width: 20px;
-      height: 16px;
+      width: 40px; /* Увеличен в 2 раза */
+      height: 32px; /* Увеличен в 2 раза */
       opacity: 0.8;
     }
 
@@ -398,7 +400,7 @@
 <body>
 
   <!-- Menu Button -->
-  <div class="menu-button" onclick="toggleMenu()">
+  <div class="menu-button">
     <div class="sound-wave">
       <span></span>
       <span></span>
@@ -426,7 +428,7 @@
       <li><a href="socials.html">Socials, contact</a></li>
       <li><a href="about.html">About</a></li>
     </ul>
-    <button class="close-btn" onclick="toggleMenu()">✕</button>
+    <button class="close-btn">✕</button>
   </div>
 
   <!-- Futuristic Welcome Screen -->
@@ -846,12 +848,6 @@
     }, { passive: false });
 
     updateCanvasTransform();
-
-    // Toggle menu
-    function toggleMenu() {
-      const menu = document.getElementById('menu');
-      menu.classList.toggle('active');
-    }
 
     // Close menu when clicking outside
     document.addEventListener('click', (e) => {
