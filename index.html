@@ -38,7 +38,7 @@
       transition: transform 0.2s ease, opacity 1s ease;
       opacity: 0;
       animation: fadeIn 1.5s forwards;
-      cursor: default; /* обычный курсор */
+      cursor: default;
     }
 
     .tile:hover {
@@ -64,7 +64,7 @@
   <div class="menu">Menu</div>
 
   <div class="workspace">
-    <div class="tile" style="top: 100px; left: 100px;" onclick="openWork('works/image1.html')">
+    <div class="tile" style="top: 100px; left: 100px;" data-url="works/image1.html">
       <img src="thumbs/image1.png" alt="">
     </div>
 
@@ -74,23 +74,29 @@
   </div>
 
   <script>
-    function openWork(url) {
-      window.open(url, '_blank');
-    }
-
-    // Мгновенное перемещение без "лапки"
-    const tiles = document.querySelectorAll('.tile');
     let activeTile = null;
     let offsetX = 0;
     let offsetY = 0;
+    let moved = false;
+
+    const tiles = document.querySelectorAll('.tile');
 
     tiles.forEach(tile => {
       tile.addEventListener('mousedown', e => {
         activeTile = tile;
         offsetX = e.clientX - tile.offsetLeft;
         offsetY = e.clientY - tile.offsetTop;
+        moved = false;
         tile.style.zIndex = 1001;
-        e.preventDefault(); // отключаем выделение
+        e.preventDefault();
+      });
+
+      tile.addEventListener('mouseup', e => {
+        if (!moved && tile.dataset.url) {
+          window.open(tile.dataset.url, '_blank');
+        }
+        tile.style.zIndex = 1000;
+        activeTile = null;
       });
     });
 
@@ -98,13 +104,7 @@
       if (activeTile) {
         activeTile.style.left = `${e.clientX - offsetX}px`;
         activeTile.style.top = `${e.clientY - offsetY}px`;
-      }
-    });
-
-    document.addEventListener('mouseup', () => {
-      if (activeTile) {
-        activeTile.style.zIndex = 1000;
-        activeTile = null;
+        moved = true;
       }
     });
   </script>
