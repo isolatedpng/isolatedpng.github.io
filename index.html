@@ -47,8 +47,6 @@
       background-color: #111;
       position: absolute;
       cursor: default;
-      width: 400px;
-      height: 300px;
       overflow: hidden;
     }
 
@@ -68,7 +66,7 @@
       pointer-events: none;
       width: 100%;
       height: 100%;
-      object-fit: cover;
+      object-fit: contain; /* Показывает весь контент без обрезки */
     }
 
     .error-placeholder {
@@ -95,7 +93,6 @@
   <script>
     const frameColors = ['#6ecf9f', '#8aa9ff', '#d88aff', '#ff8ab3', '#ffd88a'];
 
-    // Исправленные пути к файлам согласно структуре репозитория
     const works = [
       { type: 'image', src: 'thumbs/image1.png' },
       { type: 'video', src: 'thumbs/balenciaga.mp4' },
@@ -106,7 +103,7 @@
     const canvas = document.getElementById('canvas');
     let nextX = 40;
     let nextY = 100;
-    let rowHeight = 0;
+    let maxHeight = 0;
 
     works.forEach((work, index) => {
       const tile = document.createElement('div');
@@ -114,22 +111,45 @@
       tile.style.borderColor = frameColors[Math.floor(Math.random() * frameColors.length)];
 
       let content;
+      
       if (work.type === 'image') {
         content = document.createElement('img');
         content.src = work.src;
         
-        // Обработка ошибок для изображений
+        content.onload = function() {
+          const aspectRatio = this.naturalWidth / this.naturalHeight;
+          const maxWidth = 400; // Максимальная ширина
+          const maxHeight = 600; // Максимальная высота
+          
+          let width, height;
+          
+          if (aspectRatio > 1) { // Горизонтальное изображение
+            width = Math.min(maxWidth, this.naturalWidth * 0.5);
+            height = width / aspectRatio;
+          } else { // Вертикальное изображение
+            height = Math.min(maxHeight, this.naturalHeight * 0.5);
+            width = height * aspectRatio;
+          }
+          
+          // Минимальные размеры для читаемости
+          width = Math.max(200, width);
+          height = Math.max(200, height);
+          
+          tile.style.width = `${width}px`;
+          tile.style.height = `${height}px`;
+          
+          console.log(`Изображение загружено: ${work.src}, размер: ${width}x${height}, соотношение: ${aspectRatio.toFixed(2)}`);
+        };
+        
         content.onerror = function() {
           console.error(`Не удалось загрузить изображение: ${work.src}`);
+          tile.style.width = '300px';
+          tile.style.height = '300px';
           this.style.display = 'none';
           const errorDiv = document.createElement('div');
           errorDiv.className = 'error-placeholder';
           errorDiv.textContent = `Ошибка загрузки:\n${work.src}`;
           tile.appendChild(errorDiv);
-        };
-        
-        content.onload = function() {
-          console.log(`Изображение загружено: ${work.src}`);
         };
         
       } else if (work.type === 'video') {
@@ -140,32 +160,59 @@
         content.loop = true;
         content.playsInline = true;
         
-        // Обработка ошибок для видео
+        content.onloadedmetadata = function() {
+          const aspectRatio = this.videoWidth / this.videoHeight;
+          const maxWidth = 400;
+          const maxHeight = 600;
+          
+          let width, height;
+          
+          if (aspectRatio > 1) { // Горизонтальное видео (16:9)
+            width = Math.min(maxWidth, this.videoWidth * 0.3);
+            height = width / aspectRatio;
+          } else { // Вертикальное видео (9:16)
+            height = Math.min(maxHeight, this.videoHeight * 0.3);
+            width = height * aspectRatio;
+          }
+          
+          // Минимальные размеры
+          width = Math.max(200, width);
+          height = Math.max(200, height);
+          
+          tile.style.width = `${width}px`;
+          tile.style.height = `${height}px`;
+          
+          console.log(`Видео загружено: ${work.src}, размер: ${width}x${height}, соотношение: ${aspectRatio.toFixed(2)}`);
+        };
+        
         content.onerror = function() {
           console.error(`Не удалось загрузить видео: ${work.src}`);
+          tile.style.width = '300px';
+          tile.style.height = '300px';
           this.style.display = 'none';
           const errorDiv = document.createElement('div');
           errorDiv.className = 'error-placeholder';
           errorDiv.textContent = `Ошибка загрузки:\n${work.src}`;
           tile.appendChild(errorDiv);
         };
-        
-        content.onloadeddata = function() {
-          console.log(`Видео загружено: ${work.src}`);
-        };
       }
 
       tile.appendChild(content);
+      
+      // Изначально устанавливаем временные размеры
+      tile.style.width = '300px';
+      tile.style.height = '300px';
       tile.style.left = `${nextX}px`;
       tile.style.top = `${nextY}px`;
 
-      nextX += 440;
-      rowHeight = Math.max(rowHeight, 320);
+      // Простая сетка с отступами
+      nextX += 450; // Больше отступ между плитками
+      maxHeight = Math.max(maxHeight, 350);
 
-      if (nextX > window.innerWidth * 1.5) {
+      if (nextX > window.innerWidth * 1.2) {
         nextX = 40;
-        nextY += rowHeight + 40;
-        rowHeight = 0;
+        nextY += maxHeight + 60;
+        maxHeight = 0;
       }
 
       canvas.appendChild(tile);
