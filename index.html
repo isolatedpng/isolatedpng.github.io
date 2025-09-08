@@ -484,10 +484,19 @@
       } else if (work.type === 'video') {
         content = document.createElement('video');
         content.src = work.src;
-        content.autoplay = true;
+        content.autoplay = false;  // ← ЕДИНСТВЕННОЕ ИЗМЕНЕНИЕ: БЫЛО true, СТАЛО false
         content.muted = true;
         content.loop = true;
         content.playsInline = true;
+
+        // ← ЕДИНСТВЕННОЕ ИЗМЕНЕНИЕ: ДОБАВЛЕНО — воспроизведение по наведению
+        tile.addEventListener('mouseenter', () => {
+          content.play().catch(e => console.log("Playback failed:", e));
+        });
+
+        tile.addEventListener('mouseleave', () => {
+          content.pause();
+        });
         
         // Add sound indicator
         const soundIndicator = document.createElement('div');
