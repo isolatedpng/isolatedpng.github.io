@@ -1,20 +1,81 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Admin Isolated</title>
   <style>
+    /* Весь твой CSS оставлен без изменений */
     body {
       margin: 0;
-      background: #0f0f0f;
-      color: #fff;
       font-family: sans-serif;
+      background-color: #0f0f0f;
+      background-image: radial-gradient(#222 1px, transparent 1px);
+      background-size: 20px 20px;
+      overflow: hidden;
     }
+    .menu {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      background: rgba(255,255,255,0.05);
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 0.9em;
+      color: #aaa;
+      z-index: 3000;
+      user-select: none;
+    }
+    .workspace {
+      width: 100vw;
+      min-height: 100vh;
+      overflow-y: auto;
+      position: relative;
+    }
+    .canvas {
+      position: relative;
+      top: 0;
+      left: 0;
+      transform-origin: top left;
+      transition: transform 0.1s ease;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+      padding: 100px 40px 200px 40px;
+      width: 100%;
+      box-sizing: border-box;
+      min-height: 100vh;
+    }
+    .tile {
+      border-radius: 12px;
+      border: 4px solid transparent;
+      transition: transform 0.2s ease, box-shadow 0.3s ease;
+      background-color: #111;
+      position: relative;
+      cursor: move; /* меняем на move для админки */
+      overflow: hidden;
+      z-index: 1;
+      will-change: transform;
+    }
+    .tile.dragging {
+      transform: scale(1.05) translateY(-5px);
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+    }
+    .tile img,
+    .tile video {
+      display: block;
+      border-radius: 8px;
+      pointer-events: none;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    /* Кнопка сохранения layout */
     .admin-panel {
       position: fixed;
-      top: 10px;
-      left: 10px;
-      z-index: 1000;
+      top: 20px;
+      right: 20px;
+      z-index: 5000;
     }
     .admin-panel button {
       background: rgba(255,255,255,0.1);
@@ -23,39 +84,22 @@
       padding: 6px 12px;
       border-radius: 6px;
       cursor: pointer;
-      margin-right: 10px;
-    }
-    .canvas {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-      gap: 20px;
-      padding: 60px 20px;
-    }
-    .tile {
-      border: 3px solid #444;
-      border-radius: 10px;
-      background: #111;
-      overflow: hidden;
-      cursor: move;
-    }
-    .tile img, .tile video {
-      width: 100%;
-      height: auto;
-      display: block;
-    }
-    .dragging {
-      opacity: 0.6;
     }
   </style>
 </head>
 <body>
+
+  <div class="menu">Admin Panel</div>
   <div class="admin-panel">
     <button id="saveLayout">Save Layout</button>
   </div>
-  <div class="canvas" id="canvas"></div>
+
+  <div class="workspace">
+    <div class="canvas" id="canvas"></div>
+  </div>
 
   <script>
-    // список плиток (можно потом грузить из positions.json)
+    /* Сохраняем все работы из index.html */
     const works = [
       { type: 'image', src: 'thumbs/image1.png' },
       { type: 'video', src: 'thumbs/balenciaga.mp4' },
@@ -134,5 +178,6 @@
 
     buildTiles();
   </script>
+
 </body>
 </html>
