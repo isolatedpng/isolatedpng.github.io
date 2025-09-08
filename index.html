@@ -6,9 +6,11 @@
   <style>
     body {
       margin: 0;
-      background-color: #0f0f0f;
       font-family: sans-serif;
       overflow: hidden;
+      background-color: #0f0f0f;
+      background-image: radial-gradient(#222 1px, transparent 1px);
+      background-size: 20px 20px;
     }
 
     .menu {
@@ -68,7 +70,6 @@
   <div class="menu">Menu</div>
 
   <div class="workspace">
-    <!-- Только реальные работы -->
     <div class="tile" onclick="openWork('works/image1.html')" draggable="true">
       <img src="thumbs/image1.png" alt="">
     </div>
@@ -83,7 +84,6 @@
       window.open(url, '_blank');
     }
 
-    // Drag & Drop logic
     const tiles = document.querySelectorAll('.tile');
     tiles.forEach(tile => {
       let offsetX, offsetY;
