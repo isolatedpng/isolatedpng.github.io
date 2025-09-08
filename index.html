@@ -31,7 +31,6 @@
     }
 
     .tile {
-      display: inline-block;
       border-radius: 12px;
       border: 4px solid transparent;
       transition: transform 0.2s ease, box-shadow 0.3s ease, opacity 1s ease;
@@ -43,7 +42,6 @@
     }
 
     .tile:hover {
-      transform: scale(1.02) rotate(0.5deg);
       box-shadow: 0 0 12px rgba(255, 255, 255, 0.2);
     }
 
@@ -82,30 +80,47 @@
     ];
 
     const workspace = document.getElementById('workspace');
+    let nextX = 40;
+    let nextY = 100;
+    let rowHeight = 0;
 
     works.forEach((work, index) => {
       const tile = document.createElement('div');
       tile.className = 'tile';
       tile.style.borderColor = frameColors[Math.floor(Math.random() * frameColors.length)];
 
+      let content;
       if (work.type === 'image') {
-        const img = document.createElement('img');
-        img.src = work.src;
-        tile.appendChild(img);
+        content = document.createElement('img');
+        content.src = work.src;
         tile.dataset.url = work.url;
       } else if (work.type === 'video') {
-        const video = document.createElement('video');
-        video.src = work.src;
-        video.autoplay = true;
-        video.muted = true;
-        video.loop = true;
-        video.playsInline = true;
-        tile.appendChild(video);
+        content = document.createElement('video');
+        content.src = work.src;
+        content.autoplay = true;
+        content.muted = true;
+        content.loop = true;
+        content.playsInline = true;
       }
 
-      tile.style.left = `${80 + index * 440}px`;
-      tile.style.top = `100px`;
+      content.onload = content.onloadedmetadata = () => {
+        const width = content.videoWidth || content.naturalWidth || 400;
+        const height = content.videoHeight || content.naturalHeight || 300;
 
+        tile.style.left = `${nextX}px`;
+        tile.style.top = `${nextY}px`;
+
+        nextX += width + 40;
+        rowHeight = Math.max(rowHeight, height);
+
+        if (nextX > window.innerWidth - 400) {
+          nextX = 40;
+          nextY += rowHeight + 40;
+          rowHeight = 0;
+        }
+      };
+
+      tile.appendChild(content);
       workspace.appendChild(tile);
     });
 
