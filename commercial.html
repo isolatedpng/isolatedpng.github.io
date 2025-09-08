@@ -389,8 +389,29 @@
         content.src = work.src;
         content.controls = false;
         content.loop = true;
-        content.muted = true;
-        content.autoplay = true;
+        content.muted = false; // Звук включен
+        content.autoplay = false; // Автоплей отключен
+
+        // Добавляем кнопку для управления звуком
+        const soundIndicator = document.createElement('div');
+        soundIndicator.className = 'sound-indicator';
+        soundIndicator.innerHTML = '🔊';
+        soundIndicator.style.position = 'absolute';
+        soundIndicator.style.top = '8px';
+        soundIndicator.style.right = '8px';
+        soundIndicator.style.width = '20px';
+        soundIndicator.style.height = '20px';
+        soundIndicator.style.background = 'rgba(255, 107, 107, 0.8)';
+        soundIndicator.style.borderRadius = '50%';
+        soundIndicator.style.display = 'flex';
+        soundIndicator.style.alignItems = 'center';
+        soundIndicator.style.justifyContent = 'center';
+        soundIndicator.style.color = 'white';
+        soundIndicator.style.fontSize = '12px';
+        soundIndicator.style.pointerEvents = 'none';
+        soundIndicator.style.zIndex = 10;
+
+        tile.appendChild(soundIndicator);
 
         content.onloadedmetadata = function () {
           const aspectRatio = this.videoWidth / this.videoHeight;
@@ -424,6 +445,18 @@
           errorDiv.textContent = `Loading error:\n${work.src}`;
           tile.appendChild(errorDiv);
         };
+
+        // Воспроизведение при наведении
+        tile.addEventListener('mouseenter', () => {
+          if (!content.muted) {
+            content.play().catch(e => console.log("Playback failed:", e));
+          }
+        });
+
+        // Остановка при уходе
+        tile.addEventListener('mouseleave', () => {
+          content.pause();
+        });
       }
 
       tile.appendChild(content);
