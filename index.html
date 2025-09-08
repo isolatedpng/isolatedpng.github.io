@@ -7,13 +7,13 @@
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
   <style>
     body {
-  margin: 0;
-  font-family: sans-serif;
-  overflow: hidden;
-  background-color: #1a0000; /* ← Красный оттенок */
-  background-image: radial-gradient(#440000 1px, transparent 1px); /* ← Красная сетка */
-  background-size: 20px 20px;
-}
+      margin: 0;
+      font-family: sans-serif;
+      overflow: hidden;
+      background-color: #0f0f0f; /* Оригинальный чёрный фон ComfyUI */
+      background-image: radial-gradient(#222 1px, transparent 1px);
+      background-size: 20px 20px;
+    }
 
     .menu {
       position: fixed;
@@ -113,7 +113,7 @@
       left: 0;
       width: 100vw;
       height: 100vh;
-      background: rgba(0, 0, 0, 0.95);
+      background: #000000; /* Чистый чёрный */
       display: flex;
       align-items: center;
       justify-content: center;
@@ -122,12 +122,12 @@
       overflow: hidden;
     }
 
-    /* Blood Glyphs */
+    /* Ink Glyphs — White with black liquid effect */
     .glyph {
       position: absolute;
-      color: rgba(255, 0, 0, 0.8); /* Кроваво-красный */
+      color: rgba(255, 255, 255, 0.9); /* Белые иероглифы */
       font-size: 24px;
-      text-shadow: 0 0 8px rgba(255, 0, 0, 0.7), 0 0 12px rgba(255, 0, 0, 0.4);
+      text-shadow: 0 0 8px rgba(255, 255, 255, 0.3), 0 0 12px rgba(0, 0, 0, 0.5);
       animation: fall 10s linear infinite;
       z-index: 1;
       opacity: 0.9;
@@ -140,31 +140,27 @@
       100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
     }
 
-    /* Blood Text — Liquid Effect */
+    /* Liquid Ink Text */
     .enter-text {
       font-family: 'Orbitron', sans-serif;
       font-size: 48px;
       font-weight: 900;
       letter-spacing: 8px;
-      background: linear-gradient(135deg, #ff0000, #cc0000, #990000);
-      background-size: 300% 300%;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      animation: bloodShimmer 3s ease-in-out infinite, bloodPulse 2s ease-in-out infinite;
-      text-shadow: 0 0 20px rgba(255, 0, 0, 0.5), 0 0 40px rgba(255, 0, 0, 0.4);
+      color: #ffffff; /* Белый текст */
+      text-shadow: 0 0 20px rgba(255, 255, 255, 0.3), 0 0 40px rgba(0, 0, 0, 0.5);
+      animation: inkPulse 2s ease-in-out infinite;
       cursor: pointer;
       transition: all 0.4s ease;
       position: relative;
       filter: contrast(1.3);
     }
 
-    /* Blood Drips */
+    /* Ink Drips */
     .drip {
       position: absolute;
       width: 2px;
       height: 10px;
-      background: rgba(255, 0, 0, 0.8);
+      background: rgba(0, 0, 0, 0.8); /* Чёрные капли */
       border-radius: 50%;
       bottom: -10px;
       animation: drip 2s ease-in-out infinite;
@@ -177,7 +173,7 @@
       100% { transform: scaleY(1); opacity: 0; }
     }
 
-    /* Blood Stream */
+    /* Ink Stream */
     .enter-text::after {
       content: '';
       position: absolute;
@@ -185,7 +181,7 @@
       left: -10%;
       right: -10%;
       height: 2px;
-      background: linear-gradient(90deg, transparent, rgba(255, 0, 0, 0.8), transparent);
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
       animation: dataStream 2s linear infinite;
       pointer-events: none;
     }
@@ -193,15 +189,10 @@
     .enter-text:hover {
       transform: scale(1.03);
       filter: contrast(1.5) brightness(1.2);
-      text-shadow: 0 0 30px rgba(255, 0, 0, 0.7), 0 0 60px rgba(255, 0, 0, 0.5);
+      text-shadow: 0 0 30px rgba(255, 255, 255, 0.5), 0 0 60px rgba(0, 0, 0, 0.3);
     }
 
-    @keyframes bloodShimmer {
-      0%, 100% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-    }
-
-    @keyframes bloodPulse {
+    @keyframes inkPulse {
       0%, 100% { transform: scale(1); }
       50% { transform: scale(1.02); }
     }
@@ -216,7 +207,7 @@
     .smoke-particle {
       position: absolute;
       pointer-events: none;
-      background: rgba(255, 0, 0, 0.6);
+      background: rgba(0, 0, 0, 0.6); /* Чёрный дым */
       border-radius: 50%;
       filter: blur(2px);
       z-index: 2001;
@@ -224,7 +215,7 @@
 
     .bubble {
       position: absolute;
-      border: 2px solid rgba(255, 255, 255, 0.3);
+      border: 2px solid rgba(255, 255, 255, 0.1);
       border-radius: 50%;
       animation: bubbleFloat 8s ease-in-out infinite;
       z-index: 0;
@@ -244,7 +235,7 @@
     /* Dissolution Effect */
     .crack-line {
       position: absolute;
-      background: rgba(255, 0, 0, 0.8);
+      background: rgba(255, 255, 255, 0.3);
       height: 1px;
       pointer-events: none;
       z-index: 2001;
@@ -284,7 +275,7 @@
   </div>
 
   <script>
-    const frameColors = ['#6ecf9f', '#8aa9ff', '#d88aff', '#ff8ab3', '#ffd88a'];
+    const frameColors = ['#ffffff', '#e0e0e0', '#cccccc', '#aaaaaa', '#888888']; // ← Все оттенки серого/белого
 
     const works = [
       { type: 'image', src: 'thumbs/image1.png' },
