@@ -104,7 +104,7 @@
       background: #222;
     }
 
-    /* Futuristic Welcome Screen — С ИЕРОГЛИФАМИ */
+    /* Futuristic Welcome Screen */
     .welcome-overlay {
       position: fixed;
       top: 0;
@@ -120,7 +120,7 @@
       overflow: hidden;
     }
 
-    /* Matrix-style Glyphs */
+    /* Matrix-style Glyphs - Full screen */
     .glyph {
       position: absolute;
       color: rgba(0, 255, 150, 0.8);
@@ -138,19 +138,19 @@
       100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
     }
 
-    /* Neon Text */
+    /* Neon Text - Color matches glyphs */
     .enter-text {
       font-family: 'Courier New', monospace;
       font-size: 48px;
       font-weight: 700;
       letter-spacing: 8px;
-      background: linear-gradient(135deg, #00ffff, #ff00ff, #ffff00, #00ff00);
+      background: linear-gradient(135deg, #00ff00, #00ffff, #0000ff, #00ff00);
       background-size: 300% 300%;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
       animation: neonShimmer 3s ease-in-out infinite, neonPulse 2s ease-in-out infinite;
-      text-shadow: 0 0 20px rgba(0, 255, 255, 0.4), 0 0 40px rgba(255, 0, 255, 0.3);
+      text-shadow: 0 0 20px rgba(0, 255, 0, 0.4), 0 0 40px rgba(0, 255, 255, 0.3);
       cursor: pointer;
       transition: all 0.4s ease;
       position: relative;
@@ -164,7 +164,7 @@
       left: -10%;
       right: -10%;
       height: 2px;
-      background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.8), transparent);
+      background: linear-gradient(90deg, transparent, rgba(0, 255, 150, 0.8), transparent);
       animation: dataStream 2s linear infinite;
       pointer-events: none;
     }
@@ -172,7 +172,7 @@
     .enter-text:hover {
       transform: scale(1.03);
       filter: contrast(1.5) brightness(1.2);
-      text-shadow: 0 0 30px rgba(0, 255, 255, 0.6), 0 0 50px rgba(255, 0, 255, 0.4);
+      text-shadow: 0 0 30px rgba(0, 255, 0, 0.6), 0 0 50px rgba(0, 255, 255, 0.4);
     }
 
     @keyframes neonShimmer {
@@ -195,7 +195,7 @@
     .smoke-particle {
       position: absolute;
       pointer-events: none;
-      background: rgba(0, 255, 255, 0.6);
+      background: rgba(0, 255, 150, 0.6);
       border-radius: 50%;
       filter: blur(2px);
       z-index: 2001;
@@ -223,7 +223,7 @@
     /* Dissolution Effect */
     .crack-line {
       position: absolute;
-      background: rgba(0, 255, 255, 0.8);
+      background: rgba(0, 255, 150, 0.8);
       height: 1px;
       pointer-events: none;
       z-index: 2001;
@@ -248,7 +248,7 @@
 </head>
 <body>
 
-  <!-- Futuristic Welcome Screen with Glyphs -->
+  <!-- Futuristic Welcome Screen -->
   <div class="welcome-overlay" id="welcomeOverlay">
     <div id="glyphContainer"></div>
     <div id="bubbleContainer"></div>
@@ -323,11 +323,12 @@
       const container = document.getElementById('glyphContainer');
       const glyphs = '日月火水木金土山川風雲電光雷雨星宇宙神魔龍鳳亜乙丙丁戊己庚辛壬癸子丑寅卯辰巳午未申酉戌亥АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{}|;:,.<>?';
 
-      for (let i = 0; i < 150; i++) {
+      for (let i = 0; i < 200; i++) {
         const glyph = document.createElement('div');
         glyph.className = 'glyph';
         glyph.textContent = glyphs.charAt(Math.floor(Math.random() * glyphs.length));
         glyph.style.left = Math.random() * 100 + '%';
+        glyph.style.top = Math.random() * 100 + '%';
         glyph.style.animationDuration = (Math.random() * 5 + 5) + 's';
         glyph.style.animationDelay = Math.random() * 5 + 's';
         glyph.style.fontSize = (Math.random() * 20 + 16) + 'px';
