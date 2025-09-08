@@ -401,30 +401,6 @@
     // Initialize particles on load
     createParticles();
 
-    // Play isolation sound on click
-    function playIsolationSound() {
-      const audio = document.getElementById('isolationSound');
-      if (audio) {
-        try {
-          audio.currentTime = 0;
-          audio.volume = 0.4;
-          
-          const playPromise = audio.play();
-          if (playPromise !== undefined) {
-            playPromise
-              .then(() => {
-                console.log('🎵 Isolation sound playing!');
-              })
-              .catch(error => {
-                console.log('Sound error:', error);
-              });
-          }
-        } catch (error) {
-          console.log('Audio error:', error);
-        }
-      }
-    }
-
     // Function to unlock audio
     async function unlockAudio() {
       if (!audioUnlocked) {
