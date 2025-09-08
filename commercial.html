@@ -19,8 +19,8 @@
       position: fixed;
       top: 20px;
       left: 20px;
-      width: 80px; /* Увеличен в 2 раза */
-      height: 80px; /* Увеличен в 2 раза */
+      width: 80px;
+      height: 80px;
       background: rgba(255, 255, 255, 0.05);
       border-radius: 8px;
       display: flex;
@@ -38,17 +38,17 @@
 
     /* Sound Wave Icon */
     .sound-wave {
-      width: 40px; /* Увеличен в 2 раза */
-      height: 32px; /* Увеличен в 2 раза */
+      width: 40px;
+      height: 32px;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 4px; /* Увеличен интервал между линиями */
+      gap: 4px;
     }
 
     .sound-wave span {
-      width: 4px; /* Увеличена толщина линий */
-      height: 16px; /* Увеличена высота линий */
+      width: 4px;
+      height: 16px;
       background: white;
       border-radius: 2px;
       opacity: 0.8;
@@ -69,7 +69,7 @@
     /* Dropdown Menu */
     .dropdown-menu {
       position: absolute;
-      top: 100px; /* Изменен отступ сверху */
+      top: 100px;
       left: 20px;
       width: 200px;
       background: rgba(0, 0, 0, 0.9);
@@ -83,7 +83,6 @@
       z-index: 1001;
     }
 
-    /* Добавлено поведение для hover */
     .menu-button:hover + .dropdown-menu,
     .dropdown-menu:hover {
       opacity: 1;
@@ -99,8 +98,8 @@
     }
 
     .dropdown-menu-header .sound-wave {
-      width: 40px; /* Увеличен в 2 раза */
-      height: 32px; /* Увеличен в 2 раза */
+      width: 40px;
+      height: 32px;
       opacity: 0.8;
     }
 
@@ -171,7 +170,7 @@
       height: 100vh;
       overflow: hidden;
       position: relative;
-      cursor: default; /* Убираем "лапу" */
+      cursor: default;
     }
 
     .canvas {
@@ -180,6 +179,7 @@
       left: 0;
       transform-origin: top left;
       transition: transform 0.1s ease;
+      pointer-events: none; /* Важно: не мешает перетаскиванию плиток */
     }
 
     .tile {
@@ -418,13 +418,31 @@
     let dragStartX = 0;
     let dragStartY = 0;
 
+    // Смещение canvas
+    let canvasScale = 1;
+    let canvasX = 0;
+    let canvasY = 0;
+
+    function updateCanvasTransform() {
+      canvas.style.transform = `translate(${canvasX}px, ${canvasY}px) scale(${canvasScale})`;
+    }
+
+    // Перетаскивание плитки
     document.addEventListener('mousedown', e => {
       const tile = e.target.closest('.tile');
       if (tile) {
         activeTile = tile;
         const rect = tile.getBoundingClientRect();
-        offsetX = e.clientX - rect.left;
-        offsetY = e.clientY - rect.top;
+        const canvasRect = canvas.getBoundingClientRect();
+
+        // Вычисляем смещение от начала canvas
+        const x = e.clientX - canvasRect.left;
+        const y = e.clientY - canvasRect.top;
+
+        // Рассчитываем offset относительно плитки
+        offsetX = x - rect.left;
+        offsetY = y - rect.top;
+
         tile.classList.add('dragging');
         tile.style.zIndex = 1001;
         e.preventDefault();
@@ -437,10 +455,13 @@
 
     document.addEventListener('mousemove', e => {
       if (activeTile) {
-        const newX = e.clientX - offsetX;
-        const newY = e.clientY - offsetY;
-        activeTile.style.left = `${newX}px`;
-        activeTile.style.top = `${newY}px`;
+        const canvasRect = canvas.getBoundingClientRect();
+        const x = e.clientX - canvasRect.left;
+        const y = e.clientY - canvasRect.top;
+
+        // Новое положение плитки
+        activeTile.style.left = `${x - offsetX}px`;
+        activeTile.style.top = `${y - offsetY}px`;
       } else if (isDraggingCanvas) {
         const dx = e.clientX - dragStartX;
         const dy = e.clientY - dragStartY;
@@ -462,14 +483,6 @@
     });
 
     // Масштабирование с помощью колесика мыши
-    let canvasScale = 1;
-    let canvasX = 0;
-    let canvasY = 0;
-
-    function updateCanvasTransform() {
-      canvas.style.transform = `translate(${canvasX}px, ${canvasY}px) scale(${canvasScale})`;
-    }
-
     document.addEventListener('wheel', e => {
       e.preventDefault();
 
