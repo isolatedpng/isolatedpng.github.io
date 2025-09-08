@@ -44,8 +44,7 @@
       border-radius: 12px;
       border: 4px solid transparent;
       transition: transform 0.2s ease, box-shadow 0.3s ease, opacity 1s ease;
-      opacity: 0;
-      animation: fadeIn 1.5s forwards;
+      opacity: 1;
       background-color: #111;
       position: absolute;
       cursor: default;
@@ -68,11 +67,6 @@
       max-width: 100%;
       height: auto;
     }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: scale(0.95); }
-      to { opacity: 1; transform: scale(1); }
-    }
   </style>
 </head>
 <body>
@@ -86,7 +80,7 @@
     const frameColors = ['#6ecf9f', '#8aa9ff', '#d88aff', '#ff8ab3', '#ffd88a'];
 
     const works = [
-      { type: 'image', src: 'thumbs/image1.png', url: 'works/image1.html' },
+      { type: 'image', src: 'thumbs/image1.png' },
       { type: 'video', src: 'thumbs/balenciaga.mp4' },
       { type: 'video', src: 'thumbs/brds.mp4' },
       { type: 'image', src: 'thumbs/mkc.png' }
@@ -106,7 +100,6 @@
       if (work.type === 'image') {
         content = document.createElement('img');
         content.src = work.src;
-        tile.dataset.url = work.url;
       } else if (work.type === 'video') {
         content = document.createElement('video');
         content.src = work.src;
@@ -116,24 +109,19 @@
         content.playsInline = true;
       }
 
-      content.onload = content.onloadedmetadata = () => {
-        const width = content.videoWidth || content.naturalWidth || 400;
-        const height = content.videoHeight || content.naturalHeight || 300;
-
-        tile.style.left = `${nextX}px`;
-        tile.style.top = `${nextY}px`;
-
-        nextX += width + 40;
-        rowHeight = Math.max(rowHeight, height);
-
-        if (nextX > window.innerWidth * 2) {
-          nextX = 40;
-          nextY += rowHeight + 40;
-          rowHeight = 0;
-        }
-      };
-
       tile.appendChild(content);
+      tile.style.left = `${nextX}px`;
+      tile.style.top = `${nextY}px`;
+
+      nextX += 440;
+      rowHeight = Math.max(rowHeight, 300);
+
+      if (nextX > window.innerWidth * 2) {
+        nextX = 40;
+        nextY += rowHeight + 40;
+        rowHeight = 0;
+      }
+
       canvas.appendChild(tile);
     });
 
@@ -182,13 +170,6 @@
         activeTile = null;
       }
       isDraggingCanvas = false;
-    });
-
-    document.addEventListener('click', e => {
-      const tile = e.target.closest('.tile');
-      if (tile && tile.dataset.url) {
-        window.open(tile.dataset.url, '_blank');
-      }
     });
 
     // Панорамное перемещение и зум
