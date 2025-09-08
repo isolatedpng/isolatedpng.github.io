@@ -300,6 +300,39 @@
     let nextY = 100;
     let maxHeight = 0;
 
+    // Проверка параметра v в URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const v = urlParams.get('v');
+    let isEditMode = false;
+
+    if (v === 'a3fG7xK9pQ2mR8sYvN6cB1zX') {
+      isEditMode = true;
+      setTimeout(() => {
+        document.querySelectorAll('.tile').forEach(tile => {
+          tile.style.cursor = 'grab';
+        });
+      }, 1000);
+    }
+
+    // Сохранение по клавише S
+    document.addEventListener('keydown', (e) => {
+      if (isEditMode && (e.key === 's' || e.key === 'S')) {
+        e.preventDefault();
+        const tiles = document.querySelectorAll('.tile');
+        const layout = [];
+        tiles.forEach(tile => {
+          layout.push({
+            left: parseFloat(tile.style.left),
+            top: parseFloat(tile.style.top),
+            width: parseFloat(tile.style.width),
+            height: parseFloat(tile.style.height)
+          });
+        });
+        localStorage.setItem('commercialLayout', JSON.stringify(layout));
+        alert('✅ Layout saved!');
+      }
+    });
+
     works.forEach((work, index) => {
       const tile = document.createElement('div');
       tile.className = 'tile';
@@ -347,16 +380,24 @@
 
       tile.appendChild(content);
 
-      tile.style.width = '300px';
-      tile.style.height = '300px';
-      tile.style.left = `${nextX}px`;
-      tile.style.top = `${nextY}px`;
-      nextX += 225;
-      maxHeight = Math.max(maxHeight, 350);
-      if (nextX > window.innerWidth * 1.2) {
-        nextX = 40;
-        nextY += maxHeight + 30;
-        maxHeight = 0;
+      const savedLayout = JSON.parse(localStorage.getItem('commercialLayout'));
+      if (savedLayout && savedLayout[index]) {
+        tile.style.width = `${savedLayout[index].width}px`;
+        tile.style.height = `${savedLayout[index].height}px`;
+        tile.style.left = `${savedLayout[index].left}px`;
+        tile.style.top = `${savedLayout[index].top}px`;
+      } else {
+        tile.style.width = '300px';
+        tile.style.height = '300px';
+        tile.style.left = `${nextX}px`;
+        tile.style.top = `${nextY}px`;
+        nextX += 225;
+        maxHeight = Math.max(maxHeight, 350);
+        if (nextX > window.innerWidth * 1.2) {
+          nextX = 40;
+          nextY += maxHeight + 30;
+          maxHeight = 0;
+        }
       }
 
       canvas.appendChild(tile);
