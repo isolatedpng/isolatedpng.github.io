@@ -690,7 +690,7 @@
       
       const oldScale = canvasScale;
       canvasScale *= scaleAmount;
-      canvasScale = Math.max(0.2, Math.min(canvasScale, 3));
+      canvasScale = Math.max(0.5, Math.min(canvasScale, 3));
       
       const scaleChange = canvasScale / oldScale;
       canvasX = mouseX - (mouseX - canvasX) * scaleChange;
