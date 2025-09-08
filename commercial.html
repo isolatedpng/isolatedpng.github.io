@@ -458,8 +458,37 @@
       }
       isDraggingCanvas = false;
     });
+
+    // Масштабирование с помощью колесика мыши
+    let canvasScale = 1;
+    let canvasX = 0;
+    let canvasY = 0;
+
+    function updateCanvasTransform() {
+      canvas.style.transform = `translate(${canvasX}px, ${canvasY}px) scale(${canvasScale})`;
+    }
+
+    document.addEventListener('wheel', e => {
+      e.preventDefault();
+
+      const scaleAmount = e.deltaY > 0 ? 0.975 : 1.025;
+      const rect = canvas.getBoundingClientRect();
+      const mouseX = e.clientX - rect.left;
+      const mouseY = e.clientY - rect.top;
+
+      const oldScale = canvasScale;
+      canvasScale *= scaleAmount;
+      canvasScale = Math.max(0.5, Math.min(canvasScale, 3));
+
+      const scaleChange = canvasScale / oldScale;
+      canvasX = mouseX - (mouseX - canvasX) * scaleChange;
+      canvasY = mouseY - (mouseY - canvasY) * scaleChange;
+
+      updateCanvasTransform();
+    }, { passive: false });
+
+    updateCanvasTransform();
   </script>
 
 </body>
 </html>
-
