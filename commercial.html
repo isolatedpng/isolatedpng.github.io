@@ -200,7 +200,8 @@
       box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
     }
 
-    .tile img {
+    .tile img,
+    .tile video {
       display: block;
       border-radius: 8px;
       pointer-events: none;
@@ -383,6 +384,46 @@
           errorDiv.textContent = `Loading error:\n${work.src}`;
           tile.appendChild(errorDiv);
         };
+      } else if (work.type === 'video') {
+        content = document.createElement('video');
+        content.src = work.src;
+        content.controls = false;
+        content.loop = true;
+        content.muted = true;
+        content.autoplay = true;
+
+        content.onloadedmetadata = function () {
+          const aspectRatio = this.videoWidth / this.videoHeight;
+          const maxWidth = 400;
+          const maxHeight = 600;
+
+          let width, height;
+
+          if (aspectRatio > 1) {
+            width = Math.min(maxWidth, this.videoWidth * 0.5);
+            height = width / aspectRatio;
+          } else {
+            height = Math.min(maxHeight, this.videoHeight * 0.5);
+            width = height * aspectRatio;
+          }
+
+          width = Math.max(200, width);
+          height = Math.max(200, height);
+
+          tile.style.width = `${width}px`;
+          tile.style.height = `${height}px`;
+        };
+
+        content.onerror = function () {
+          console.error(`Failed to load video: ${work.src}`);
+          tile.style.width = '300px';
+          tile.style.height = '300px';
+          this.style.display = 'none';
+          const errorDiv = document.createElement('div');
+          errorDiv.className = 'error-placeholder';
+          errorDiv.textContent = `Loading error:\n${work.src}`;
+          tile.appendChild(errorDiv);
+        };
       }
 
       tile.appendChild(content);
@@ -507,4 +548,3 @@
 
 </body>
 </html>
-
