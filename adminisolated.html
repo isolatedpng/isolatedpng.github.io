@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <title>Admin Isolated</title>
   <style>
-    /* Весь твой CSS оставлен без изменений */
+    /* Все стили как в index.html */
     body {
       margin: 0;
       font-family: sans-serif;
@@ -51,7 +51,7 @@
       transition: transform 0.2s ease, box-shadow 0.3s ease;
       background-color: #111;
       position: relative;
-      cursor: move; /* меняем на move для админки */
+      cursor: move; /* draggable */
       overflow: hidden;
       z-index: 1;
       will-change: transform;
@@ -69,8 +69,6 @@
       height: 100%;
       object-fit: contain;
     }
-
-    /* Кнопка сохранения layout */
     .admin-panel {
       position: fixed;
       top: 20px;
@@ -88,18 +86,15 @@
   </style>
 </head>
 <body>
-
   <div class="menu">Admin Panel</div>
   <div class="admin-panel">
     <button id="saveLayout">Save Layout</button>
   </div>
-
   <div class="workspace">
     <div class="canvas" id="canvas"></div>
   </div>
 
   <script>
-    /* Сохраняем все работы из index.html */
     const works = [
       { type: 'image', src: 'thumbs/image1.png' },
       { type: 'video', src: 'thumbs/balenciaga.mp4' },
@@ -110,12 +105,14 @@
 
     const canvas = document.getElementById('canvas');
 
+    // Создание плиток с liftTile и абсолютным drag
     function buildTiles() {
       canvas.innerHTML = '';
       works.forEach(work => {
         const tile = document.createElement('div');
         tile.className = 'tile';
-        tile.draggable = true;
+        tile.style.width = '300px';
+        tile.style.height = '300px';
 
         let content;
         if (work.type === 'image') {
@@ -127,45 +124,130 @@
           content.autoplay = true;
           content.loop = true;
           content.muted = true;
+          content.playsInline = true;
         }
         tile.appendChild(content);
         canvas.appendChild(tile);
       });
-      addDnDHandlers();
     }
 
-    function addDnDHandlers() {
-      let dragSrc = null;
-      document.querySelectorAll('.tile').forEach(tile => {
-        tile.addEventListener('dragstart', e => {
-          dragSrc = tile;
-          tile.classList.add('dragging');
-          e.dataTransfer.effectAllowed = 'move';
-        });
-        tile.addEventListener('dragover', e => {
-          e.preventDefault();
-          e.dataTransfer.dropEffect = 'move';
-        });
-        tile.addEventListener('drop', e => {
-          e.preventDefault();
-          if (dragSrc && dragSrc !== tile) {
-            const srcHTML = dragSrc.outerHTML;
-            dragSrc.outerHTML = tile.outerHTML;
-            tile.outerHTML = srcHTML;
-            addDnDHandlers();
-          }
-        });
-        tile.addEventListener('dragend', () => {
-          tile.classList.remove('dragging');
-        });
-      });
+    buildTiles();
+
+    // Drag & drop с liftTile
+    let activeTile = null;
+    let offsetX = 0;
+    let offsetY = 0;
+    let isDraggingCanvas = false;
+    let dragStartX = 0;
+    let dragStartY = 0;
+
+    let canvasX = 0;
+    let canvasY = 0;
+    let canvasScale = 1;
+
+    function updateCanvasTransform() {
+      canvas.style.transform = `translate(${canvasX}px, ${canvasY}px) scale(${canvasScale})`;
+    }
+    updateCanvasTransform();
+
+    function liftTile(tile, pointerClientX, pointerClientY) {
+      if (tile.classList.contains('floating')) return;
+
+      const canvasRect = canvas.getBoundingClientRect();
+      const tileRect = tile.getBoundingClientRect();
+
+      const localLeft = (tileRect.left - canvasRect.left) / canvasScale;
+      const localTop  = (tileRect.top  - canvasRect.top)  / canvasScale;
+
+      const w = tileRect.width / canvasScale;
+      const h = tileRect.height / canvasScale;
+
+      tile.style.width = w + 'px';
+      tile.style.height = h + 'px';
+
+      tile.classList.add('floating');
+      tile.style.left = localLeft + 'px';
+      tile.style.top = localTop + 'px';
+
+      offsetX = (pointerClientX - tileRect.left) / canvasScale;
+      offsetY = (pointerClientY - tileRect.top) / canvasScale;
     }
 
+    document.addEventListener('mousedown', e => {
+      const tile = e.target.closest('.tile');
+      if (tile) {
+        liftTile(tile, e.clientX, e.clientY);
+        activeTile = tile;
+        tile.classList.add('dragging');
+        tile.style.zIndex = 2002;
+        e.preventDefault();
+      } else {
+        isDraggingCanvas = true;
+        dragStartX = e.clientX;
+        dragStartY = e.clientY;
+      }
+    });
+
+    document.addEventListener('mousemove', e => {
+      if (activeTile) {
+        const canvasRect = canvas.getBoundingClientRect();
+        const newX = (e.clientX - canvasRect.left) / canvasScale - offsetX;
+        const newY = (e.clientY - canvasRect.top) / canvasScale - offsetY;
+        activeTile.style.left = `${newX}px`;
+        activeTile.style.top = `${newY}px`;
+      } else if (isDraggingCanvas) {
+        const dx = e.clientX - dragStartX;
+        const dy = e.clientY - dragStartY;
+        canvasX += dx;
+        canvasY += dy;
+        dragStartX = e.clientX;
+        dragStartY = e.clientY;
+        updateCanvasTransform();
+      }
+    });
+
+    document.addEventListener('mouseup', () => {
+      if (activeTile) {
+        activeTile.classList.remove('dragging');
+        activeTile.style.zIndex = 2001;
+        activeTile = null;
+      }
+      isDraggingCanvas = false;
+    });
+
+    document.addEventListener('wheel', e => {
+      if (e.ctrlKey) return;
+      e.preventDefault();
+      const rect = canvas.getBoundingClientRect();
+      const mouseX = e.clientX - rect.left;
+      const mouseY = e.clientY - rect.top;
+
+      const oldScale = canvasScale;
+      const scaleAmount = e.deltaY > 0 ? 0.95 : 1.05;
+      canvasScale *= scaleAmount;
+      canvasScale = Math.max(0.2, Math.min(canvasScale, 3));
+
+      const scaleChange = canvasScale / oldScale;
+      canvasX = mouseX - (mouseX - canvasX) * scaleChange;
+      canvasY = mouseY - (mouseY - canvasY) * scaleChange;
+
+      updateCanvasTransform();
+    }, { passive: false });
+
+    // Сохранение layout
     document.getElementById('saveLayout').addEventListener('click', () => {
-      const tiles = document.querySelectorAll('.tile img, .tile video');
+      const tiles = document.querySelectorAll('.tile');
       const layout = [];
-      tiles.forEach((el, idx) => {
-        layout.push({ order: idx, type: el.tagName.toLowerCase(), src: el.getAttribute('src') });
+      tiles.forEach(tile => {
+        const el = tile.querySelector('img, video');
+        layout.push({
+          src: el.src,
+          type: el.tagName.toLowerCase(),
+          left: parseFloat(tile.style.left || 0),
+          top: parseFloat(tile.style.top || 0),
+          width: parseFloat(tile.style.width),
+          height: parseFloat(tile.style.height)
+        });
       });
       const blob = new Blob([JSON.stringify(layout, null, 2)], {type: "application/json"});
       const url = URL.createObjectURL(blob);
@@ -175,9 +257,6 @@
       a.click();
       URL.revokeObjectURL(url);
     });
-
-    buildTiles();
   </script>
-
 </body>
 </html>
