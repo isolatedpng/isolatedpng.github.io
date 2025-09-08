@@ -7,13 +7,13 @@
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
   <style>
     body {
-      margin: 0;
-      font-family: sans-serif;
-      overflow: hidden;
-      background-color: #1a0000; /* Темно-красный фон */
-      background-image: radial-gradient(#440000 1px, transparent 1px);
-      background-size: 20px 20px;
-    }
+  margin: 0;
+  font-family: sans-serif;
+  overflow: hidden;
+  background-color: #1a0000; /* ← Красный оттенок */
+  background-image: radial-gradient(#440000 1px, transparent 1px); /* ← Красная сетка */
+  background-size: 20px 20px;
+}
 
     .menu {
       position: fixed;
@@ -125,7 +125,7 @@
     /* Blood Glyphs */
     .glyph {
       position: absolute;
-      color: rgba(255, 0, 0, 0.8);
+      color: rgba(255, 0, 0, 0.8); /* Кроваво-красный */
       font-size: 24px;
       text-shadow: 0 0 8px rgba(255, 0, 0, 0.7), 0 0 12px rgba(255, 0, 0, 0.4);
       animation: fall 10s linear infinite;
@@ -284,7 +284,7 @@
   </div>
 
   <script>
-    const frameColors = ['#ff0000', '#cc0000', '#990000', '#660000', '#330000']; // ← Все красные оттенки
+    const frameColors = ['#6ecf9f', '#8aa9ff', '#d88aff', '#ff8ab3', '#ffd88a'];
 
     const works = [
       { type: 'image', src: 'thumbs/image1.png' },
