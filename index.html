@@ -32,10 +32,11 @@
 
     .tile {
       position: absolute;
+      width: 400px;
+      height: auto;
       border-radius: 10px;
       cursor: grab;
       transition: transform 0.3s ease, opacity 1s ease;
-      display: inline-block;
       opacity: 0;
       animation: fadeIn 1.5s forwards;
     }
@@ -50,7 +51,7 @@
 
     .tile img,
     .tile video {
-      max-width: 100%;
+      width: 100%;
       height: auto;
       display: block;
       border-radius: 10px;
@@ -67,14 +68,24 @@
   <div class="menu">Menu</div>
 
   <div class="workspace">
-    <!-- Плитка с изображением -->
-    <div class="tile" style="top: 100px; left: 100px;" onclick="openWork('works/image1.html')" draggable="true">
+    <!-- Плитка 1 -->
+    <div class="tile" style="top: 80px; left: 80px;" onclick="openWork('works/image1.html')" draggable="true">
       <img src="thumbs/image1.png" alt="">
     </div>
 
-    <!-- Плитка с видео -->
-    <div class="tile" style="top: 400px; left: 200px;" draggable="true">
+    <!-- Плитка 2 -->
+    <div class="tile" style="top: 360px; left: 100px;" draggable="true">
       <video src="thumbs/balenciaga.mp4" autoplay muted loop controls></video>
+    </div>
+
+    <!-- Плитка 3 (пример для будущих работ) -->
+    <div class="tile" style="top: 80px; left: 520px;" onclick="openWork('works/image2.html')" draggable="true">
+      <img src="thumbs/image2.png" alt="">
+    </div>
+
+    <!-- Плитка 4 -->
+    <div class="tile" style="top: 360px; left: 540px;" draggable="true">
+      <video src="thumbs/video2.mp4" autoplay muted loop controls></video>
     </div>
   </div>
 
