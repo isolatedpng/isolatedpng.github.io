@@ -19,8 +19,8 @@
       position: fixed;
       top: 20px;
       left: 20px;
-      width: 80px;
-      height: 80px;
+      width: 80px; /* Увеличен в 2 раза */
+      height: 80px; /* Увеличен в 2 раза */
       background: rgba(255, 255, 255, 0.05);
       border-radius: 8px;
       display: flex;
@@ -38,17 +38,17 @@
 
     /* Sound Wave Icon */
     .sound-wave {
-      width: 40px;
-      height: 32px;
+      width: 40px; /* Увеличен в 2 раза */
+      height: 32px; /* Увеличен в 2 раза */
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 4px;
+      gap: 4px; /* Увеличен интервал между линиями */
     }
 
     .sound-wave span {
-      width: 4px;
-      height: 16px;
+      width: 4px; /* Увеличена толщина линий */
+      height: 16px; /* Увеличена высота линий */
       background: white;
       border-radius: 2px;
       opacity: 0.8;
@@ -69,7 +69,7 @@
     /* Dropdown Menu */
     .dropdown-menu {
       position: absolute;
-      top: 100px;
+      top: 100px; /* Изменен отступ сверху */
       left: 20px;
       width: 200px;
       background: rgba(0, 0, 0, 0.9);
@@ -99,8 +99,8 @@
     }
 
     .dropdown-menu-header .sound-wave {
-      width: 40px;
-      height: 32px;
+      width: 40px; /* Увеличен в 2 раза */
+      height: 32px; /* Увеличен в 2 раза */
       opacity: 0.8;
     }
 
@@ -279,4 +279,127 @@
 <body>
 
   <!-- Menu Button -->
-  <div class="menu-button
+  <div class="menu-button">
+    <div class="sound-wave">
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </div>
+
+  <!-- Dropdown Menu -->
+  <div class="dropdown-menu" id="menu">
+    <div class="dropdown-menu-header">
+      <div class="sound-wave">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+    <ul>
+      <li><a href="index.html">Isolated Page</a></li>
+      <li><a href="commercial.html">Commercial</a></li>
+      <li><a href="workflows.html">Workflows</a></li>
+      <li><a href="socials.html">Socials, contact</a></li>
+      <li><a href="about.html">About</a></li>
+    </ul>
+    <button class="close-btn">✕</button>
+  </div>
+
+  <!-- Futuristic Welcome Screen -->
+  <div class="welcome-overlay" id="welcomeOverlay">
+    <div id="glyphContainer"></div>
+    <div id="bubbleContainer"></div>
+    <div class="welcome-container">
+      <div class="enter-text" onclick="enterSite()">ACCESS PAGE</div>
+    </div>
+  </div>
+
+  <div class="workspace">
+    <div class="canvas" id="canvas"></div>
+  </div>
+
+  <script>
+    // Генератор иероглифов
+    function createGlyphs() {
+      const container = document.getElementById('glyphContainer');
+      const glyphs = '日月火水木金土山川風雲電光雷雨星宇宙神魔龍鳳亜乙丙丁戊己庚辛壬癸子丑寅卯辰巳午未申酉戌亥АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{}|;:,.<>?';
+
+      for (let i = 0; i < 200; i++) {
+        const glyph = document.createElement('div');
+        glyph.className = 'glyph';
+        glyph.textContent = glyphs.charAt(Math.floor(Math.random() * glyphs.length));
+        glyph.style.left = Math.random() * 100 + '%';
+        glyph.style.top = Math.random() * 100 + '%';
+        glyph.style.animationDuration = (Math.random() * 5 + 5) + 's';
+        glyph.style.animationDelay = Math.random() * 5 + 's';
+        glyph.style.fontSize = (Math.random() * 20 + 16) + 'px';
+        container.appendChild(glyph);
+      }
+    }
+
+    // Генератор пузырьков
+    function createBubbles() {
+      const container = document.getElementById('bubbleContainer');
+      for (let i = 0; i < 30; i++) {
+        const bubble = document.createElement('div');
+        bubble.className = 'bubble';
+        const size = Math.random() * 60 + 20;
+        bubble.style.width = `${size}px`;
+        bubble.style.height = `${size}px`;
+        bubble.style.left = Math.random() * 100 + '%';
+        bubble.style.animationDuration = (Math.random() * 6 + 4) + 's';
+        bubble.style.animationDelay = Math.random() * 5 + 's';
+        container.appendChild(bubble);
+      }
+    }
+
+    // Функция входа с эффектом "растворения матрицы"
+    function enterSite() {
+      const overlay = document.getElementById('welcomeOverlay');
+      const textElement = document.querySelector('.enter-text');
+
+      // Создаём трещины
+      for (let i = 0; i < 20; i++) {
+        const crack = document.createElement('div');
+        crack.className = 'crack-line';
+        crack.style.top = (Math.random() * 100) + '%';
+        crack.style.left = '0';
+        crack.style.opacity = Math.random() * 0.5 + 0.3;
+        overlay.appendChild(crack);
+      }
+
+      // Создаём "дымовые частицы"
+      for (let i = 0; i < 250; i++) {
+        setTimeout(() => {
+          const particle = document.createElement('div');
+          particle.className = 'smoke-particle';
+          const size = Math.random() * 10 + 3;
+          particle.style.width = `${size}px`;
+          particle.style.height = `${size}px`;
+          particle.style.left = `${Math.random() * 100}%`;
+          particle.style.top = `${Math.random() * 100}%`;
+          particle.style.animation = `smokeFloat ${Math.random() * 3 + 2}s ease-out forwards`;
+          overlay.appendChild(particle);
+        }, i * 8);
+      }
+
+      // Плавное исчезновение оверлея
+      overlay.classList.add('fade-out');
+
+      setTimeout(() => {
+        overlay.remove();
+      }, 1600);
+    }
+
+    // Создаём иероглифы и пузырьки при загрузке
+    createGlyphs();
+    createBubbles();
+  </script>
+
+</body>
+</html>
