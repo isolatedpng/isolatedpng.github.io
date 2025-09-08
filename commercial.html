@@ -365,10 +365,10 @@
           let width, height;
 
           if (aspectRatio > 1) {
-            width = Math.min(maxWidth, this.naturalWidth * 0.5);
+            width = Math.min(maxWidth, this.naturalWidth * 0.75);
             height = width / aspectRatio;
           } else {
-            height = Math.min(maxHeight, this.naturalHeight * 0.5);
+            height = Math.min(maxHeight, this.naturalHeight * 0.75);
             width = height * aspectRatio;
           }
 
@@ -586,4 +586,5 @@
 
 </body>
 </html>
+
 
