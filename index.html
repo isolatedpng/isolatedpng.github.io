@@ -104,97 +104,216 @@
       background: #222;
     }
 
-    /* Стили для приветственного модального окна */
+    /* Futuristic Welcome Screen */
     .welcome-overlay {
       position: fixed;
       top: 0;
       left: 0;
       width: 100vw;
       height: 100vh;
-      background: rgba(0, 0, 0, 0.8);
+      background: radial-gradient(circle at center, rgba(0, 20, 40, 0.9), rgba(0, 0, 0, 0.95));
       display: flex;
       align-items: center;
       justify-content: center;
       z-index: 2000;
-      backdrop-filter: blur(5px);
+      backdrop-filter: blur(10px);
     }
 
-    .welcome-modal {
-      background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
-      padding: 40px;
-      border-radius: 20px;
+    .welcome-container {
+      position: relative;
       text-align: center;
-      color: white;
-      max-width: 500px;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
-      border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
-    .welcome-modal h2 {
-      margin: 0 0 20px 0;
-      font-size: 28px;
-      background: linear-gradient(45deg, #6ecf9f, #8aa9ff);
+    .enter-text {
+      font-size: 120px;
+      font-weight: 900;
+      letter-spacing: 20px;
+      background: linear-gradient(45deg, #00ffff, #ff00ff, #ffff00, #ff0080);
+      background-size: 300% 300%;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
-    }
-
-    .welcome-modal p {
-      margin: 0 0 30px 0;
-      font-size: 16px;
-      line-height: 1.5;
-      color: #ccc;
-    }
-
-    .enter-btn {
-      background: linear-gradient(45deg, #6ecf9f, #8aa9ff);
-      border: none;
-      padding: 15px 40px;
-      border-radius: 50px;
-      color: white;
-      font-size: 16px;
-      font-weight: bold;
+      animation: gradientShift 3s ease-in-out infinite, glow 2s ease-in-out infinite alternate;
+      text-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
       cursor: pointer;
       transition: all 0.3s ease;
-      box-shadow: 0 5px 15px rgba(106, 207, 159, 0.3);
+      position: relative;
     }
 
-    .enter-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(106, 207, 159, 0.4);
+    .enter-text::before {
+      content: 'ENTER';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: scanline 2s linear infinite;
+      pointer-events: none;
     }
 
-    .welcome-features {
-      display: flex;
-      justify-content: space-around;
-      margin: 20px 0;
-      font-size: 14px;
-      color: #999;
+    .enter-text:hover {
+      transform: scale(1.05);
+      filter: brightness(1.2);
     }
 
-    .feature {
-      display: flex;
-      align-items: center;
-      gap: 8px;
+    .circuit-lines {
+      position: absolute;
+      width: 600px;
+      height: 400px;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+
+    .circuit-line {
+      position: absolute;
+      background: linear-gradient(90deg, transparent, #00ffff, transparent);
+      height: 2px;
+      animation: circuitFlow 4s linear infinite;
+    }
+
+    .circuit-line:nth-child(1) {
+      top: 20%;
+      left: 0;
+      width: 100%;
+      animation-delay: 0s;
+    }
+
+    .circuit-line:nth-child(2) {
+      top: 80%;
+      left: 0;
+      width: 100%;
+      animation-delay: 1s;
+    }
+
+    .circuit-line:nth-child(3) {
+      left: 20%;
+      top: 0;
+      height: 100%;
+      width: 2px;
+      background: linear-gradient(180deg, transparent, #ff00ff, transparent);
+      animation-delay: 2s;
+    }
+
+    .circuit-line:nth-child(4) {
+      right: 20%;
+      top: 0;
+      height: 100%;
+      width: 2px;
+      background: linear-gradient(180deg, transparent, #ffff00, transparent);
+      animation-delay: 3s;
+    }
+
+    .particles {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .particle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: #00ffff;
+      border-radius: 50%;
+      animation: particleFloat 8s linear infinite;
+      box-shadow: 0 0 10px #00ffff;
+    }
+
+    /* Keyframes */
+    @keyframes gradientShift {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+
+    @keyframes glow {
+      from { text-shadow: 0 0 30px rgba(0, 255, 255, 0.5), 0 0 60px rgba(0, 255, 255, 0.3); }
+      to { text-shadow: 0 0 40px rgba(255, 0, 255, 0.7), 0 0 80px rgba(255, 0, 255, 0.4); }
+    }
+
+    @keyframes scanline {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    @keyframes circuitFlow {
+      0% { opacity: 0; transform: scaleX(0); }
+      50% { opacity: 1; transform: scaleX(1); }
+      100% { opacity: 0; transform: scaleX(0); }
+    }
+
+    @keyframes particleFloat {
+      0% { 
+        transform: translateY(100vh) translateX(0px) rotate(0deg);
+        opacity: 0;
+      }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { 
+        transform: translateY(-100px) translateX(100px) rotate(360deg);
+        opacity: 0;
+      }
+    }
+
+    /* Dissolution Animation */
+    @keyframes dissolve {
+      0% { 
+        opacity: 1; 
+        transform: scale(1) rotate(0deg); 
+        filter: blur(0px);
+      }
+      50% { 
+        opacity: 0.7; 
+        transform: scale(1.2) rotate(5deg); 
+        filter: blur(2px);
+      }
+      100% { 
+        opacity: 0; 
+        transform: scale(2) rotate(15deg); 
+        filter: blur(10px);
+      }
+    }
+
+    @keyframes particleExplode {
+      0% { 
+        opacity: 1; 
+        transform: translate(0, 0) scale(1);
+      }
+      100% { 
+        opacity: 0; 
+        transform: translate(var(--random-x), var(--random-y)) scale(0);
+      }
+    }
+
+    .dissolving {
+      animation: dissolve 1s ease-out forwards;
+    }
+
+    .exploding .particle {
+      animation: particleExplode 1s ease-out forwards;
     }
   </style>
 </head>
 <body>
 
-  <!-- Приветственное модальное окно -->
+  <!-- Futuristic Welcome Screen -->
   <div class="welcome-overlay" id="welcomeOverlay">
-    <div class="welcome-modal">
-      <h2>🎨 Добро пожаловать</h2>
-      <p>Интерактивная галерея с медиа-контентом.<br>
-      Наводите курсор на видео для включения звука.</p>
-      
-      <div class="welcome-features">
-        <div class="feature">🎵 Звук при наведении</div>
-        <div class="feature">🎯 Перетаскивание</div>
-        <div class="feature">🔍 Масштабирование</div>
-      </div>
-      
-      <button class="enter-btn" onclick="enterSite()">Войти в галерею</button>
+    <div class="particles" id="particles"></div>
+    <div class="circuit-lines">
+      <div class="circuit-line"></div>
+      <div class="circuit-line"></div>
+      <div class="circuit-line"></div>
+      <div class="circuit-line"></div>
+    </div>
+    <div class="welcome-container">
+      <div class="enter-text" onclick="enterSite()">ENTER</div>
     </div>
   </div>
 
@@ -219,25 +338,58 @@
     let nextY = 100;
     let maxHeight = 0;
 
-    // Функция входа в сайт - разблокирует звук
+    // Create floating particles
+    function createParticles() {
+      const particlesContainer = document.getElementById('particles');
+      for (let i = 0; i < 50; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.animationDelay = Math.random() * 8 + 's';
+        particle.style.animationDuration = (Math.random() * 4 + 4) + 's';
+        
+        // Random colors for particles
+        const colors = ['#00ffff', '#ff00ff', '#ffff00', '#ff0080'];
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        particle.style.background = color;
+        particle.style.boxShadow = `0 0 10px ${color}`;
+        
+        particlesContainer.appendChild(particle);
+      }
+    }
+
+    // Futuristic enter site function
     function enterSite() {
       const overlay = document.getElementById('welcomeOverlay');
-      overlay.style.opacity = '0';
-      overlay.style.transition = 'opacity 0.5s ease';
+      const particles = document.querySelectorAll('.particle');
+      
+      // Add explosion effect to particles
+      particles.forEach((particle, index) => {
+        const randomX = (Math.random() - 0.5) * 2000 + 'px';
+        const randomY = (Math.random() - 0.5) * 2000 + 'px';
+        particle.style.setProperty('--random-x', randomX);
+        particle.style.setProperty('--random-y', randomY);
+      });
+      
+      overlay.classList.add('exploding');
+      overlay.classList.add('dissolving');
       
       setTimeout(() => {
         overlay.remove();
-      }, 500);
+      }, 1000);
       
-      // Разблокируем звук сразу после клика
+      // Unlock audio
       unlockAudio();
     }
 
-    // Функция для разблокировки звука
+    // Initialize particles on load
+    createParticles();
+
+    // Function to unlock audio
     async function unlockAudio() {
       if (!audioUnlocked) {
         try {
-          // Создаем тихий звук для разблокировки
+          // Create silent sound to unlock
           const audioContext = new (window.AudioContext || window.webkitAudioContext)();
           const oscillator = audioContext.createOscillator();
           const gainNode = audioContext.createGain();
@@ -250,14 +402,14 @@
           oscillator.stop(audioContext.currentTime + 0.01);
           
           audioUnlocked = true;
-          console.log('Звук разблокирован!');
+          console.log('Audio unlocked!');
           
-          // Обновляем меню
+          // Update menu
           const menu = document.querySelector('.menu');
           menu.innerHTML = 'Menu | <span style="color: #6ecf9f;">🔊 Audio Enabled</span>';
           
         } catch (error) {
-          console.log('Не удалось разблокировать звук:', error);
+          console.log('Could not unlock audio:', error);
         }
       }
     }
@@ -296,13 +448,13 @@
         };
         
         content.onerror = function() {
-          console.error(`Не удалось загрузить изображение: ${work.src}`);
+          console.error(`Failed to load image: ${work.src}`);
           tile.style.width = '300px';
           tile.style.height = '300px';
           this.style.display = 'none';
           const errorDiv = document.createElement('div');
           errorDiv.className = 'error-placeholder';
-          errorDiv.textContent = `Ошибка загрузки:\n${work.src}`;
+          errorDiv.textContent = `Loading error:\n${work.src}`;
           tile.appendChild(errorDiv);
         };
         
@@ -314,7 +466,7 @@
         content.loop = true;
         content.playsInline = true;
         
-        // Добавляем индикатор звука
+        // Add sound indicator
         const soundIndicator = document.createElement('div');
         soundIndicator.className = 'sound-indicator';
         soundIndicator.innerHTML = '🔊';
@@ -346,25 +498,25 @@
         
         tile.addEventListener('mouseenter', async () => {
           if (!audioUnlocked) {
-            console.log('Звук еще не разблокирован');
+            console.log('Audio not yet unlocked');
             return;
           }
           
-          // Очищаем предыдущий интервал если есть
+          // Clear previous interval if exists
           if (fadeInterval) {
             clearInterval(fadeInterval);
           }
           
-          // Визуальные эффекты
+          // Visual effects
           tile.classList.add('sound-on');
           soundIndicator.style.display = 'flex';
           
           try {
-            // Включаем звук без перезапуска видео
+            // Enable sound without restarting video
             content.muted = false;
             content.volume = 0;
             
-            // Плавное увеличение громкости
+            // Smooth volume increase
             let vol = 0;
             fadeInterval = setInterval(() => {
               if (vol < 0.6) {
@@ -377,21 +529,21 @@
             }, 25);
             
           } catch (error) {
-            console.error('Ошибка включения звука:', error);
+            console.error('Error enabling sound:', error);
           }
         });
         
         tile.addEventListener('mouseleave', () => {
-          // Очищаем предыдущий интервал если есть
+          // Clear previous interval if exists
           if (fadeInterval) {
             clearInterval(fadeInterval);
           }
           
-          // Убираем визуальные эффекты
+          // Remove visual effects
           tile.classList.remove('sound-on');
           soundIndicator.style.display = 'none';
           
-          // Плавное уменьшение громкости
+          // Smooth volume decrease
           let vol = content.volume;
           fadeInterval = setInterval(() => {
             if (vol > 0) {
@@ -406,13 +558,13 @@
         });
         
         content.onerror = function() {
-          console.error(`Не удалось загрузить видео: ${work.src}`);
+          console.error(`Failed to load video: ${work.src}`);
           tile.style.width = '300px';
           tile.style.height = '300px';
           this.style.display = 'none';
           const errorDiv = document.createElement('div');
           errorDiv.className = 'error-placeholder';
-          errorDiv.textContent = `Ошибка загрузки:\n${work.src}`;
+          errorDiv.textContent = `Loading error:\n${work.src}`;
           tile.appendChild(errorDiv);
         };
       }
@@ -436,7 +588,7 @@
       canvas.appendChild(tile);
     });
 
-    // Перемещение плитки
+    // Tile dragging
     let activeTile = null;
     let offsetX = 0;
     let offsetY = 0;
@@ -488,7 +640,7 @@
       isDraggingCanvas = false;
     });
 
-    // Панорамное перемещение и зум
+    // Pan and zoom
     let canvasX = 0;
     let canvasY = 0;
     let canvasScale = 1;
