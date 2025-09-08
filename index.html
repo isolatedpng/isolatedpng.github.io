@@ -367,6 +367,47 @@
     let nextY = 100;
     let maxHeight = 0;
 
+    // Проверяем URL на наличие админ-ключа
+    const urlParams = new URLSearchParams(window.location.search);
+    const adminKey = urlParams.get('admin');
+    const ADMIN_PASSWORD = 'mysecret123'; // ← ЗАМЕНИ НА СВОЙ ПАРОЛЬ
+
+    let isEditMode = false;
+
+    if (adminKey === ADMIN_PASSWORD) {
+      isEditMode = true;
+      console.log('✅ Admin Mode Activated — You can drag tiles and press "S" to save layout.');
+      
+      // Меняем курсор на всех тайлах
+      setTimeout(() => {
+        document.querySelectorAll('.tile').forEach(tile => {
+          tile.style.cursor = 'grab';
+        });
+      }, 1000);
+    }
+
+    // Сохранение композиции по нажатию клавиши "S" (только в админ-режиме)
+    document.addEventListener('keydown', (e) => {
+      if (isEditMode && (e.key === 's' || e.key === 'S')) {
+        e.preventDefault();
+        
+        const tiles = document.querySelectorAll('.tile');
+        const layout = [];
+        
+        tiles.forEach(tile => {
+          layout.push({
+            left: parseFloat(tile.style.left),
+            top: parseFloat(tile.style.top),
+            width: parseFloat(tile.style.width),
+            height: parseFloat(tile.style.height)
+          });
+        });
+        
+        localStorage.setItem('tileLayout', JSON.stringify(layout));
+        alert('✅ Layout saved! All users will see this arrangement.');
+      }
+    });
+
     // Create floating particles
     function createParticles() {
       const particlesContainer = document.getElementById('particles');
@@ -603,18 +644,28 @@
 
       tile.appendChild(content);
       
-      tile.style.width = '300px';
-      tile.style.height = '300px';
-      tile.style.left = `${nextX}px`;
-      tile.style.top = `${nextY}px`;
+      // Пытаемся загрузить сохранённую позицию
+      const savedLayout = JSON.parse(localStorage.getItem('tileLayout'));
+      if (savedLayout && savedLayout[index]) {
+        tile.style.width = `${savedLayout[index].width}px`;
+        tile.style.height = `${savedLayout[index].height}px`;
+        tile.style.left = `${savedLayout[index].left}px`;
+        tile.style.top = `${savedLayout[index].top}px`;
+      } else {
+        // Если нет — размещаем как раньше
+        tile.style.width = '300px';
+        tile.style.height = '300px';
+        tile.style.left = `${nextX}px`;
+        tile.style.top = `${nextY}px`;
 
-      nextX += 450;
-      maxHeight = Math.max(maxHeight, 350);
+        nextX += 225;
+        maxHeight = Math.max(maxHeight, 350);
 
-      if (nextX > window.innerWidth * 1.2) {
-        nextX = 40;
-        nextY += maxHeight + 60;
-        maxHeight = 0;
+        if (nextX > window.innerWidth * 1.2) {
+          nextX = 40;
+          nextY += maxHeight + 30;
+          maxHeight = 0;
+        }
       }
 
       canvas.appendChild(tile);
@@ -683,14 +734,14 @@
 
     document.addEventListener('wheel', e => {
       e.preventDefault();
-      const scaleAmount = e.deltaY > 0 ? 0.95 : 1.05;
+      const scaleAmount = e.deltaY > 0 ? 0.975 : 1.05;  // ← 0.975 для плавного отдаления
       const rect = canvas.getBoundingClientRect();
       const mouseX = e.clientX - rect.left;
       const mouseY = e.clientY - rect.top;
       
       const oldScale = canvasScale;
       canvasScale *= scaleAmount;
-      canvasScale = Math.max(0.5, Math.min(canvasScale, 3));
+      canvasScale = Math.max(0.5, Math.min(canvasScale, 3));  // ← 0.5 вместо 0.2 — лимит отдаления
       
       const scaleChange = canvasScale / oldScale;
       canvasX = mouseX - (mouseX - canvasX) * scaleChange;
