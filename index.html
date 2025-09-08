@@ -125,45 +125,60 @@
     }
 
     .enter-text {
-      font-size: 120px;
-      font-weight: 900;
-      letter-spacing: 20px;
-      background: linear-gradient(45deg, #00ffff, #ff00ff, #ffff00, #ff0080);
-      background-size: 300% 300%;
+      font-family: 'Courier New', monospace;
+      font-size: 48px;
+      font-weight: 700;
+      letter-spacing: 8px;
+      background: linear-gradient(135deg, #c0c0c0, #ffffff, #808080, #c0c0c0);
+      background-size: 200% 200%;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
-      animation: gradientShift 3s ease-in-out infinite, glow 2s ease-in-out infinite alternate;
-      text-shadow: 0 0 30px rgba(0, 255, 255, 0.5);
+      animation: textShimmer 4s ease-in-out infinite, isolationPulse 3s ease-in-out infinite;
+      text-shadow: 0 0 20px rgba(192, 192, 192, 0.3);
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: all 0.4s ease;
       position: relative;
+      filter: contrast(1.2);
     }
 
     .enter-text::before {
-      content: 'ENTER';
+      content: 'ACCESS ISOLATION';
       position: absolute;
       top: 0;
       left: 0;
       right: 0;
       bottom: 0;
-      background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+      background: linear-gradient(90deg, transparent 45%, rgba(0, 255, 255, 0.6) 50%, transparent 55%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
-      animation: scanline 2s linear infinite;
+      animation: isolationScan 3s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    .enter-text::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: -10%;
+      right: -10%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.8), transparent);
+      animation: dataStream 2s linear infinite;
       pointer-events: none;
     }
 
     .enter-text:hover {
-      transform: scale(1.05);
-      filter: brightness(1.2);
+      transform: scale(1.02);
+      filter: contrast(1.4) brightness(1.1);
+      text-shadow: 0 0 25px rgba(0, 255, 255, 0.4);
     }
 
     .circuit-lines {
       position: absolute;
-      width: 600px;
-      height: 400px;
+      width: 800px;
+      height: 300px;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
@@ -172,41 +187,41 @@
 
     .circuit-line {
       position: absolute;
-      background: linear-gradient(90deg, transparent, #00ffff, transparent);
-      height: 2px;
-      animation: circuitFlow 4s linear infinite;
+      background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.3), transparent);
+      height: 1px;
+      animation: circuitFlow 6s ease-in-out infinite;
     }
 
     .circuit-line:nth-child(1) {
-      top: 20%;
+      top: 30%;
       left: 0;
       width: 100%;
       animation-delay: 0s;
     }
 
     .circuit-line:nth-child(2) {
-      top: 80%;
+      top: 70%;
       left: 0;
       width: 100%;
-      animation-delay: 1s;
-    }
-
-    .circuit-line:nth-child(3) {
-      left: 20%;
-      top: 0;
-      height: 100%;
-      width: 2px;
-      background: linear-gradient(180deg, transparent, #ff00ff, transparent);
       animation-delay: 2s;
     }
 
-    .circuit-line:nth-child(4) {
-      right: 20%;
+    .circuit-line:nth-child(3) {
+      left: 25%;
       top: 0;
       height: 100%;
-      width: 2px;
-      background: linear-gradient(180deg, transparent, #ffff00, transparent);
-      animation-delay: 3s;
+      width: 1px;
+      background: linear-gradient(180deg, transparent, rgba(0, 255, 255, 0.2), transparent);
+      animation-delay: 4s;
+    }
+
+    .circuit-line:nth-child(4) {
+      right: 25%;
+      top: 0;
+      height: 100%;
+      width: 1px;
+      background: linear-gradient(180deg, transparent, rgba(0, 255, 255, 0.2), transparent);
+      animation-delay: 1s;
     }
 
     .particles {
@@ -219,33 +234,40 @@
 
     .particle {
       position: absolute;
-      width: 4px;
-      height: 4px;
-      background: #00ffff;
+      width: 3px;
+      height: 3px;
+      background: rgba(0, 255, 255, 0.7);
       border-radius: 50%;
-      animation: particleFloat 8s linear infinite;
-      box-shadow: 0 0 10px #00ffff;
+      animation: particleFloat 12s linear infinite;
+      box-shadow: 0 0 8px rgba(0, 255, 255, 0.5);
     }
 
     /* Keyframes */
-    @keyframes gradientShift {
+    @keyframes textShimmer {
       0%, 100% { background-position: 0% 50%; }
       50% { background-position: 100% 50%; }
     }
 
-    @keyframes glow {
-      from { text-shadow: 0 0 30px rgba(0, 255, 255, 0.5), 0 0 60px rgba(0, 255, 255, 0.3); }
-      to { text-shadow: 0 0 40px rgba(255, 0, 255, 0.7), 0 0 80px rgba(255, 0, 255, 0.4); }
+    @keyframes isolationPulse {
+      0%, 100% { transform: scale(1); opacity: 0.9; }
+      50% { transform: scale(1.01); opacity: 1; }
     }
 
-    @keyframes scanline {
-      0% { transform: translateX(-100%); }
-      100% { transform: translateX(100%); }
+    @keyframes isolationScan {
+      0%, 100% { background-position: -200% 0; }
+      50% { background-position: 200% 0; }
+    }
+
+    @keyframes dataStream {
+      0% { transform: translateX(-100%); opacity: 0; }
+      50% { opacity: 1; }
+      100% { transform: translateX(100%); opacity: 0; }
     }
 
     @keyframes circuitFlow {
       0% { opacity: 0; transform: scaleX(0); }
-      50% { opacity: 1; transform: scaleX(1); }
+      30% { opacity: 0.6; transform: scaleX(1); }
+      70% { opacity: 0.6; transform: scaleX(1); }
       100% { opacity: 0; transform: scaleX(0); }
     }
 
@@ -313,7 +335,7 @@
       <div class="circuit-line"></div>
     </div>
     <div class="welcome-container">
-      <div class="enter-text" onclick="enterSite()">ENTER</div>
+      <div class="enter-text" onclick="enterSite()">ACCESS ISOLATION</div>
     </div>
   </div>
 
@@ -341,18 +363,12 @@
     // Create floating particles
     function createParticles() {
       const particlesContainer = document.getElementById('particles');
-      for (let i = 0; i < 50; i++) {
+      for (let i = 0; i < 30; i++) {
         const particle = document.createElement('div');
         particle.className = 'particle';
         particle.style.left = Math.random() * 100 + '%';
-        particle.style.animationDelay = Math.random() * 8 + 's';
-        particle.style.animationDuration = (Math.random() * 4 + 4) + 's';
-        
-        // Random colors for particles
-        const colors = ['#00ffff', '#ff00ff', '#ffff00', '#ff0080'];
-        const color = colors[Math.floor(Math.random() * colors.length)];
-        particle.style.background = color;
-        particle.style.boxShadow = `0 0 10px ${color}`;
+        particle.style.animationDelay = Math.random() * 12 + 's';
+        particle.style.animationDuration = (Math.random() * 6 + 8) + 's';
         
         particlesContainer.appendChild(particle);
       }
