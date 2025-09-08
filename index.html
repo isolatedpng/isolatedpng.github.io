@@ -401,6 +401,18 @@
     // Initialize particles on load
     createParticles();
 
+    // Play isolation sound on hover
+    function playIsolationSound() {
+      const audio = document.getElementById('isolationSound');
+      if (audio) {
+        audio.currentTime = 0; // Reset to beginning
+        audio.volume = 0.3; // Set comfortable volume
+        audio.play().catch(error => {
+          console.log('Could not play isolation sound:', error);
+        });
+      }
+    }
+
     // Function to unlock audio
     async function unlockAudio() {
       if (!audioUnlocked) {
