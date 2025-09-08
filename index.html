@@ -26,19 +26,17 @@
     }
 
     .workspace {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 40px;
-      padding: 100px 40px;
-      justify-content: flex-start;
-      align-items: flex-start;
+      position: relative;
+      width: 100vw;
+      height: 100vh;
     }
 
     .tile {
+      position: absolute;
       width: 400px;
       border-radius: 10px;
       cursor: grab;
-      transition: transform 0.3s ease, opacity 1s ease;
+      transition: transform 0.2s ease, opacity 1s ease;
       opacity: 0;
       animation: fadeIn 1.5s forwards;
     }
@@ -70,11 +68,11 @@
   <div class="menu">Menu</div>
 
   <div class="workspace">
-    <div class="tile" onclick="openWork('works/image1.html')" draggable="true">
+    <div class="tile" style="top: 100px; left: 100px;" onclick="openWork('works/image1.html')">
       <img src="thumbs/image1.png" alt="">
     </div>
 
-    <div class="tile" draggable="true">
+    <div class="tile" style="top: 400px; left: 200px;">
       <video src="thumbs/balenciaga.mp4" autoplay muted loop controls></video>
     </div>
   </div>
@@ -84,20 +82,33 @@
       window.open(url, '_blank');
     }
 
+    // Плавное перемещение плиток
     const tiles = document.querySelectorAll('.tile');
+    let activeTile = null;
+    let offsetX = 0;
+    let offsetY = 0;
+
     tiles.forEach(tile => {
-      let offsetX, offsetY;
-
-      tile.addEventListener('dragstart', e => {
-        offsetX = e.offsetX;
-        offsetY = e.offsetY;
+      tile.addEventListener('mousedown', e => {
+        activeTile = tile;
+        offsetX = e.clientX - tile.offsetLeft;
+        offsetY = e.clientY - tile.offsetTop;
+        tile.style.zIndex = 1001;
       });
+    });
 
-      tile.addEventListener('dragend', e => {
-        tile.style.position = 'absolute';
-        tile.style.left = `${e.pageX - offsetX}px`;
-        tile.style.top = `${e.pageY - offsetY}px`;
-      });
+    document.addEventListener('mousemove', e => {
+      if (activeTile) {
+        activeTile.style.left = `${e.clientX - offsetX}px`;
+        activeTile.style.top = `${e.clientY - offsetY}px`;
+      }
+    });
+
+    document.addEventListener('mouseup', () => {
+      if (activeTile) {
+        activeTile.style.zIndex = 1000;
+        activeTile = null;
+      }
     });
   </script>
 
