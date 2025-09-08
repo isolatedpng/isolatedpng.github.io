@@ -171,7 +171,7 @@
       height: 100vh;
       overflow: hidden;
       position: relative;
-      cursor: grab;
+      cursor: default; /* Убираем "лапу" */
     }
 
     .canvas {
@@ -423,8 +423,8 @@
       if (tile) {
         activeTile = tile;
         const rect = tile.getBoundingClientRect();
-        offsetX = e.clientX - rect.left - window.scrollX;
-        offsetY = e.clientY - rect.top - window.scrollY;
+        offsetX = e.clientX - rect.left;
+        offsetY = e.clientY - rect.top;
         tile.classList.add('dragging');
         tile.style.zIndex = 1001;
         e.preventDefault();
@@ -444,9 +444,11 @@
       } else if (isDraggingCanvas) {
         const dx = e.clientX - dragStartX;
         const dy = e.clientY - dragStartY;
-        canvas.scrollBy(-dx, -dy);
+        canvasX += dx;
+        canvasY += dy;
         dragStartX = e.clientX;
         dragStartY = e.clientY;
+        updateCanvasTransform();
       }
     });
 
