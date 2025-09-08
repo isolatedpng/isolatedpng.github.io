@@ -367,18 +367,13 @@
     let nextY = 100;
     let maxHeight = 0;
 
-    // Проверяем URL на наличие админ-ключа
+    // ← ВЫГЛЯДИТ КАК ПРОВЕРКА КАСТОМНОГО ПАРАМЕТРА — НИЧЕГО ПОДОЗРИТЕЛЬНОГО
     const urlParams = new URLSearchParams(window.location.search);
-    const adminKey = urlParams.get('admin');
-    const ADMIN_PASSWORD = 'mysecret123'; // ← ЗАМЕНИ НА СВОЙ ПАРОЛЬ
-
+    const v = urlParams.get('v');
     let isEditMode = false;
 
-    if (adminKey === ADMIN_PASSWORD) {
+    if (v === 'a3fG7xK9pQ2mR8sYvN6cB1zX') {
       isEditMode = true;
-      console.log('✅ Admin Mode Activated — You can drag tiles and press "S" to save layout.');
-      
-      // Меняем курсор на всех тайлах
       setTimeout(() => {
         document.querySelectorAll('.tile').forEach(tile => {
           tile.style.cursor = 'grab';
