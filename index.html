@@ -34,7 +34,7 @@
       display: inline-block;
       border-radius: 12px;
       border: 4px solid transparent;
-      transition: transform 0.2s ease, opacity 1s ease;
+      transition: transform 0.2s ease, box-shadow 0.3s ease, opacity 1s ease;
       opacity: 0;
       animation: fadeIn 1.5s forwards;
       background-color: #111;
@@ -44,6 +44,12 @@
 
     .tile:hover {
       transform: scale(1.02) rotate(0.5deg);
+      box-shadow: 0 0 12px rgba(255, 255, 255, 0.2);
+    }
+
+    .tile.dragging {
+      transform: scale(1.05) translateY(-5px);
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
     }
 
     .tile img,
@@ -97,14 +103,13 @@
         tile.appendChild(video);
       }
 
-      // Начальная позиция (распределённая по экрану)
       tile.style.left = `${80 + index * 440}px`;
       tile.style.top = `100px`;
 
       workspace.appendChild(tile);
     });
 
-    // Перемещение только при удержании
+    // Перемещение с эффектом парения
     let activeTile = null;
     let offsetX = 0;
     let offsetY = 0;
@@ -118,6 +123,7 @@
       offsetX = e.clientX - rect.left;
       offsetY = e.clientY - rect.top;
 
+      tile.classList.add('dragging');
       tile.style.zIndex = 1001;
       tile.style.pointerEvents = 'none';
     });
@@ -131,6 +137,7 @@
 
     document.addEventListener('mouseup', e => {
       if (activeTile) {
+        activeTile.classList.remove('dragging');
         activeTile.style.zIndex = 1000;
         activeTile.style.pointerEvents = 'auto';
         activeTile = null;
@@ -148,4 +155,3 @@
 
 </body>
 </html>
-
