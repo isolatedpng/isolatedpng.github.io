@@ -401,44 +401,29 @@
     // Initialize particles on load
     createParticles();
 
-    // Play isolation sound on hover
+    // Play isolation sound on click
     function playIsolationSound() {
       const audio = document.getElementById('isolationSound');
       if (audio) {
-        // Try to unlock audio context first
-        if (typeof AudioContext !== 'undefined' || typeof webkitAudioContext !== 'undefined') {
-          try {
-            audio.currentTime = 0;
-            audio.volume = 0.3;
-            
-            const playPromise = audio.play();
-            if (playPromise !== undefined) {
-              playPromise
-                .then(() => {
-                  console.log('Isolation sound playing');
-                })
-                .catch(error => {
-                  console.log('Could not play isolation sound - interaction required:', error);
-                });
-            }
-          } catch (error) {
-            console.log('Audio error:', error);
+        try {
+          audio.currentTime = 0;
+          audio.volume = 0.4;
+          
+          const playPromise = audio.play();
+          if (playPromise !== undefined) {
+            playPromise
+              .then(() => {
+                console.log('🎵 Isolation sound playing!');
+              })
+              .catch(error => {
+                console.log('Sound error:', error);
+              });
           }
+        } catch (error) {
+          console.log('Audio error:', error);
         }
       }
     }
-
-    // Try to enable audio on any user interaction
-    document.addEventListener('click', function enableAudioOnFirstClick() {
-      const audio = document.getElementById('isolationSound');
-      if (audio) {
-        audio.play().then(() => {
-          audio.pause();
-          audio.currentTime = 0;
-          console.log('Audio unlocked for isolation sound');
-        }).catch(e => console.log('Audio unlock failed:', e));
-      }
-    }, { once: true });
 
     // Function to unlock audio
     async function unlockAudio() {
