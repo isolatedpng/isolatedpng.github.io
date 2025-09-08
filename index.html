@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <title>selfitisolated</title>
+  <!-- Подключаем футуристический шрифт Orbitron -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
   <style>
     body {
       margin: 0;
@@ -120,12 +122,12 @@
       overflow: hidden;
     }
 
-    /* Matrix-style Glyphs - Full screen */
+    /* Matrix-style Glyphs - Full screen, in cyber colors */
     .glyph {
       position: absolute;
-      color: rgba(0, 255, 150, 0.8);
+      color: rgba(255, 0, 255, 0.8); /* Пурпурный неон */
       font-size: 24px;
-      text-shadow: 0 0 8px rgba(0, 255, 150, 0.6);
+      text-shadow: 0 0 8px rgba(255, 0, 255, 0.6), 0 0 12px rgba(159, 0, 255, 0.4);
       animation: fall 10s linear infinite;
       z-index: 1;
       opacity: 0.9;
@@ -138,19 +140,19 @@
       100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
     }
 
-    /* Neon Text - Color matches glyphs */
+    /* Futuristic Text — Orbitron + Cyber Glam Gradient */
     .enter-text {
-      font-family: 'Courier New', monospace;
+      font-family: 'Orbitron', sans-serif; /* ← НОВЫЙ ШРИФТ */
       font-size: 48px;
-      font-weight: 700;
+      font-weight: 900;
       letter-spacing: 8px;
-      background: linear-gradient(135deg, #00ff00, #00ffff, #0000ff, #00ff00);
+      background: linear-gradient(135deg, #ff00ff, #9f00ff, #00ffff, #ff00cc); /* ← НОВЫЕ ЦВЕТА */
       background-size: 300% 300%;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
       animation: neonShimmer 3s ease-in-out infinite, neonPulse 2s ease-in-out infinite;
-      text-shadow: 0 0 20px rgba(0, 255, 0, 0.4), 0 0 40px rgba(0, 255, 255, 0.3);
+      text-shadow: 0 0 20px rgba(255, 0, 255, 0.5), 0 0 40px rgba(159, 0, 255, 0.4); /* ← НОВЫЕ ТЕНИ */
       cursor: pointer;
       transition: all 0.4s ease;
       position: relative;
@@ -164,7 +166,7 @@
       left: -10%;
       right: -10%;
       height: 2px;
-      background: linear-gradient(90deg, transparent, rgba(0, 255, 150, 0.8), transparent);
+      background: linear-gradient(90deg, transparent, rgba(255, 0, 255, 0.8), transparent);
       animation: dataStream 2s linear infinite;
       pointer-events: none;
     }
@@ -172,7 +174,7 @@
     .enter-text:hover {
       transform: scale(1.03);
       filter: contrast(1.5) brightness(1.2);
-      text-shadow: 0 0 30px rgba(0, 255, 0, 0.6), 0 0 50px rgba(0, 255, 255, 0.4);
+      text-shadow: 0 0 30px rgba(255, 0, 255, 0.7), 0 0 60px rgba(159, 0, 255, 0.5);
     }
 
     @keyframes neonShimmer {
@@ -195,7 +197,7 @@
     .smoke-particle {
       position: absolute;
       pointer-events: none;
-      background: rgba(0, 255, 150, 0.6);
+      background: rgba(255, 0, 255, 0.6);
       border-radius: 50%;
       filter: blur(2px);
       z-index: 2001;
@@ -223,7 +225,7 @@
     /* Dissolution Effect */
     .crack-line {
       position: absolute;
-      background: rgba(0, 255, 150, 0.8);
+      background: rgba(255, 0, 255, 0.8);
       height: 1px;
       pointer-events: none;
       z-index: 2001;
