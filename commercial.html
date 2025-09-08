@@ -365,10 +365,10 @@
           let width, height;
 
           if (aspectRatio > 1) {
-            width = Math.min(maxWidth, this.naturalWidth * 0.75);
+            width = Math.min(maxWidth, this.naturalWidth * 0.5);
             height = width / aspectRatio;
           } else {
-            height = Math.min(maxHeight, this.naturalHeight * 0.75);
+            height = Math.min(maxHeight, this.naturalHeight * 0.5);
             width = height * aspectRatio;
           }
 
@@ -420,21 +420,21 @@
 
         content.onloadedmetadata = function () {
           const aspectRatio = this.videoWidth / this.videoHeight;
-          const maxWidth = 400;
-          const maxHeight = 600;
+          const maxWidth = 600; // Увеличено с 400 до 600
+          const maxHeight = 900; // Увеличено с 600 до 900
 
           let width, height;
 
           if (aspectRatio > 1) {
-            width = Math.min(maxWidth, this.videoWidth * 0.5);
+            width = Math.min(maxWidth, this.videoWidth * 0.75); // Изменено с 0.5 на 0.75
             height = width / aspectRatio;
           } else {
-            height = Math.min(maxHeight, this.videoHeight * 0.5);
+            height = Math.min(maxHeight, this.videoHeight * 0.75); // Изменено с 0.5 на 0.75
             width = height * aspectRatio;
           }
 
-          width = Math.max(200, width);
-          height = Math.max(200, height);
+          width = Math.max(300, width); // Минимальная ширина увеличена с 200 до 300
+          height = Math.max(300, height); // Минимальная высота увеличена с 200 до 300
 
           tile.style.width = `${width}px`;
           tile.style.height = `${height}px`;
@@ -586,5 +586,3 @@
 
 </body>
 </html>
-
-
