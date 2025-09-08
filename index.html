@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>selfitisolated</title>
   <style>
+    /* Base */
     body {
       margin: 0;
       font-family: sans-serif;
@@ -22,7 +23,8 @@
       border-radius: 8px;
       font-size: 0.9em;
       color: #aaa;
-      z-index: 1000;
+      z-index: 3000;
+      user-select: none;
     }
 
     .workspace {
@@ -32,12 +34,26 @@
       position: relative;
     }
 
+    /* KEY CHANGE: canvas becomes a grid container */
     .canvas {
       position: absolute;
       top: 0;
       left: 0;
       transform-origin: top left;
       transition: transform 0.1s ease;
+
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      /* gap: row column (vertical horizontal) */
+      row-gap: 400px;
+      column-gap: 450px;
+
+      /* Inner padding to match your initial offsets */
+      padding: 100px 40px 200px 40px;
+
+      /* Allow plenty of space for panning/zooming if needed */
+      width: 400vw;
+      min-height: 200vh;
     }
 
     .tile {
@@ -45,9 +61,11 @@
       border: 4px solid transparent;
       transition: transform 0.2s ease, box-shadow 0.3s ease;
       background-color: #111;
-      position: absolute;
+      position: relative; /* IMPORTANT: relative in grid mode */
       cursor: default;
       overflow: hidden;
+      z-index: 1;
+      will-change: transform;
     }
 
     .tile:hover {
@@ -62,6 +80,13 @@
     .tile.sound-on {
       border-color: #ff6b6b !important;
       box-shadow: 0 0 15px rgba(255, 107, 107, 0.4);
+    }
+
+    /* When a tile is lifted from the grid for manual placement */
+    .tile.floating {
+      position: absolute !important;
+      z-index: 2001;
+      /* keep size as set by content */
     }
 
     .sound-indicator {
@@ -107,63 +132,45 @@
     /* Futuristic Welcome Screen */
     .welcome-overlay {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
       background: radial-gradient(circle at center, rgba(0, 20, 40, 0.9), rgba(0, 0, 0, 0.95));
       display: flex;
       align-items: center;
       justify-content: center;
-      z-index: 2000;
+      z-index: 4000;
       backdrop-filter: blur(10px);
+      overflow: hidden;
     }
 
-    .welcome-container {
-      position: relative;
-      text-align: center;
-    }
+    .welcome-container { position: relative; text-align: center; }
 
     .enter-text {
       font-family: 'Courier New', monospace;
-      font-size: 48px;
-      font-weight: 700;
-      letter-spacing: 8px;
+      font-size: 48px; font-weight: 700; letter-spacing: 8px;
       background: linear-gradient(135deg, #c0c0c0, #ffffff, #808080, #c0c0c0);
       background-size: 200% 200%;
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
       background-clip: text;
       animation: textShimmer 4s ease-in-out infinite, isolationPulse 3s ease-in-out infinite;
       text-shadow: 0 0 20px rgba(192, 192, 192, 0.3);
-      cursor: pointer;
-      transition: all 0.4s ease;
-      position: relative;
-      filter: contrast(1.2);
+      cursor: pointer; transition: all 0.4s ease;
+      position: relative; filter: contrast(1.2);
+      user-select: none;
     }
 
     .enter-text::before {
       content: 'ACCESS ISOLATION';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
+      position: absolute; inset: 0;
       background: linear-gradient(90deg, transparent 45%, rgba(0, 255, 255, 0.6) 50%, transparent 55%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
       animation: isolationScan 3s ease-in-out infinite;
       pointer-events: none;
     }
 
     .enter-text::after {
       content: '';
-      position: absolute;
-      top: 50%;
-      left: -10%;
-      right: -10%;
-      height: 1px;
+      position: absolute; left: -10%; right: -10%; top: 50%; height: 1px;
       background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.8), transparent);
       animation: dataStream 2s linear infinite;
       pointer-events: none;
@@ -177,149 +184,75 @@
 
     .circuit-lines {
       position: absolute;
-      width: 800px;
-      height: 300px;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
+      width: 800px; height: 300px;
+      top: 50%; left: 50%; transform: translate(-50%, -50%);
       pointer-events: none;
     }
 
     .circuit-line {
       position: absolute;
       background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.3), transparent);
-      height: 1px;
-      animation: circuitFlow 6s ease-in-out infinite;
+      height: 1px; animation: circuitFlow 6s ease-in-out infinite;
     }
 
-    .circuit-line:nth-child(1) {
-      top: 30%;
-      left: 0;
-      width: 100%;
-      animation-delay: 0s;
-    }
-
-    .circuit-line:nth-child(2) {
-      top: 70%;
-      left: 0;
-      width: 100%;
-      animation-delay: 2s;
-    }
-
+    .circuit-line:nth-child(1) { top: 30%; left: 0; width: 100%; animation-delay: 0s; }
+    .circuit-line:nth-child(2) { top: 70%; left: 0; width: 100%; animation-delay: 2s; }
     .circuit-line:nth-child(3) {
-      left: 25%;
-      top: 0;
-      height: 100%;
-      width: 1px;
+      left: 25%; top: 0; height: 100%; width: 1px;
       background: linear-gradient(180deg, transparent, rgba(0, 255, 255, 0.2), transparent);
       animation-delay: 4s;
     }
-
     .circuit-line:nth-child(4) {
-      right: 25%;
-      top: 0;
-      height: 100%;
-      width: 1px;
+      right: 25%; top: 0; height: 100%; width: 1px;
       background: linear-gradient(180deg, transparent, rgba(0, 255, 255, 0.2), transparent);
       animation-delay: 1s;
     }
 
     .particles {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      pointer-events: none;
+      position: absolute; inset: 0;
+      overflow: hidden; pointer-events: none;
     }
 
     .particle {
-      position: absolute;
-      width: 3px;
-      height: 3px;
-      background: rgba(0, 255, 255, 0.7);
-      border-radius: 50%;
+      position: absolute; width: 3px; height: 3px;
+      background: rgba(0, 255, 255, 0.7); border-radius: 50%;
       animation: particleFloat 12s linear infinite;
       box-shadow: 0 0 8px rgba(0, 255, 255, 0.5);
     }
 
-    /* Keyframes */
-    @keyframes textShimmer {
-      0%, 100% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-    }
-
-    @keyframes isolationPulse {
-      0%, 100% { transform: scale(1); opacity: 0.9; }
-      50% { transform: scale(1.01); opacity: 1; }
-    }
-
-    @keyframes isolationScan {
-      0%, 100% { background-position: -200% 0; }
-      50% { background-position: 200% 0; }
-    }
-
-    @keyframes dataStream {
-      0% { transform: translateX(-100%); opacity: 0; }
-      50% { opacity: 1; }
-      100% { transform: translateX(100%); opacity: 0; }
-    }
-
-    @keyframes circuitFlow {
-      0% { opacity: 0; transform: scaleX(0); }
-      30% { opacity: 0.6; transform: scaleX(1); }
-      70% { opacity: 0.6; transform: scaleX(1); }
-      100% { opacity: 0; transform: scaleX(0); }
-    }
-
-    @keyframes particleFloat {
-      0% { 
-        transform: translateY(100vh) translateX(0px) rotate(0deg);
-        opacity: 0;
-      }
-      10% { opacity: 1; }
-      90% { opacity: 1; }
-      100% { 
-        transform: translateY(-100px) translateX(100px) rotate(360deg);
-        opacity: 0;
-      }
-    }
-
     /* Dissolution Animation */
     @keyframes dissolve {
-      0% { 
-        opacity: 1; 
-        transform: scale(1) rotate(0deg); 
-        filter: blur(0px);
-      }
-      50% { 
-        opacity: 0.7; 
-        transform: scale(1.2) rotate(5deg); 
-        filter: blur(2px);
-      }
-      100% { 
-        opacity: 0; 
-        transform: scale(2) rotate(15deg); 
-        filter: blur(10px);
-      }
+      0% { opacity: 1; transform: scale(1) rotate(0deg); filter: blur(0px); }
+      50% { opacity: 0.7; transform: scale(1.2) rotate(5deg); filter: blur(2px); }
+      100% { opacity: 0; transform: scale(2) rotate(15deg); filter: blur(10px); }
     }
 
     @keyframes particleExplode {
-      0% { 
-        opacity: 1; 
-        transform: translate(0, 0) scale(1);
-      }
-      100% { 
-        opacity: 0; 
-        transform: translate(var(--random-x), var(--random-y)) scale(0);
-      }
+      0% { opacity: 1; transform: translate(0, 0) scale(1); }
+      100% { opacity: 0; transform: translate(var(--random-x), var(--random-y)) scale(0); }
     }
 
-    .dissolving {
-      animation: dissolve 1s ease-out forwards;
+    .dissolving { animation: dissolve 1s ease-out forwards; }
+    .exploding .particle { animation: particleExplode 1s ease-out forwards; }
+
+    /* Keyframes */
+    @keyframes textShimmer { 0%,100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+    @keyframes isolationPulse { 0%,100% { transform: scale(1); opacity: 0.9; } 50% { transform: scale(1.01); opacity: 1; } }
+    @keyframes isolationScan { 0%,100% { background-position: -200% 0; } 50% { background-position: 200% 0; } }
+    @keyframes dataStream { 0% { transform: translateX(-100%); opacity: 0; } 50% { opacity: 1; } 100% { transform: translateX(100%); opacity: 0; } }
+    @keyframes circuitFlow { 0% { opacity: 0; transform: scaleX(0); } 30% { opacity: 0.6; transform: scaleX(1); } 70% { opacity: 0.6; transform: scaleX(1); } 100% { opacity: 0; transform: scaleX(0); } }
+    @keyframes particleFloat {
+      0% { transform: translateY(100vh) translateX(0px) rotate(0deg); opacity: 0; }
+      10% { opacity: 1; } 90% { opacity: 1; }
+      100% { transform: translateY(-100px) translateX(100px) rotate(360deg); opacity: 0; }
     }
 
-    .exploding .particle {
-      animation: particleExplode 1s ease-out forwards;
+    /* Responsive column tuning if you ever want tighter behavior on narrow screens */
+    @media (max-width: 1400px) {
+      .canvas { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
+    }
+    @media (max-width: 900px) {
+      .canvas { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); row-gap: 320px; column-gap: 260px; }
     }
   </style>
 </head>
@@ -335,11 +268,12 @@
       <div class="circuit-line"></div>
     </div>
     <div class="welcome-container">
-      <div class="enter-text" onclick="enterSite()">ACCESS ISOLATION</div>
+      <div class="enter-text" id="enterText">ACCESS ISOLATION</div>
     </div>
   </div>
 
   <div class="menu">Menu</div>
+
   <div class="workspace">
     <div class="canvas" id="canvas"></div>
   </div>
@@ -352,103 +286,80 @@
       { type: 'video', src: 'thumbs/balenciaga.mp4' },
       { type: 'video', src: 'thumbs/brds.mp4' },
       { type: 'image', src: 'thumbs/mkc.png' },
-      { type: 'video', src: 'thumbs/sora11.mp4' }
+      { type: 'video', src: 'thumbs/sora11.mp4' } // <- новый файл
     ];
 
     let audioUnlocked = false;
     const canvas = document.getElementById('canvas');
-    let nextX = 40;
-    let nextY = 100;
-    let maxHeight = 0;
 
-    // Create floating particles
+    /* Particles for welcome screen */
     function createParticles() {
       const particlesContainer = document.getElementById('particles');
       for (let i = 0; i < 30; i++) {
-        const particle = document.createElement('div');
-        particle.className = 'particle';
-        particle.style.left = Math.random() * 100 + '%';
-        particle.style.animationDelay = Math.random() * 12 + 's';
-        particle.style.animationDuration = (Math.random() * 6 + 8) + 's';
-        
-        particlesContainer.appendChild(particle);
+        const p = document.createElement('div');
+        p.className = 'particle';
+        p.style.left = Math.random() * 100 + '%';
+        p.style.animationDelay = Math.random() * 12 + 's';
+        p.style.animationDuration = (Math.random() * 6 + 8) + 's';
+        particlesContainer.appendChild(p);
       }
     }
-
-    // Futuristic enter site function
-    function enterSite() {
-      const overlay = document.getElementById('welcomeOverlay');
-      const particles = document.querySelectorAll('.particle');
-      
-      // Add explosion effect to particles
-      particles.forEach((particle, index) => {
-        const randomX = (Math.random() - 0.5) * 2000 + 'px';
-        const randomY = (Math.random() - 0.5) * 2000 + 'px';
-        particle.style.setProperty('--random-x', randomX);
-        particle.style.setProperty('--random-y', randomY);
-      });
-      
-      overlay.classList.add('exploding');
-      overlay.classList.add('dissolving');
-      
-      setTimeout(() => {
-        overlay.remove();
-      }, 1000);
-      
-      // Unlock audio
-      unlockAudio();
-    }
-
-    // Initialize particles on load
     createParticles();
 
-    // Function to unlock audio
+    function enterSite() {
+      const overlay = document.getElementById('welcomeOverlay');
+      const particles = overlay.querySelectorAll('.particle');
+
+      particles.forEach(p => {
+        const randomX = (Math.random() - 0.5) * 2000 + 'px';
+        const randomY = (Math.random() - 0.5) * 2000 + 'px';
+        p.style.setProperty('--random-x', randomX);
+        p.style.setProperty('--random-y', randomY);
+      });
+
+      overlay.classList.add('exploding', 'dissolving');
+
+      setTimeout(() => overlay.remove(), 1000);
+      unlockAudio();
+    }
+    document.getElementById('enterText').addEventListener('click', enterSite);
+
     async function unlockAudio() {
-      if (!audioUnlocked) {
-        try {
-          // Create silent sound to unlock
-          const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-          const oscillator = audioContext.createOscillator();
-          const gainNode = audioContext.createGain();
-          
-          oscillator.connect(gainNode);
-          gainNode.connect(audioContext.destination);
-          
-          gainNode.gain.setValueAtTime(0, audioContext.currentTime);
-          oscillator.start(audioContext.currentTime);
-          oscillator.stop(audioContext.currentTime + 0.01);
-          
-          audioUnlocked = true;
-          console.log('Audio unlocked!');
-          
-          // Update menu
-          const menu = document.querySelector('.menu');
-          menu.innerHTML = 'Menu | <span style="color: #6ecf9f;">🔊 Audio Enabled</span>';
-          
-        } catch (error) {
-          console.log('Could not unlock audio:', error);
-        }
+      if (audioUnlocked) return;
+      try {
+        const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        oscillator.connect(gainNode); gainNode.connect(audioContext.destination);
+        gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 0.01);
+        audioUnlocked = true;
+        const menu = document.querySelector('.menu');
+        menu.innerHTML = 'Menu | <span style="color: #6ecf9f;">🔊 Audio Enabled</span>';
+      } catch (e) {
+        console.log('Could not unlock audio:', e);
       }
     }
 
-    works.forEach((work, index) => {
+    /* Build tiles in a grid — no manual left/top */
+    works.forEach(work => {
       const tile = document.createElement('div');
       tile.className = 'tile';
       tile.style.borderColor = frameColors[Math.floor(Math.random() * frameColors.length)];
 
       let content;
-      
+
       if (work.type === 'image') {
         content = document.createElement('img');
         content.src = work.src;
-        
-        content.onload = function() {
+
+        content.onload = function () {
           const aspectRatio = this.naturalWidth / this.naturalHeight;
           const maxWidth = 400;
           const maxHeight = 600;
-          
           let width, height;
-          
+
           if (aspectRatio > 1) {
             width = Math.min(maxWidth, this.naturalWidth * 0.5);
             height = width / aspectRatio;
@@ -456,16 +367,15 @@
             height = Math.min(maxHeight, this.naturalHeight * 0.5);
             width = height * aspectRatio;
           }
-          
+
           width = Math.max(200, width);
           height = Math.max(200, height);
-          
-          tile.style.width = `${width}px`;
-          tile.style.height = `${height}px`;
+
+          tile.style.width = width + 'px';
+          tile.style.height = height + 'px';
         };
-        
-        content.onerror = function() {
-          console.error(`Failed to load image: ${work.src}`);
+
+        content.onerror = function () {
           tile.style.width = '300px';
           tile.style.height = '300px';
           this.style.display = 'none';
@@ -474,7 +384,7 @@
           errorDiv.textContent = `Loading error:\n${work.src}`;
           tile.appendChild(errorDiv);
         };
-        
+
       } else if (work.type === 'video') {
         content = document.createElement('video');
         content.src = work.src;
@@ -482,20 +392,18 @@
         content.muted = true;
         content.loop = true;
         content.playsInline = true;
-        
-        // Add sound indicator
+
         const soundIndicator = document.createElement('div');
         soundIndicator.className = 'sound-indicator';
         soundIndicator.innerHTML = '🔊';
         tile.appendChild(soundIndicator);
-        
-        content.onloadedmetadata = function() {
+
+        content.onloadedmetadata = function () {
           const aspectRatio = this.videoWidth / this.videoHeight;
           const maxWidth = 400;
           const maxHeight = 600;
-          
           let width, height;
-          
+
           if (aspectRatio > 1) {
             width = Math.min(maxWidth, this.videoWidth * 0.3);
             height = width / aspectRatio;
@@ -503,65 +411,39 @@
             height = Math.min(maxHeight, this.videoHeight * 0.3);
             width = height * aspectRatio;
           }
-          
+
           width = Math.max(200, width);
           height = Math.max(200, height);
-          
-          tile.style.width = `${width}px`;
-          tile.style.height = `${height}px`;
+
+          tile.style.width = width + 'px';
+          tile.style.height = height + 'px';
         };
-        
+
         let fadeInterval = null;
-        
-        tile.addEventListener('mouseenter', async () => {
-          if (!audioUnlocked) {
-            console.log('Audio not yet unlocked');
-            return;
-          }
-          
-          // Clear previous interval if exists
-          if (fadeInterval) {
-            clearInterval(fadeInterval);
-          }
-          
-          // Visual effects
+
+        tile.addEventListener('mouseenter', () => {
+          if (!audioUnlocked) return;
           tile.classList.add('sound-on');
           soundIndicator.style.display = 'flex';
-          
-          try {
-            // Enable sound without restarting video
-            content.muted = false;
-            content.volume = 0;
-            
-            // Smooth volume increase
-            let vol = 0;
-            fadeInterval = setInterval(() => {
-              if (vol < 0.6) {
-                vol += 0.04;
-                content.volume = Math.min(vol, 0.6);
-              } else {
-                clearInterval(fadeInterval);
-                fadeInterval = null;
-              }
-            }, 25);
-            
-          } catch (error) {
-            console.error('Error enabling sound:', error);
-          }
+          content.muted = false;
+          content.volume = 0;
+          let vol = 0;
+          clearInterval(fadeInterval);
+          fadeInterval = setInterval(() => {
+            if (vol < 0.6) {
+              vol += 0.04;
+              content.volume = Math.min(vol, 0.6);
+            } else {
+              clearInterval(fadeInterval);
+            }
+          }, 25);
         });
-        
+
         tile.addEventListener('mouseleave', () => {
-          // Clear previous interval if exists
-          if (fadeInterval) {
-            clearInterval(fadeInterval);
-          }
-          
-          // Remove visual effects
+          let vol = content.volume;
+          clearInterval(fadeInterval);
           tile.classList.remove('sound-on');
           soundIndicator.style.display = 'none';
-          
-          // Smooth volume decrease
-          let vol = content.volume;
           fadeInterval = setInterval(() => {
             if (vol > 0) {
               vol -= 0.08;
@@ -569,13 +451,11 @@
             } else {
               content.muted = true;
               clearInterval(fadeInterval);
-              fadeInterval = null;
             }
           }, 25);
         });
-        
-        content.onerror = function() {
-          console.error(`Failed to load video: ${work.src}`);
+
+        content.onerror = function () {
           tile.style.width = '300px';
           tile.style.height = '300px';
           this.style.display = 'none';
@@ -587,25 +467,10 @@
       }
 
       tile.appendChild(content);
-      
-      tile.style.width = '300px';
-      tile.style.height = '300px';
-      tile.style.left = `${nextX}px`;
-      tile.style.top = `${nextY}px`;
-
-      nextX += 450;
-      maxHeight = Math.max(maxHeight, 350);
-
-      if (nextX > window.innerWidth * 1.2) {
-        nextX = 40;
-        nextY += maxHeight + 60;
-        maxHeight = 0;
-      }
-
       canvas.appendChild(tile);
     });
 
-    // Tile dragging
+    /* Drag tiles (hybrid): lift from grid to absolute on drag */
     let activeTile = null;
     let offsetX = 0;
     let offsetY = 0;
@@ -613,15 +478,52 @@
     let dragStartX = 0;
     let dragStartY = 0;
 
+    // Pan and zoom state
+    let canvasX = 0;
+    let canvasY = 0;
+    let canvasScale = 1;
+
+    function updateCanvasTransform() {
+      canvas.style.transform = `translate(${canvasX}px, ${canvasY}px) scale(${canvasScale})`;
+    }
+    updateCanvasTransform();
+
+    // Lift a tile from grid to absolute at its current visual position
+    function liftTile(tile, pointerClientX, pointerClientY) {
+      if (tile.classList.contains('floating')) return;
+
+      const canvasRect = canvas.getBoundingClientRect();
+      const tileRect = tile.getBoundingClientRect();
+
+      // Convert screen coords to canvas local coords (inverse of current transform)
+      const localLeft = (tileRect.left - canvasRect.left) / canvasScale;
+      const localTop  = (tileRect.top  - canvasRect.top)  / canvasScale;
+
+      // Fix width/height to avoid reflow jumps
+      const w = tileRect.width / canvasScale;
+      const h = tileRect.height / canvasScale;
+
+      tile.style.width = w + 'px';
+      tile.style.height = h + 'px';
+
+      tile.classList.add('floating'); // switches to position:absolute
+
+      tile.style.left = localLeft + 'px';
+      tile.style.top = localTop + 'px';
+
+      // Compute offsets so the pointer stays anchored
+      offsetX = (pointerClientX - tileRect.left) / canvasScale;
+      offsetY = (pointerClientY - tileRect.top) / canvasScale;
+    }
+
     document.addEventListener('mousedown', e => {
       const tile = e.target.closest('.tile');
       if (tile) {
+        // Lift into absolute space if not already
+        liftTile(tile, e.clientX, e.clientY);
         activeTile = tile;
-        const rect = tile.getBoundingClientRect();
-        offsetX = e.clientX - rect.left;
-        offsetY = e.clientY - rect.top;
         tile.classList.add('dragging');
-        tile.style.zIndex = 1001;
+        tile.style.zIndex = 2002;
         e.preventDefault();
       } else {
         isDraggingCanvas = true;
@@ -633,8 +535,8 @@
     document.addEventListener('mousemove', e => {
       if (activeTile) {
         const canvasRect = canvas.getBoundingClientRect();
-        const newX = (e.clientX - offsetX - canvasRect.left) / canvasScale;
-        const newY = (e.clientY - offsetY - canvasRect.top) / canvasScale;
+        const newX = (e.clientX - canvasRect.left) / canvasScale - offsetX;
+        const newY = (e.clientY - canvasRect.top) / canvasScale - offsetY;
         activeTile.style.left = `${newX}px`;
         activeTile.style.top = `${newY}px`;
       } else if (isDraggingCanvas) {
@@ -651,41 +553,31 @@
     document.addEventListener('mouseup', () => {
       if (activeTile) {
         activeTile.classList.remove('dragging');
-        activeTile.style.zIndex = 1000;
+        activeTile.style.zIndex = 2001;
+        // stays floating where you placed it (manual override retained)
         activeTile = null;
       }
       isDraggingCanvas = false;
     });
 
-    // Pan and zoom
-    let canvasX = 0;
-    let canvasY = 0;
-    let canvasScale = 1;
-
-    function updateCanvasTransform() {
-      canvas.style.transform = `translate(${canvasX}px, ${canvasY}px) scale(${canvasScale})`;
-    }
-
+    // Pan and zoom with mouse wheel
     document.addEventListener('wheel', e => {
       e.preventDefault();
-      const scaleAmount = e.deltaY > 0 ? 0.95 : 1.05;
       const rect = canvas.getBoundingClientRect();
       const mouseX = e.clientX - rect.left;
       const mouseY = e.clientY - rect.top;
-      
+
       const oldScale = canvasScale;
+      const scaleAmount = e.deltaY > 0 ? 0.95 : 1.05;
       canvasScale *= scaleAmount;
       canvasScale = Math.max(0.2, Math.min(canvasScale, 3));
-      
+
       const scaleChange = canvasScale / oldScale;
       canvasX = mouseX - (mouseX - canvasX) * scaleChange;
       canvasY = mouseY - (mouseY - canvasY) * scaleChange;
-      
+
       updateCanvasTransform();
     }, { passive: false });
-
-    updateCanvasTransform();
   </script>
-
 </body>
 </html>
