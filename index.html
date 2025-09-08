@@ -24,16 +24,16 @@
     }
 
     .workspace {
-      position: relative;
-      width: 100vw;
-      height: 100vh;
-      overflow: hidden;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 40px;
+      padding: 100px 40px;
+      justify-content: flex-start;
+      align-items: flex-start;
     }
 
     .tile {
-      position: absolute;
       width: 400px;
-      height: auto;
       border-radius: 10px;
       cursor: grab;
       transition: transform 0.3s ease, opacity 1s ease;
@@ -68,24 +68,13 @@
   <div class="menu">Menu</div>
 
   <div class="workspace">
-    <!-- Плитка 1 -->
-    <div class="tile" style="top: 80px; left: 80px;" onclick="openWork('works/image1.html')" draggable="true">
+    <!-- Только реальные работы -->
+    <div class="tile" onclick="openWork('works/image1.html')" draggable="true">
       <img src="thumbs/image1.png" alt="">
     </div>
 
-    <!-- Плитка 2 -->
-    <div class="tile" style="top: 360px; left: 100px;" draggable="true">
+    <div class="tile" draggable="true">
       <video src="thumbs/balenciaga.mp4" autoplay muted loop controls></video>
-    </div>
-
-    <!-- Плитка 3 (пример для будущих работ) -->
-    <div class="tile" style="top: 80px; left: 520px;" onclick="openWork('works/image2.html')" draggable="true">
-      <img src="thumbs/image2.png" alt="">
-    </div>
-
-    <!-- Плитка 4 -->
-    <div class="tile" style="top: 360px; left: 540px;" draggable="true">
-      <video src="thumbs/video2.mp4" autoplay muted loop controls></video>
     </div>
   </div>
 
@@ -105,6 +94,7 @@
       });
 
       tile.addEventListener('dragend', e => {
+        tile.style.position = 'absolute';
         tile.style.left = `${e.pageX - offsetX}px`;
         tile.style.top = `${e.pageY - offsetY}px`;
       });
