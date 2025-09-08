@@ -26,22 +26,20 @@
     }
 
     .workspace {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 40px;
-      padding: 100px 40px;
       position: relative;
+      padding: 100px 40px;
     }
 
     .tile {
-      width: 400px;
+      display: inline-block;
       border-radius: 12px;
+      border: 4px solid transparent;
       transition: transform 0.2s ease, opacity 1s ease;
       opacity: 0;
       animation: fadeIn 1.5s forwards;
-      cursor: default;
       background-color: #111;
-      position: relative;
+      position: absolute;
+      cursor: default;
     }
 
     .tile:hover {
@@ -50,11 +48,11 @@
 
     .tile img,
     .tile video {
-      width: 100%;
-      height: auto;
       display: block;
       border-radius: 8px;
       pointer-events: none;
+      max-width: 100%;
+      height: auto;
     }
 
     @keyframes fadeIn {
@@ -79,10 +77,10 @@
 
     const workspace = document.getElementById('workspace');
 
-    works.forEach(work => {
+    works.forEach((work, index) => {
       const tile = document.createElement('div');
       tile.className = 'tile';
-      tile.style.border = `4px solid ${frameColors[Math.floor(Math.random() * frameColors.length)]}`;
+      tile.style.borderColor = frameColors[Math.floor(Math.random() * frameColors.length)];
 
       if (work.type === 'image') {
         const img = document.createElement('img');
@@ -99,49 +97,55 @@
         tile.appendChild(video);
       }
 
+      // Начальная позиция (распределённая по экрану)
+      tile.style.left = `${80 + index * 440}px`;
+      tile.style.top = `100px`;
+
       workspace.appendChild(tile);
     });
 
-    // Плавное перемещение + защита от залипания
+    // Перемещение только при удержании
     let activeTile = null;
     let offsetX = 0;
     let offsetY = 0;
-    let moved = false;
 
-    document.querySelectorAll('.tile').forEach(tile => {
-      tile.addEventListener('mousedown', e => {
-        activeTile = tile;
-        offsetX = e.clientX - tile.getBoundingClientRect().left;
-        offsetY = e.clientY - tile.getBoundingClientRect().top;
-        moved = false;
+    document.addEventListener('mousedown', e => {
+      const tile = e.target.closest('.tile');
+      if (!tile) return;
 
-        const rect = tile.getBoundingClientRect();
-        tile.style.position = 'absolute';
-        tile.style.left = `${rect.left}px`;
-        tile.style.top = `${rect.top}px`;
-        tile.style.zIndex = 1001;
-        tile.style.margin = '0';
-        tile.style.pointerEvents = 'none'; // отключаем залипание
-      });
+      activeTile = tile;
+      const rect = tile.getBoundingClientRect();
+      offsetX = e.clientX - rect.left;
+      offsetY = e.clientY - rect.top;
 
-      tile.addEventListener('mouseup', e => {
-        if (!moved && tile.dataset.url) {
-          window.open(tile.dataset.url, '_blank');
-        }
-        tile.style.zIndex = 1000;
-        tile.style.pointerEvents = 'auto'; // возвращаем обратно
-        activeTile = null;
-      });
+      tile.style.zIndex = 1001;
+      tile.style.pointerEvents = 'none';
     });
 
     document.addEventListener('mousemove', e => {
       if (activeTile) {
         activeTile.style.left = `${e.clientX - offsetX}px`;
         activeTile.style.top = `${e.clientY - offsetY}px`;
-        moved = true;
+      }
+    });
+
+    document.addEventListener('mouseup', e => {
+      if (activeTile) {
+        activeTile.style.zIndex = 1000;
+        activeTile.style.pointerEvents = 'auto';
+        activeTile = null;
+      }
+    });
+
+    // Открытие при клике без перемещения
+    document.addEventListener('click', e => {
+      const tile = e.target.closest('.tile');
+      if (tile && tile.dataset.url) {
+        window.open(tile.dataset.url, '_blank');
       }
     });
   </script>
 
 </body>
 </html>
+
