@@ -102,7 +102,7 @@
       workspace.appendChild(tile);
     });
 
-    // Плавное перемещение
+    // Плавное перемещение + защита от залипания
     let activeTile = null;
     let offsetX = 0;
     let offsetY = 0;
@@ -121,6 +121,7 @@
         tile.style.top = `${rect.top}px`;
         tile.style.zIndex = 1001;
         tile.style.margin = '0';
+        tile.style.pointerEvents = 'none'; // отключаем залипание
       });
 
       tile.addEventListener('mouseup', e => {
@@ -128,6 +129,7 @@
           window.open(tile.dataset.url, '_blank');
         }
         tile.style.zIndex = 1000;
+        tile.style.pointerEvents = 'auto'; // возвращаем обратно
         activeTile = null;
       });
     });
