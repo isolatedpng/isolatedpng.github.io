@@ -117,6 +117,12 @@
       justify-content: center;
       z-index: 2000;
       backdrop-filter: blur(10px);
+      animation: digitalPulse 5s ease-in-out infinite alternate;
+    }
+
+    @keyframes digitalPulse {
+      0% { transform: scale(1); }
+      100% { transform: scale(1.01); }
     }
 
     .welcome-container {
@@ -155,6 +161,7 @@
       background-clip: text;
       animation: isolationScan 3s ease-in-out infinite;
       pointer-events: none;
+      text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
     }
 
     .enter-text::after {
@@ -240,6 +247,8 @@
       border-radius: 50%;
       animation: particleFloat 12s linear infinite;
       box-shadow: 0 0 8px rgba(0, 255, 255, 0.5);
+      opacity: 0.7;
+      filter: blur(1px);
     }
 
     /* Keyframes */
@@ -520,12 +529,12 @@
       } else if (work.type === 'video') {
         content = document.createElement('video');
         content.src = work.src;
-        content.autoplay = false;  // ← ЕДИНСТВЕННОЕ ИЗМЕНЕНИЕ: БЫЛО true, СТАЛО false
+        content.autoplay = false;  // ← Видео не играет автоматически
         content.muted = true;
         content.loop = true;
         content.playsInline = true;
 
-        // ← ЕДИНСТВЕННОЕ ИЗМЕНЕНИЕ: ДОБАВЛЕНО — воспроизведение по наведению
+        // ← Воспроизведение только при наведении
         tile.addEventListener('mouseenter', () => {
           content.play().catch(e => console.log("Playback failed:", e));
         });
@@ -729,14 +738,14 @@
 
     document.addEventListener('wheel', e => {
       e.preventDefault();
-      const scaleAmount = e.deltaY > 0 ? 0.975 : 1.05;  // ← 0.975 для плавного отдаления
+      const scaleAmount = e.deltaY > 0 ? 0.975 : 1.05;  // ← плавное отдаление
       const rect = canvas.getBoundingClientRect();
       const mouseX = e.clientX - rect.left;
       const mouseY = e.clientY - rect.top;
       
       const oldScale = canvasScale;
       canvasScale *= scaleAmount;
-      canvasScale = Math.max(0.5, Math.min(canvasScale, 3));  // ← 0.5 вместо 0.2 — лимит отдаления
+      canvasScale = Math.max(0.5, Math.min(canvasScale, 3));  // ← лимит отдаления
       
       const scaleChange = canvasScale / oldScale;
       canvasX = mouseX - (mouseX - canvasX) * scaleChange;
