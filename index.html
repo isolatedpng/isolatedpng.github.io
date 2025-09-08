@@ -47,6 +47,9 @@
       background-color: #111;
       position: absolute;
       cursor: default;
+      width: 400px;
+      height: 300px;
+      overflow: hidden;
     }
 
     .tile:hover {
@@ -63,8 +66,22 @@
       display: block;
       border-radius: 8px;
       pointer-events: none;
-      max-width: 100%;
-      height: auto;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .error-placeholder {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+      color: #666;
+      font-size: 14px;
+      text-align: center;
+      border-radius: 8px;
+      background: #222;
     }
   </style>
 </head>
@@ -78,11 +95,12 @@
   <script>
     const frameColors = ['#6ecf9f', '#8aa9ff', '#d88aff', '#ff8ab3', '#ffd88a'];
 
+    // Исправленные пути к файлам согласно структуре репозитория
     const works = [
       { type: 'image', src: 'thumbs/image1.png' },
-      { type: 'video', src: 'thumbs/balenciaga4.mp4' },
-      { type: 'video', src: 'thumbs/bird5.mp4' },
-      { type: 'image', src: 'thumbs/mkcp.png' }
+      { type: 'video', src: 'thumbs/balenciaga.mp4' },
+      { type: 'video', src: 'thumbs/brds.mp4' },
+      { type: 'image', src: 'thumbs/mkc.png' }
     ];
 
     const canvas = document.getElementById('canvas');
@@ -99,6 +117,21 @@
       if (work.type === 'image') {
         content = document.createElement('img');
         content.src = work.src;
+        
+        // Обработка ошибок для изображений
+        content.onerror = function() {
+          console.error(`Не удалось загрузить изображение: ${work.src}`);
+          this.style.display = 'none';
+          const errorDiv = document.createElement('div');
+          errorDiv.className = 'error-placeholder';
+          errorDiv.textContent = `Ошибка загрузки:\n${work.src}`;
+          tile.appendChild(errorDiv);
+        };
+        
+        content.onload = function() {
+          console.log(`Изображение загружено: ${work.src}`);
+        };
+        
       } else if (work.type === 'video') {
         content = document.createElement('video');
         content.src = work.src;
@@ -106,6 +139,20 @@
         content.muted = true;
         content.loop = true;
         content.playsInline = true;
+        
+        // Обработка ошибок для видео
+        content.onerror = function() {
+          console.error(`Не удалось загрузить видео: ${work.src}`);
+          this.style.display = 'none';
+          const errorDiv = document.createElement('div');
+          errorDiv.className = 'error-placeholder';
+          errorDiv.textContent = `Ошибка загрузки:\n${work.src}`;
+          tile.appendChild(errorDiv);
+        };
+        
+        content.onloadeddata = function() {
+          console.log(`Видео загружено: ${work.src}`);
+        };
       }
 
       tile.appendChild(content);
@@ -113,9 +160,9 @@
       tile.style.top = `${nextY}px`;
 
       nextX += 440;
-      rowHeight = Math.max(rowHeight, 300);
+      rowHeight = Math.max(rowHeight, 320);
 
-      if (nextX > window.innerWidth * 2) {
+      if (nextX > window.innerWidth * 1.5) {
         nextX = 40;
         nextY += rowHeight + 40;
         rowHeight = 0;
@@ -128,17 +175,21 @@
     let activeTile = null;
     let offsetX = 0;
     let offsetY = 0;
+    let isDraggingCanvas = false;
+    let dragStartX = 0;
+    let dragStartY = 0;
 
     document.addEventListener('mousedown', e => {
       const tile = e.target.closest('.tile');
       if (tile) {
         activeTile = tile;
         const rect = tile.getBoundingClientRect();
+        const canvasRect = canvas.getBoundingClientRect();
         offsetX = e.clientX - rect.left;
         offsetY = e.clientY - rect.top;
         tile.classList.add('dragging');
         tile.style.zIndex = 1001;
-        tile.style.pointerEvents = 'none';
+        e.preventDefault();
       } else {
         isDraggingCanvas = true;
         dragStartX = e.clientX;
@@ -148,8 +199,11 @@
 
     document.addEventListener('mousemove', e => {
       if (activeTile) {
-        activeTile.style.left = `${e.clientX - offsetX}px`;
-        activeTile.style.top = `${e.clientY - offsetY}px`;
+        const canvasRect = canvas.getBoundingClientRect();
+        const newX = (e.clientX - offsetX - canvasRect.left) / canvasScale;
+        const newY = (e.clientY - offsetY - canvasRect.top) / canvasScale;
+        activeTile.style.left = `${newX}px`;
+        activeTile.style.top = `${newY}px`;
       } else if (isDraggingCanvas) {
         const dx = e.clientX - dragStartX;
         const dy = e.clientY - dragStartY;
@@ -165,7 +219,6 @@
       if (activeTile) {
         activeTile.classList.remove('dragging');
         activeTile.style.zIndex = 1000;
-        activeTile.style.pointerEvents = 'auto';
         activeTile = null;
       }
       isDraggingCanvas = false;
@@ -175,9 +228,6 @@
     let canvasX = 0;
     let canvasY = 0;
     let canvasScale = 1;
-    let isDraggingCanvas = false;
-    let dragStartX = 0;
-    let dragStartY = 0;
 
     function updateCanvasTransform() {
       canvas.style.transform = `translate(${canvasX}px, ${canvasY}px) scale(${canvasScale})`;
@@ -186,10 +236,23 @@
     document.addEventListener('wheel', e => {
       e.preventDefault();
       const scaleAmount = e.deltaY > 0 ? 0.95 : 1.05;
+      const rect = canvas.getBoundingClientRect();
+      const mouseX = e.clientX - rect.left;
+      const mouseY = e.clientY - rect.top;
+      
+      const oldScale = canvasScale;
       canvasScale *= scaleAmount;
       canvasScale = Math.max(0.2, Math.min(canvasScale, 3));
+      
+      const scaleChange = canvasScale / oldScale;
+      canvasX = mouseX - (mouseX - canvasX) * scaleChange;
+      canvasY = mouseY - (mouseY - canvasY) * scaleChange;
+      
       updateCanvasTransform();
     }, { passive: false });
+
+    // Инициализация
+    updateCanvasTransform();
   </script>
 
 </body>
