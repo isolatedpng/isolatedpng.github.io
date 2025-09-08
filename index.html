@@ -26,8 +26,18 @@
     }
 
     .workspace {
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
       position: relative;
-      padding: 100px 40px;
+    }
+
+    .canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      transform-origin: top left;
+      transition: transform 0.1s ease;
     }
 
     .tile {
@@ -68,7 +78,9 @@
 <body>
 
   <div class="menu">Menu</div>
-  <div class="workspace" id="workspace"></div>
+  <div class="workspace">
+    <div class="canvas" id="canvas"></div>
+  </div>
 
   <script>
     const frameColors = ['#6ecf9f', '#8aa9ff', '#d88aff', '#ff8ab3', '#ffd88a'];
@@ -78,10 +90,9 @@
       { type: 'video', src: 'thumbs/balenciaga.mp4' },
       { type: 'video', src: 'thumbs/brds.mp4' },
       { type: 'image', src: 'thumbs/mkc.png' }
-      // Добавляй сюда новые работы
     ];
 
-    const workspace = document.getElementById('workspace');
+    const canvas = document.getElementById('canvas');
     let nextX = 40;
     let nextY = 100;
     let rowHeight = 0;
@@ -115,7 +126,7 @@
         nextX += width + 40;
         rowHeight = Math.max(rowHeight, height);
 
-        if (nextX > window.innerWidth - 400) {
+        if (nextX > window.innerWidth * 2) {
           nextX = 40;
           nextY += rowHeight + 40;
           rowHeight = 0;
@@ -123,51 +134,82 @@
       };
 
       tile.appendChild(content);
-      workspace.appendChild(tile);
+      canvas.appendChild(tile);
     });
 
-    // Перемещение с эффектом парения
+    // Перемещение плитки
     let activeTile = null;
     let offsetX = 0;
     let offsetY = 0;
 
     document.addEventListener('mousedown', e => {
       const tile = e.target.closest('.tile');
-      if (!tile) return;
-
-      activeTile = tile;
-      const rect = tile.getBoundingClientRect();
-      offsetX = e.clientX - rect.left;
-      offsetY = e.clientY - rect.top;
-
-      tile.classList.add('dragging');
-      tile.style.zIndex = 1001;
-      tile.style.pointerEvents = 'none';
+      if (tile) {
+        activeTile = tile;
+        const rect = tile.getBoundingClientRect();
+        offsetX = e.clientX - rect.left;
+        offsetY = e.clientY - rect.top;
+        tile.classList.add('dragging');
+        tile.style.zIndex = 1001;
+        tile.style.pointerEvents = 'none';
+      } else {
+        isDraggingCanvas = true;
+        dragStartX = e.clientX;
+        dragStartY = e.clientY;
+      }
     });
 
     document.addEventListener('mousemove', e => {
       if (activeTile) {
         activeTile.style.left = `${e.clientX - offsetX}px`;
         activeTile.style.top = `${e.clientY - offsetY}px`;
+      } else if (isDraggingCanvas) {
+        const dx = e.clientX - dragStartX;
+        const dy = e.clientY - dragStartY;
+        canvasX += dx;
+        canvasY += dy;
+        dragStartX = e.clientX;
+        dragStartY = e.clientY;
+        updateCanvasTransform();
       }
     });
 
-    document.addEventListener('mouseup', e => {
+    document.addEventListener('mouseup', () => {
       if (activeTile) {
         activeTile.classList.remove('dragging');
         activeTile.style.zIndex = 1000;
         activeTile.style.pointerEvents = 'auto';
         activeTile = null;
       }
+      isDraggingCanvas = false;
     });
 
-    // Открытие при клике без перемещения
     document.addEventListener('click', e => {
       const tile = e.target.closest('.tile');
       if (tile && tile.dataset.url) {
         window.open(tile.dataset.url, '_blank');
       }
     });
+
+    // Панорамное перемещение и зум
+    let canvasX = 0;
+    let canvasY = 0;
+    let canvasScale = 1;
+    let isDraggingCanvas = false;
+    let dragStartX = 0;
+    let dragStartY = 0;
+
+    function updateCanvasTransform() {
+      canvas.style.transform = `translate(${canvasX}px, ${canvasY}px) scale(${canvasScale})`;
+    }
+
+    document.addEventListener('wheel', e => {
+      e.preventDefault();
+      const scaleAmount = e.deltaY > 0 ? 0.95 : 1.05;
+      canvasScale *= scaleAmount;
+      canvasScale = Math.max(0.2, Math.min(canvasScale, 3));
+      updateCanvasTransform();
+    }, { passive: false });
   </script>
 
 </body>
