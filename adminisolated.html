@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Isolated</title>
+  <style>
+    body {
+      margin: 0;
+      background: #0f0f0f;
+      color: #fff;
+      font-family: sans-serif;
+    }
+    .admin-panel {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      z-index: 1000;
+    }
+    .admin-panel button {
+      background: rgba(255,255,255,0.1);
+      color: #fff;
+      border: 1px solid #666;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+    .canvas {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+      padding: 60px 20px;
+    }
+    .tile {
+      border: 3px solid #444;
+      border-radius: 10px;
+      background: #111;
+      overflow: hidden;
+      cursor: move;
+    }
+    .tile img, .tile video {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    .dragging {
+      opacity: 0.6;
+    }
+  </style>
+</head>
+<body>
+  <div class="admin-panel">
+    <button id="saveLayout">Save Layout</button>
+  </div>
+  <div class="canvas" id="canvas"></div>
+
+  <script>
+    // список плиток (можно потом грузить из positions.json)
+    const works = [
+      { type: 'image', src: 'thumbs/image1.png' },
+      { type: 'video', src: 'thumbs/balenciaga.mp4' },
+      { type: 'video', src: 'thumbs/brds.mp4' },
+      { type: 'image', src: 'thumbs/mkc.png' },
+      { type: 'video', src: 'thumbs/sora11.mp4' }
+    ];
+
+    const canvas = document.getElementById('canvas');
+
+    function buildTiles() {
+      canvas.innerHTML = '';
+      works.forEach(work => {
+        const tile = document.createElement('div');
+        tile.className = 'tile';
+        tile.draggable = true;
+
+        let content;
+        if (work.type === 'image') {
+          content = document.createElement('img');
+          content.src = work.src;
+        } else {
+          content = document.createElement('video');
+          content.src = work.src;
+          content.autoplay = true;
+          content.loop = true;
+          content.muted = true;
+        }
+        tile.appendChild(content);
+        canvas.appendChild(tile);
+      });
+      addDnDHandlers();
+    }
+
+    function addDnDHandlers() {
+      let dragSrc = null;
+      document.querySelectorAll('.tile').forEach(tile => {
+        tile.addEventListener('dragstart', e => {
+          dragSrc = tile;
+          tile.classList.add('dragging');
+          e.dataTransfer.effectAllowed = 'move';
+        });
+        tile.addEventListener('dragover', e => {
+          e.preventDefault();
+          e.dataTransfer.dropEffect = 'move';
+        });
+        tile.addEventListener('drop', e => {
+          e.preventDefault();
+          if (dragSrc && dragSrc !== tile) {
+            const srcHTML = dragSrc.outerHTML;
+            dragSrc.outerHTML = tile.outerHTML;
+            tile.outerHTML = srcHTML;
+            addDnDHandlers();
+          }
+        });
+        tile.addEventListener('dragend', () => {
+          tile.classList.remove('dragging');
+        });
+      });
+    }
+
+    document.getElementById('saveLayout').addEventListener('click', () => {
+      const tiles = document.querySelectorAll('.tile img, .tile video');
+      const layout = [];
+      tiles.forEach((el, idx) => {
+        layout.push({ order: idx, type: el.tagName.toLowerCase(), src: el.getAttribute('src') });
+      });
+      const blob = new Blob([JSON.stringify(layout, null, 2)], {type: "application/json"});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = "positions.json";
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+
+    buildTiles();
+  </script>
+</body>
+</html>
