@@ -171,6 +171,7 @@
       height: 100vh;
       overflow: hidden;
       position: relative;
+      cursor: grab;
     }
 
     .canvas {
@@ -187,7 +188,7 @@
       transition: transform 0.2s ease, box-shadow 0.3s ease;
       background-color: #111;
       position: absolute;
-      cursor: default;
+      cursor: grab;
       overflow: hidden;
     }
 
@@ -422,8 +423,8 @@
       if (tile) {
         activeTile = tile;
         const rect = tile.getBoundingClientRect();
-        offsetX = e.clientX - rect.left;
-        offsetY = e.clientY - rect.top;
+        offsetX = e.clientX - rect.left - window.scrollX;
+        offsetY = e.clientY - rect.top - window.scrollY;
         tile.classList.add('dragging');
         tile.style.zIndex = 1001;
         e.preventDefault();
@@ -436,9 +437,8 @@
 
     document.addEventListener('mousemove', e => {
       if (activeTile) {
-        const canvasRect = canvas.getBoundingClientRect();
-        const newX = (e.clientX - offsetX - canvasRect.left);
-        const newY = (e.clientY - offsetY - canvasRect.top);
+        const newX = e.clientX - offsetX;
+        const newY = e.clientY - offsetY;
         activeTile.style.left = `${newX}px`;
         activeTile.style.top = `${newY}px`;
       } else if (isDraggingCanvas) {
