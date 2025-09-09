@@ -6,7 +6,246 @@
   <!-- Подключаем футуристический шрифт Orbitron -->
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
   <style>
-    /* Стили остаются без изменений */
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      overflow: hidden;
+      background-color: #0f0f0f;
+      background-image: radial-gradient(#222 1px, transparent 1px);
+      background-size: 20px 20px;
+    }
+
+    .menu-button {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      width: 80px;
+      height: 80px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      z-index: 1000;
+    }
+
+    .menu-button:hover {
+      background: rgba(255, 255, 255, 0.1);
+      transform: scale(1.05);
+    }
+
+    /* Sound Wave Icon */
+    .sound-wave {
+      width: 40px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+
+    .sound-wave span {
+      width: 4px;
+      height: 16px;
+      background: white;
+      border-radius: 2px;
+      opacity: 0.8;
+      animation: pulse 1.5s infinite alternate;
+    }
+
+    .sound-wave span:nth-child(1) { height: 24px; animation-delay: 0s; }
+    .sound-wave span:nth-child(2) { height: 16px; animation-delay: 0.1s; }
+    .sound-wave span:nth-child(3) { height: 8px; animation-delay: 0.2s; }
+    .sound-wave span:nth-child(4) { height: 16px; animation-delay: 0.3s; }
+    .sound-wave span:nth-child(5) { height: 24px; animation-delay: 0.4s; }
+
+    @keyframes pulse {
+      0% { opacity: 0.5; }
+      100% { opacity: 1; }
+    }
+
+    /* Dropdown Menu */
+    .dropdown-menu {
+      position: absolute;
+      top: 100px;
+      left: 20px;
+      width: 200px;
+      background: rgba(0, 0, 0, 0.9);
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px);
+      transition: all 0.3s ease;
+      z-index: 1001;
+    }
+
+    .menu-button:hover + .dropdown-menu,
+    .dropdown-menu:hover {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .dropdown-menu-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .dropdown-menu-header .sound-wave {
+      width: 40px;
+      height: 32px;
+      opacity: 0.8;
+    }
+
+    .dropdown-menu ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .dropdown-menu li {
+      margin-bottom: 15px;
+    }
+
+    .dropdown-menu a {
+      color: #ffffff;
+      text-decoration: none;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 16px;
+      letter-spacing: 1px;
+      transition: all 0.3s ease;
+      position: relative;
+      display: block;
+    }
+
+    .dropdown-menu a:hover {
+      color: #ff0000;
+      transform: scale(1.02);
+    }
+
+    .dropdown-menu a::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: #ff0000;
+      transition: width 0.3s ease;
+    }
+
+    .dropdown-menu a:hover::after {
+      width: 100%;
+    }
+
+    /* Close button */
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 20px;
+      height: 20px;
+      background: transparent;
+      border: none;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .close-btn:hover {
+      transform: rotate(90deg);
+      color: #ff0000;
+    }
+
+    /* Workspace */
+    .workspace {
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      position: relative;
+      cursor: default;
+    }
+
+    .canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      transform-origin: top left;
+      transition: transform 0.1s ease;
+    }
+
+    .tile {
+      border-radius: 12px;
+      border: 4px solid transparent;
+      transition: transform 0.2s ease, box-shadow 0.3s ease;
+      background-color: #111;
+      position: absolute;
+      cursor: grab;
+      overflow: hidden;
+    }
+
+    .tile:hover {
+      box-shadow: 0 0 12px rgba(255, 255, 255, 0.2);
+    }
+
+    .tile.dragging {
+      transform: scale(1.05) translateY(-5px);
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+    }
+
+    .tile img,
+    .tile video {
+      display: block;
+      border-radius: 8px;
+      pointer-events: none;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .error-placeholder {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+      color: #666;
+      font-size: 14px;
+      text-align: center;
+      border-radius: 8px;
+      background: #222;
+    }
+
+    /* Smoke & Bubbles */
+    .smoke-particle {
+      position: absolute;
+      pointer-events: none;
+      background: rgba(0, 0, 0, 0.6);
+      border-radius: 50%;
+      filter: blur(2px);
+      z-index: 2001;
+    }
+
+    .bubble {
+      position: absolute;
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      animation: bubbleFloat 8s ease-in-out infinite;
+      z-index: 0;
+    }
+
+    @keyframes bubbleFloat {
+      0% { transform: translateY(100vh) scale(0); opacity: 0; }
+      50% { opacity: 0.8; }
+      100% { transform: translateY(-100vh) scale(1); opacity: 0; }
+    }
   </style>
 </head>
 <body>
