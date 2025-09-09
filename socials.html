@@ -5,6 +5,8 @@
   <title>selfitisolated - Socials</title>
   <!-- Подключаем футуристический шрифт Orbitron -->
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+  <!-- Подключаем иконки Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
     body {
       margin: 0;
@@ -19,8 +21,8 @@
       position: fixed;
       top: 20px;
       left: 20px;
-      width: 80px; /* Увеличен в 2 раза */
-      height: 80px; /* Увеличен в 2 раза */
+      width: 80px;
+      height: 80px;
       background: rgba(255, 255, 255, 0.05);
       border-radius: 8px;
       display: flex;
@@ -38,17 +40,17 @@
 
     /* Sound Wave Icon */
     .sound-wave {
-      width: 40px; /* Увеличен в 2 раза */
-      height: 32px; /* Увеличен в 2 раза */
+      width: 40px;
+      height: 32px;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 4px; /* Увеличен интервал между линиями */
+      gap: 4px;
     }
 
     .sound-wave span {
-      width: 4px; /* Увеличена толщина линий */
-      height: 16px; /* Увеличена высота линий */
+      width: 4px;
+      height: 16px;
       background: white;
       border-radius: 2px;
       opacity: 0.8;
@@ -69,7 +71,7 @@
     /* Dropdown Menu */
     .dropdown-menu {
       position: absolute;
-      top: 100px; /* Изменен отступ сверху */
+      top: 100px;
       left: 20px;
       width: 200px;
       background: rgba(0, 0, 0, 0.9);
@@ -99,8 +101,8 @@
     }
 
     .dropdown-menu-header .sound-wave {
-      width: 40px; /* Увеличен в 2 раза */
-      height: 32px; /* Увеличен в 2 раза */
+      width: 40px;
+      height: 32px;
       opacity: 0.8;
     }
 
@@ -180,6 +182,96 @@
       transform-origin: top left;
       transition: transform 0.1s ease;
     }
+
+    /* Social Links Section */
+    .social-links {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      color: white;
+    }
+
+    .social-links h1 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 36px;
+      margin-bottom: 20px;
+    }
+
+    .social-links ul {
+      list-style: none;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .social-links li {
+      margin: 0;
+    }
+
+    .social-links a {
+      color: white;
+      text-decoration: none;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 18px;
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .social-links a:hover {
+      color: #ff0000;
+      transform: scale(1.1);
+    }
+
+    .social-links a i {
+      font-size: 36px;
+    }
+
+    /* Connect with Me Section */
+    .connect-with-me {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      text-align: center;
+      color: white;
+    }
+
+    .connect-with-me h2 {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+
+    .connect-with-me ul {
+      list-style: none;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .connect-with-me li {
+      margin: 0;
+    }
+
+    .connect-with-me a {
+      color: white;
+      text-decoration: none;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 18px;
+      transition: all 0.3s ease;
+    }
+
+    .connect-with-me a:hover {
+      color: #ff0000;
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
@@ -221,6 +313,46 @@
     <div class="canvas" id="canvas"></div>
   </div>
 
+  <!-- Social Links Section -->
+  <div class="social-links">
+    <h1>Социальные сети</h1>
+    <ul>
+      <li>
+        <a href="https://www.instagram.com/isolated.png/" target="_blank">
+          <i class="fab fa-instagram"></i>
+          Instagram
+        </a>
+      </li>
+      <li>
+        <a href="https://www.youtube.com/@isolated_png/videos" target="_blank">
+          <i class="fab fa-youtube"></i>
+          YouTube
+        </a>
+      </li>
+      <li>
+        <a href="https://www.linkedin.com/in/isolatedpng/" target="_blank">
+          <i class="fab fa-linkedin"></i>
+          LinkedIn
+        </a>
+      </li>
+      <li>
+        <a href="https://civitai.com/user/isolated_png" target="_blank">
+          <i class="fas fa-globe"></i>
+          CivitAI
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Connect with Me Section -->
+  <div class="connect-with-me">
+    <h2>Connect with Me</h2>
+    <ul>
+      <li><a href="https://t.me/isolatedpng" target="_blank">Telegram</a></li>
+      <li><a href="https://discord.com/users/isolated.png" target="_blank">Discord</a></li>
+      <li><a href="mailto:selfitisolated@gmail.com">Email</a></li>
+    </ul>
+  </div>
+
 </body>
 </html>
-
