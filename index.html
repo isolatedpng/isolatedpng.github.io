@@ -7,6 +7,7 @@
   <!-- Подключаем футуристический шрифт Orbitron -->
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
   <style>
+    /* Ваш существующий CSS */
     body {
       margin: 0;
       font-family: sans-serif;
@@ -732,8 +733,87 @@
       }, 1000);
     }
 
-    // Сохранение по клавише S
-    document.addEventListener('keydown', (e) => {
+    // Глобальные переменные для работы с GitHub API
+    const GITHUB_API_URL = 'https://api.github.com/repos/selfitisolated/selfitisolated.github.io/contents/tile-layout.json'; // URL вашего репозитория
+    const GITHUB_TOKEN = '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'; // Ваш персональный токен
+
+    // Функция для загрузки расположения плиток из JSON-файла
+    async function loadTileLayout() {
+      try {
+        const response = await fetch(GITHUB_API_URL, {
+          headers: {
+            Accept: 'application/vnd.github.v3.raw',
+          },
+        });
+
+        if (!response.ok) {
+          console.error('Failed to load tile layout:', response.statusText);
+          return null;
+        }
+
+        const data = await response.json();
+        return JSON.parse(atob(data.content)); // Декодируем Base64
+      } catch (error) {
+        console.error('Error loading tile layout:', error);
+        return null;
+      }
+    }
+
+    // Функция для сохранения расположения плиток в JSON-файл
+    async function saveTileLayout(layout) {
+      try {
+        const existingResponse = await fetch(GITHUB_API_URL, {
+          headers: {
+            Accept: 'application/vnd.github.v3.raw',
+          },
+        });
+
+        let sha = null;
+        if (existingResponse.ok) {
+          const existingData = await existingResponse.json();
+          sha = existingData.sha; // SHA текущего файла
+        }
+
+        const response = await fetch(GITHUB_API_URL, {
+          method: 'PUT',
+          headers: {
+            Authorization: `token ${GITHUB_TOKEN}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            message: 'Update tile layout',
+            content: btoa(JSON.stringify(layout)), // Кодируем данные в Base64
+            sha: sha, // Если файл существует, передаем его SHA
+          }),
+        });
+
+        if (!response.ok) {
+          console.error('Failed to save tile layout:', response.statusText);
+        } else {
+          console.log('Tile layout saved successfully!');
+        }
+      } catch (error) {
+        console.error('Error saving tile layout:', error);
+      }
+    }
+
+    // Загрузка расположения плиток при загрузке страницы
+    document.addEventListener('DOMContentLoaded', async () => {
+      const savedLayout = await loadTileLayout();
+      if (savedLayout) {
+        document.querySelectorAll('.tile').forEach((tile, index) => {
+          if (savedLayout[index]) {
+            tile.style.width = `${savedLayout[index].width}px`;
+            tile.style.height = `${savedLayout[index].height}px`;
+            tile.style.left = `${savedLayout[index].left}px`;
+            tile.style.top = `${savedLayout[index].top}px`;
+          }
+        });
+      }
+    });
+
+    // Сохранение расположения плиток по клавише S
+    document.addEventListener('keydown', async (e) => {
       if (isEditMode && (e.key === 's' || e.key === 'S')) {
         e.preventDefault();
         const tiles = document.querySelectorAll('.tile');
@@ -743,11 +823,11 @@
             left: parseFloat(tile.style.left),
             top: parseFloat(tile.style.top),
             width: parseFloat(tile.style.width),
-            height: parseFloat(tile.style.height)
+            height: parseFloat(tile.style.height),
           });
         });
-        localStorage.setItem('tileLayout', JSON.stringify(layout));
-        alert('✅ Layout saved!');
+        await saveTileLayout(layout);
+        alert('✅ Layout saved to GitHub!');
       }
     });
 
