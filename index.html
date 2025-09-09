@@ -175,15 +175,15 @@
     }
 
     .canvas {
-  position: relative; /* Оставляем, чтобы плитки оставались внутри */
-  transform-origin: top left;
-  transition: transform 0.1s ease;
-  display: flex; /* Активируем Flexbox */
-  flex-wrap: wrap; /* Разрешаем элементам переноситься на новую строку */
-  gap: 25px; /* Задаём расстояние между плитками */
-  padding: 50px; /* Добавляем отступы */
-  justify-content: center; /* Выравниваем по центру */
-}
+      position: relative; /* Оставляем relative для правильного позиционирования дочерних элементов */
+      display: flex; /* Используем Flexbox */
+      flex-wrap: wrap; /* Разрешаем перенос плиток на следующую строку */
+      gap: 25px; /* Устанавливаем отступ между плитками */
+      padding: 50px; /* Отступы от края */
+      justify-content: center; /* Выравниваем по центру */
+      align-items: flex-start; /* Прижимаем к верху */
+     transition: transform 0.1s ease;
+     }
 
     .tile {
       border-radius: 12px;
@@ -1022,7 +1022,13 @@
 
       tile.appendChild(content);
       
-
+      const savedLayout = JSON.parse(localStorage.getItem('tileLayout'));
+      if (savedLayout && savedLayout[index]) {
+     tile.style.width = `${savedLayout[index].width}px`;
+     tile.style.height = `${savedLayout[index].height}px`;
+     tile.style.left = `${savedLayout[index].left}px`;
+     tile.style.top = `${savedLayout[index].top}px`;
+     }
 
       canvas.appendChild(tile);
     });
