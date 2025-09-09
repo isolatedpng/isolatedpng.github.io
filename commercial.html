@@ -593,6 +593,37 @@
       updateCanvasTransform();
     }, { passive: false });
 
+    // Добавляем поддержку масштабирования на мобильных устройствах
+    let initialDistance = null;
+    let initialScale = 1;
+
+    document.addEventListener('touchstart', e => {
+      if (e.touches.length === 2) {
+        const touch1 = e.touches[0];
+        const touch2 = e.touches[1];
+        initialDistance = Math.hypot(touch2.clientX - touch1.clientX, touch2.clientY - touch1.clientY);
+        initialScale = canvasScale;
+      }
+    });
+
+    document.addEventListener('touchmove', e => {
+      if (e.touches.length === 2 && initialDistance) {
+        const touch1 = e.touches[0];
+        const touch2 = e.touches[1];
+        const currentDistance = Math.hypot(touch2.clientX - touch1.clientX, touch2.clientY - touch1.clientY);
+
+        const scaleChange = currentDistance / initialDistance;
+        canvasScale = initialScale * scaleChange;
+        canvasScale = Math.max(0.5, Math.min(canvasScale, 3));
+
+        updateCanvasTransform();
+      }
+    });
+
+    document.addEventListener('touchend', () => {
+      initialDistance = null;
+    });
+
     updateCanvasTransform();
   </script>
 
