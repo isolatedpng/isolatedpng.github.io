@@ -812,6 +812,36 @@
       }
     });
 
+    function applyLayout(layout) {
+if (!Array.isArray(layout)) return;
+const tiles = document.querySelectorAll('.tile');
+tiles.forEach((tile, i) => {
+const item = layout[i];
+if (!item) return;
+if (item.width !== undefined) tile.style.width = `${item.width}px`;
+if (item.height !== undefined) tile.style.height = `${item.height}px`;
+if (item.left !== undefined) tile.style.left = `${item.left}px`;
+if (item.top !== undefined) tile.style.top = `${item.top}px`;
+});
+try { localStorage.setItem('tileLayout', JSON.stringify(layout)); } catch (e) {}
+}
+
+
+(async function loadLayoutFromFile(){
+try {
+const res = await fetch('./tile-layout.json?t=' + Date.now());
+if (!res.ok) {
+console.warn('tile-layout.json fetch failed:', res.status);
+return;
+}
+const layout = await res.json();
+console.log('Loaded tile-layout.json:', layout);
+applyLayout(layout);
+} catch (err) {
+console.error('Error loading tile-layout.json:', err);
+}
+})();
+
     // Сохранение расположения плиток по клавише S
     document.addEventListener('keydown', async (e) => {
       if (isEditMode && (e.key === 's' || e.key === 'S')) {
@@ -1099,13 +1129,7 @@
 
       tile.appendChild(content);
       
-      const savedLayout = JSON.parse(localStorage.getItem('tileLayout'));
-      if (savedLayout && savedLayout[index]) {
-        tile.style.width = `${savedLayout[index].width}px`;
-        tile.style.height = `${savedLayout[index].height}px`;
-        tile.style.left = `${savedLayout[index].left}px`;
-        tile.style.top = `${savedLayout[index].top}px`;
-      } else {
+       else {
         // Mobile layout: vertical stacking
         if (isMobile) {
           tile.style.width = '200px';
