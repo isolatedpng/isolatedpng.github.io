@@ -1366,5 +1366,16 @@ updateCanvasTransform();
     }, false);
   </script>
 
+  <!-- тут твои остальные <script> -->
+  <script>
+    async function loadLayout() {
+      const res = await fetch("tile-layout.json");
+      const layout = await res.json();
+      applyLayout(layout); // вызов твоей функции, которая применяет позиции
+    }
+
+    loadLayout();
+  </script>
 </body>
 </html>
+
