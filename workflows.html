@@ -181,62 +181,44 @@
       transition: transform 0.1s ease;
     }
 
-    /* Particle Game */
+    /* Clicker Game */
     .game-container {
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      width: 80vw;
-      height: 80vh;
+      width: 300px;
+      height: 300px;
       background: rgba(0, 0, 0, 0.8);
       border: 2px solid #ff0000;
       border-radius: 10px;
       overflow: hidden;
       box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
     }
 
-    .particle {
-      position: absolute;
-      width: 10px;
-      height: 10px;
+    .clicker-box {
+      width: 100px;
+      height: 100px;
       background: #ff0000;
-      border-radius: 50%;
-      animation: move-particle 5s linear infinite;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: transform 0.2s ease;
     }
 
-    @keyframes move-particle {
-      0% {
-        top: 0;
-        left: 0;
-      }
-      25% {
-        top: 0;
-        left: 100%;
-      }
-      50% {
-        top: 100%;
-        left: 100%;
-      }
-      75% {
-        top: 100%;
-        left: 0;
-      }
-      100% {
-        top: 0;
-        left: 0;
-      }
+    .clicker-box:hover {
+      transform: scale(1.1);
     }
 
     .score {
-      position: absolute;
-      top: 10px;
-      left: 50%;
-      transform: translateX(-50%);
+      margin-top: 20px;
       font-family: 'Orbitron', sans-serif;
       font-size: 24px;
       color: #ff0000;
-      z-index: 10;
     }
   </style>
 </head>
@@ -279,40 +261,23 @@
     <div class="canvas" id="canvas"></div>
   </div>
 
-  <!-- Particle Game -->
+  <!-- Clicker Game -->
   <div class="game-container">
+    <div class="clicker-box" id="clicker-box"></div>
     <div class="score" id="score">Score: 0</div>
-    <div class="particle" id="particle"></div>
   </div>
 
   <script>
-    // Particle Catcher Game Logic
-    const particle = document.getElementById('particle');
+    // Clicker Game Logic
+    const clickerBox = document.getElementById('clicker-box');
     const scoreElement = document.getElementById('score');
     let score = 0;
 
-    // Function to generate random position for the particle
-    function moveParticle() {
-      const container = document.querySelector('.game-container');
-      const containerRect = container.getBoundingClientRect();
-
-      const randomX = Math.random() * (containerRect.width - 10);
-      const randomY = Math.random() * (containerRect.height - 10);
-
-      particle.style.left = `${randomX}px`;
-      particle.style.top = `${randomY}px`;
-    }
-
-    // Event listener for catching the particle
-    particle.addEventListener('click', () => {
+    // Event listener for clicking the box
+    clickerBox.addEventListener('click', () => {
       score++;
       scoreElement.textContent = `Score: ${score}`;
-      moveParticle();
     });
-
-    // Initialize the game
-    moveParticle();
-    setInterval(moveParticle, 5000); // Move particle every 5 seconds
   </script>
 
 </body>
