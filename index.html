@@ -1007,8 +1007,8 @@
         
         content.onerror = function() {
           console.error(`Failed to load video: ${work.src}`);
-          tile.style.width = isMobile ? '200px' : '300px';
-          tile.style.height = isMobile ? '200px' : '300px';
+          tile.style.width = '300px';
+          tile.style.height = '300px';
           this.style.display = 'none';
           const errorDiv = document.createElement('div');
           errorDiv.className = 'error-placeholder';
