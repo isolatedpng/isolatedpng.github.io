@@ -997,160 +997,158 @@
         };
 
         content.onerror = function() {
-          console.error(`Failed to load image: ${work.src}`);
-          tile.style.width = isMobile ? '200px' : '300px';
-          tile.style.height = isMobile ? '200px' : '300px';
-          this.style.display = 'none';
-          const errorDiv = document.createElement('div');
-          errorDiv.className = 'error-placeholder';
-          errorDiv.textContent = `Loading error:\n${work.src}`;
-          tile.appendChild(errorDiv);
-        };
-        
-      } else if (work.type === 'video') {
-        content = document.createElement('video');
-        content.src = work.src;
-        content.autoplay = false;
+  console.error(`Failed to load image: ${work.src}`);
+  tile.style.width = isMobile ? '200px' : '300px';
+  tile.style.height = isMobile ? '200px' : '300px';
+  this.style.display = 'none';
+  const errorDiv = document.createElement('div');
+  errorDiv.className = 'error-placeholder';
+  errorDiv.textContent = `Loading error:\n${work.src}`;
+  tile.appendChild(errorDiv);
+};
+
+} else if (work.type === 'video') {
+  content = document.createElement('video');
+  content.src = work.src;
+  content.autoplay = false;
+  content.muted = true;
+  content.loop = true;
+  content.playsInline = true;
+
+  // Mobile touch events for video
+  if (isMobile) {
+    tile.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      content.play().catch(e => console.log("Playback failed:", e));
+    });
+
+    tile.addEventListener('touchend', () => {
+      setTimeout(() => content.pause(), 100);
+    });
+  } else {
+    tile.addEventListener('mouseenter', () => {
+      content.play().catch(e => console.log("Playback failed:", e));
+    });
+
+    tile.addEventListener('mouseleave', () => {
+      content.pause();
+    });
+  }
+
+  const soundIndicator = document.createElement('div');
+  soundIndicator.className = 'sound-indicator';
+  soundIndicator.innerHTML = '🔊';
+  tile.appendChild(soundIndicator);
+
+  content.onloadedmetadata = function() {
+    const aspectRatio = this.videoWidth / this.videoHeight;
+    const maxWidth = isMobile ? 250 : 400;
+    const maxHeight = isMobile ? 400 : 600;
+
+    let width, height;
+
+    if (aspectRatio > 1) {
+      width = Math.min(maxWidth, this.videoWidth * (isMobile ? 0.25 : 0.3));
+      height = width / aspectRatio;
+    } else {
+      height = Math.min(maxHeight, this.videoHeight * (isMobile ? 0.25 : 0.3));
+      width = height * aspectRatio;
+    }
+
+    width = Math.max(isMobile ? 150 : 200, width);
+    height = Math.max(isMobile ? 150 : 200, height);
+
+    tile.style.width = `${width}px`;
+    tile.style.height = `${height}px`;
+  };
+
+  let fadeInterval = null;
+
+  const enableSound = () => {
+    if (!audioUnlocked || isMobile) return;
+
+    if (fadeInterval) clearInterval(fadeInterval);
+
+    tile.classList.add('sound-on');
+    soundIndicator.style.display = 'flex';
+
+    try {
+      content.muted = false;
+      content.volume = 0;
+      let vol = 0;
+      fadeInterval = setInterval(() => {
+        if (vol < 0.6) {
+          vol += 0.04;
+          content.volume = Math.min(vol, 0.6);
+        } else {
+          clearInterval(fadeInterval);
+          fadeInterval = null;
+        }
+      }, 25);
+    } catch (error) {
+      console.error('Error enabling sound:', error);
+    }
+  };
+
+  const disableSound = () => {
+    if (fadeInterval) clearInterval(fadeInterval);
+
+    tile.classList.remove('sound-on');
+    soundIndicator.style.display = 'none';
+
+    let vol = content.volume;
+    fadeInterval = setInterval(() => {
+      if (vol > 0) {
+        vol -= 0.08;
+        content.volume = Math.max(vol, 0);
+      } else {
         content.muted = true;
-        content.loop = true;
-        content.playsInline = true;
-
-        // Mobile touch events for video
-        if (isMobile) {
-          tile.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            content.play().catch(e => console.log("Playback failed:", e));
-          });
-
-          tile.addEventListener('touchend', () => {
-            setTimeout(() => content.pause(), 100);
-          });
-        } else {
-          tile.addEventListener('mouseenter', () => {
-            content.play().catch(e => console.log("Playback failed:", e));
-          });
-
-          tile.addEventListener('mouseleave', () => {
-            content.pause();
-          });
-        }
-        
-        const soundIndicator = document.createElement('div');
-        soundIndicator.className = 'sound-indicator';
-        soundIndicator.innerHTML = '🔊';
-        tile.appendChild(soundIndicator);
-        
-        content.onloadedmetadata = function() {
-          const aspectRatio = this.videoWidth / this.videoHeight;
-          const maxWidth = isMobile ? 250 : 400;
-          const maxHeight = isMobile ? 400 : 600;
-          
-          let width, height;
-          
-          if (aspectRatio > 1) {
-            width = Math.min(maxWidth, this.videoWidth * (isMobile ? 0.25 : 0.3));
-            height = width / aspectRatio;
-          } else {
-            height = Math.min(maxHeight, this.videoHeight * (isMobile ? 0.25 : 0.3));
-            width = height * aspectRatio;
-          }
-          
-          width = Math.max(isMobile ? 150 : 200, width);
-          height = Math.max(isMobile ? 150 : 200, height);
-          
-          tile.style.width = `${width}px`;
-          tile.style.height = `${height}px`;
-        };
-        
-        let fadeInterval = null;
-        
-        const enableSound = () => {
-          if (!audioUnlocked || isMobile) return;
-          
-          if (fadeInterval) clearInterval(fadeInterval);
-          
-          tile.classList.add('sound-on');
-          soundIndicator.style.display = 'flex';
-          
-          try {
-            content.muted = false;
-            content.volume = 0;
-            let vol = 0;
-            fadeInterval = setInterval(() => {
-              if (vol < 0.6) {
-                vol += 0.04;
-                content.volume = Math.min(vol, 0.6);
-              } else {
-                clearInterval(fadeInterval);
-                fadeInterval = null;
-              }
-            }, 25);
-          } catch (error) {
-            console.error('Error enabling sound:', error);
-          }
-        };
-
-        const disableSound = () => {
-          if (fadeInterval) clearInterval(fadeInterval);
-          
-          tile.classList.remove('sound-on');
-          soundIndicator.style.display = 'none';
-          
-          let vol = content.volume;
-          fadeInterval = setInterval(() => {
-            if (vol > 0) {
-              vol -= 0.08;
-              content.volume = Math.max(vol, 0);
-            } else {
-              content.muted = true;
-              clearInterval(fadeInterval);
-              fadeInterval = null;
-            }
-          }, 25);
-        };
-
-        if (!isMobile) {
-          tile.addEventListener('mouseenter', enableSound);
-          tile.addEventListener('mouseleave', disableSound);
-        }
-        
-        content.onerror = function() {
-          console.error(`Failed to load video: ${work.src}`);
-          tile.style.width = '300px';
-          tile.style.height = '300px';
-          this.style.display = 'none';
-          const errorDiv = document.createElement('div');
-          errorDiv.className = 'error-placeholder';
-          errorDiv.textContent = `Loading error:\n${work.src}`;
-          tile.appendChild(errorDiv);
-        };
+        clearInterval(fadeInterval);
+        fadeInterval = null;
       }
+    }, 25);
+  };
 
-      tile.appendChild(content);
-      
-       else {
-        // Mobile layout: vertical stacking
-        if (isMobile) {
-          tile.style.width = '200px';
-          tile.style.height = '200px';
-          tile.style.left = `${20 + (index % 2) * 210}px`;
-          tile.style.top = `${120 + Math.floor(index / 2) * 220}px`;
-        } else {
-          tile.style.width = '300px';
-          tile.style.height = '300px';
-          tile.style.left = `${nextX}px`;
-          tile.style.top = `${nextY}px`;
-          nextX += 225;
-          maxHeight = Math.max(maxHeight, 350);
-          if (nextX > window.innerWidth * 1.2) {
-            nextX = 40;
-            nextY += maxHeight + 30;
-            maxHeight = 0;
-          }
-        }
-      }
+  if (!isMobile) {
+    tile.addEventListener('mouseenter', enableSound);
+    tile.addEventListener('mouseleave', disableSound);
+  }
 
-      canvas.appendChild(tile);
+  content.onerror = function() {
+    console.error(`Failed to load video: ${work.src}`);
+    tile.style.width = '300px';
+    tile.style.height = '300px';
+    this.style.display = 'none';
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'error-placeholder';
+    errorDiv.textContent = `Loading error:\n${work.src}`;
+    tile.appendChild(errorDiv);
+  };
+}
+
+tile.appendChild(content);
+
+// Размещение плиток
+if (isMobile) {
+  tile.style.width = '200px';
+  tile.style.height = '200px';
+  tile.style.left = `${20 + (index % 2) * 210}px`;
+  tile.style.top = `${120 + Math.floor(index / 2) * 220}px`;
+} else {
+  tile.style.width = '300px';
+  tile.style.height = '300px';
+  tile.style.left = `${nextX}px`;
+  tile.style.top = `${nextY}px`;
+  nextX += 225;
+  maxHeight = Math.max(maxHeight, 350);
+  if (nextX > window.innerWidth * 1.2) {
+    nextX = 40;
+    nextY += maxHeight + 30;
+    maxHeight = 0;
+  }
+}
+
+canvas.appendChild(tile);
     });
 
     // Enhanced mobile drag & zoom functionality
