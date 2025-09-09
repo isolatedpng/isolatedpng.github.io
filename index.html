@@ -175,15 +175,16 @@
     }
 
     .canvas {
-      position: relative; /* Оставляем relative для правильного позиционирования дочерних элементов */
-      display: flex; /* Используем Flexbox */
-      flex-wrap: wrap; /* Разрешаем перенос плиток на следующую строку */
-      gap: 25px; /* Устанавливаем отступ между плитками */
+      /* Мы используем относительное позиционирование, чтобы плитки оставались внутри, когда вы их перетаскиваете */
+     position: relative;
+     display: flex; /* Используем Flexbox */
+     flex-wrap: wrap; /* Разрешаем перенос плиток на следующую строку */
+     gap: 25px; /* Устанавливаем отступ между плитками */
       padding: 50px; /* Отступы от края */
       justify-content: center; /* Выравниваем по центру */
       align-items: flex-start; /* Прижимаем к верху */
      transition: transform 0.1s ease;
-     }
+      }
 
     .tile {
       border-radius: 12px;
@@ -1024,11 +1025,11 @@
       
       const savedLayout = JSON.parse(localStorage.getItem('tileLayout'));
       if (savedLayout && savedLayout[index]) {
-     tile.style.width = `${savedLayout[index].width}px`;
-     tile.style.height = `${savedLayout[index].height}px`;
-     tile.style.left = `${savedLayout[index].left}px`;
-     tile.style.top = `${savedLayout[index].top}px`;
-     }
+        tile.style.width = `${savedLayout[index].width}px`;
+        tile.style.height = `${savedLayout[index].height}px`;
+        tile.style.left = `${savedLayout[index].left}px`;
+        tile.style.top = `${savedLayout[index].top}px`;
+      
 
       canvas.appendChild(tile);
     });
