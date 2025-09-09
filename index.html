@@ -532,7 +532,7 @@
       }
 
       .sound-wave span:nth-child(1) { height: 15px; }
-      .sound-wave span:nth-child(2) { height: 10px; }
+      .sound-wave span:nthchild(2) { height: 10px; }
       .sound-wave span:nth-child(3) { height: 5px; }
       .sound-wave span:nth-child(4) { height: 10px; }
       .sound-wave span:nth-child(5) { height: 15px; }
@@ -813,34 +813,33 @@
     });
 
     function applyLayout(layout) {
-if (!Array.isArray(layout)) return;
-const tiles = document.querySelectorAll('.tile');
-tiles.forEach((tile, i) => {
-const item = layout[i];
-if (!item) return;
-if (item.width !== undefined) tile.style.width = `${item.width}px`;
-if (item.height !== undefined) tile.style.height = `${item.height}px`;
-if (item.left !== undefined) tile.style.left = `${item.left}px`;
-if (item.top !== undefined) tile.style.top = `${item.top}px`;
-});
-try { localStorage.setItem('tileLayout', JSON.stringify(layout)); } catch (e) {}
-}
+      if (!Array.isArray(layout)) return;
+      const tiles = document.querySelectorAll('.tile');
+      tiles.forEach((tile, i) => {
+        const item = layout[i];
+        if (!item) return;
+        if (item.width !== undefined) tile.style.width = `${item.width}px`;
+        if (item.height !== undefined) tile.style.height = `${item.height}px`;
+        if (item.left !== undefined) tile.style.left = `${item.left}px`;
+        if (item.top !== undefined) tile.style.top = `${item.top}px`;
+      });
+      try { localStorage.setItem('tileLayout', JSON.stringify(layout)); } catch (e) {}
+    }
 
-
-(async function loadLayoutFromFile(){
-try {
-const res = await fetch('./tile-layout.json?t=' + Date.now());
-if (!res.ok) {
-console.warn('tile-layout.json fetch failed:', res.status);
-return;
-}
-const layout = await res.json();
-console.log('Loaded tile-layout.json:', layout);
-applyLayout(layout);
-} catch (err) {
-console.error('Error loading tile-layout.json:', err);
-}
-})();
+    (async function loadLayoutFromFile() {
+      try {
+        const res = await fetch('./tile-layout.json?t=' + Date.now());
+        if (!res.ok) {
+          console.warn('tile-layout.json fetch failed:', res.status);
+          return;
+        }
+        const layout = await res.json();
+        console.log('Loaded tile-layout.json:', layout);
+        applyLayout(layout);
+      } catch (err) {
+        console.error('Error loading tile-layout.json:', err);
+      }
+    })();
 
     // Сохранение расположения плиток по клавише S
     document.addEventListener('keydown', async (e) => {
@@ -884,7 +883,7 @@ console.error('Error loading tile-layout.json:', err);
     function createBubbles() {
       const container = document.getElementById('bubbleContainer');
       const bubbleCount = isMobile ? 15 : 30;
-      
+
       for (let i = 0; i < bubbleCount; i++) {
         const bubble = document.createElement('div');
         bubble.className = 'bubble';
@@ -970,18 +969,18 @@ console.error('Error loading tile-layout.json:', err);
       tile.style.borderColor = frameColors[Math.floor(Math.random() * frameColors.length)];
 
       let content;
-      
+
       if (work.type === 'image') {
         content = document.createElement('img');
         content.src = work.src;
-        
+
         content.onload = function() {
           const aspectRatio = this.naturalWidth / this.naturalHeight;
           const maxWidth = isMobile ? 250 : 400;
           const maxHeight = isMobile ? 400 : 600;
-          
+
           let width, height;
-          
+
           if (aspectRatio > 1) {
             width = Math.min(maxWidth, this.naturalWidth * (isMobile ? 0.4 : 0.5));
             height = width / aspectRatio;
@@ -989,14 +988,14 @@ console.error('Error loading tile-layout.json:', err);
             height = Math.min(maxHeight, this.naturalHeight * (isMobile ? 0.4 : 0.5));
             width = height * aspectRatio;
           }
-          
+
           width = Math.max(isMobile ? 150 : 200, width);
           height = Math.max(isMobile ? 150 : 200, height);
-          
+
           tile.style.width = `${width}px`;
           tile.style.height = `${height}px`;
         };
-        
+
         content.onerror = function() {
           console.error(`Failed to load image: ${work.src}`);
           tile.style.width = isMobile ? '200px' : '300px';
