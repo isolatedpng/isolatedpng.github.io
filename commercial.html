@@ -440,10 +440,10 @@
             let width, height;
 
             if (aspectRatio > 1) {
-              width = Math.min(maxWidth, this.videoWidth * 0.75);
+              width = Math.min(maxWidth, this.videoWidth * 0.95);
               height = width / aspectRatio;
             } else {
-              height = Math.min(maxHeight, this.videoHeight * 0.75);
+              height = Math.min(maxHeight, this.videoHeight * 0.95);
               width = height * aspectRatio;
             }
 
@@ -665,5 +665,6 @@
 
 </body>
 </html>
+
 
 
