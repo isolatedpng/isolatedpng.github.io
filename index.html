@@ -1086,12 +1086,20 @@
         activeTile.style.top = `${newY}px`;
       } else if (isDraggingCanvas && !isMobile) {
         const dx = e.clientX - dragStartX;
-        const dy = e.clientY - dragStartY;
-        canvasX += dx;
-        canvasY += dy;
-        dragStartX = e.clientX;
-        dragStartY = e.clientY;
-        updateCanvasTransform();
+const dy = e.clientY - dragStartY;
+
+// Ограничение панорамирования вверх
+const minY = -500; // Минимальное значение Y (можно изменить)
+canvasY = Math.max(minY, canvasY + dy);
+
+// Ограничение панорамирования вниз
+const maxY = 500; // Максимальное значение Y (можно изменить)
+canvasY = Math.min(maxY, canvasY);
+
+canvasX += dx;
+dragStartX = e.clientX;
+dragStartY = e.clientY;
+updateCanvasTransform();
       }
     });
 
