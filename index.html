@@ -1089,7 +1089,7 @@
 const dy = e.clientY - dragStartY;
 
 // Ограничение панорамирования вверх
-const minY = -500; // Минимальное значение Y (можно изменить)
+const minY = -600; // Минимальное значение Y (можно изменить)
 canvasY = Math.max(minY, canvasY + dy);
 
 // Ограничение панорамирования вниз
@@ -1101,7 +1101,7 @@ const minX = -800; // Минимальное значение X (можно из
 canvasX = Math.max(minX, canvasX + dx);
 
 // Ограничение панорамирования вправо
-const maxX = 800; // Максимальное значение X (можно изменить)
+const maxX = 400; // Максимальное значение X (можно изменить)
 canvasX = Math.min(maxX, canvasX);
 
 dragStartX = e.clientX;
