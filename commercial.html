@@ -89,51 +89,7 @@
       }, 1000);
     }
 
-    // Загрузка макета из localStorage или JSON-файла
-    async function loadLayout() {
-      try {
-        // Попытка загрузить макет из JSON-файла
-        const res = await fetch('./tile-layout-commercial.json?t=' + Date.now());
-        if (res.ok) {
-          const layout = await res.json();
-          console.log('Loaded tile-layout-commercial.json:', layout);
-          return layout;
-        }
-      } catch (err) {
-        console.error('Error loading tile-layout-commercial.json:', err);
-      }
-
-      // Если JSON-файл недоступен, попробуем загрузить из localStorage
-      try {
-        const savedLayout = localStorage.getItem('commercialLayout');
-        if (savedLayout) {
-          const layout = JSON.parse(savedLayout);
-          console.log('Loaded commercialLayout from localStorage:', layout);
-          return layout;
-        }
-      } catch (e) {
-        console.error('Error loading commercialLayout from localStorage:', e);
-      }
-
-      // Если ничего не найдено, возвращаем null
-      return null;
-    }
-
-    // Применение макета
-    function applyLayout(layout) {
-      if (!Array.isArray(layout)) return;
-      const tiles = document.querySelectorAll('.tile');
-      tiles.forEach((tile, i) => {
-        const item = layout[i];
-        if (!item) return;
-        if (item.width !== undefined) tile.style.width = `${item.width}px`;
-        if (item.height !== undefined) tile.style.height = `${item.height}px`;
-        if (item.left !== undefined) tile.style.left = `${item.left}px`;
-        if (item.top !== undefined) tile.style.top = `${item.top}px`;
-      });
-    }
-
-    // Сохранение макета в localStorage
+    // Сохранение по клавише S
     document.addEventListener('keydown', (e) => {
       if (isEditMode && (e.key === 's' || e.key === 'S')) {
         e.preventDefault();
@@ -147,156 +103,151 @@
             height: parseFloat(tile.style.height)
           });
         });
-        localStorage.setItem('commercialLayout', JSON.stringify(layout));
+        localStorage.setItem('commercialLayout', JSON.stringify(layout)); // Уникальный ключ для commercial.html
         alert('✅ Layout saved!');
       }
     });
 
-    // Инициализация
-    (async () => {
-      const layout = await loadLayout(); // Загружаем макет
-      works.forEach((work, index) => {
-        const tile = document.createElement('div');
-        tile.className = 'tile';
-        tile.style.borderColor = frameColors[Math.floor(Math.random() * frameColors.length)];
+    // Загрузка макета из localStorage
+    const savedLayout = JSON.parse(localStorage.getItem('commercialLayout')); // Загружаем данные для commercial.html
 
-        let content;
+    works.forEach((work, index) => {
+      const tile = document.createElement('div');
+      tile.className = 'tile';
+      tile.style.borderColor = frameColors[Math.floor(Math.random() * frameColors.length)];
 
-        if (work.type === 'image') {
-          content = document.createElement('img');
-          content.src = work.src;
+      let content;
 
-          content.onload = function () {
-            const aspectRatio = this.naturalWidth / this.naturalHeight;
-            const maxWidth = 400;
-            const maxHeight = 600;
+      if (work.type === 'image') {
+        content = document.createElement('img');
+        content.src = work.src;
 
-            let width, height;
+        content.onload = function () {
+          const aspectRatio = this.naturalWidth / this.naturalHeight;
+          const maxWidth = 400;
+          const maxHeight = 600;
 
-            if (aspectRatio > 1) {
-              width = Math.min(maxWidth, this.naturalWidth * 0.5);
-              height = width / aspectRatio;
-            } else {
-              height = Math.min(maxHeight, this.naturalHeight * 0.5);
-              width = height * aspectRatio;
-            }
+          let width, height;
 
-            width = Math.max(200, width);
-            height = Math.max(200, height);
+          if (aspectRatio > 1) {
+            width = Math.min(maxWidth, this.naturalWidth * 0.5);
+            height = width / aspectRatio;
+          } else {
+            height = Math.min(maxHeight, this.naturalHeight * 0.5);
+            width = height * aspectRatio;
+          }
 
-            tile.style.width = `${width}px`;
-            tile.style.height = `${height}px`;
-          };
+          width = Math.max(200, width);
+          height = Math.max(200, height);
 
-          content.onerror = function () {
-            console.error(`Failed to load image: ${work.src}`);
-            tile.style.width = '300px';
-            tile.style.height = '300px';
-            this.style.display = 'none';
-            const errorDiv = document.createElement('div');
-            errorDiv.className = 'error-placeholder';
-            errorDiv.textContent = `Loading error:\n${work.src}`;
-            tile.appendChild(errorDiv);
-          };
-        } else if (work.type === 'video') {
-          content = document.createElement('video');
-          content.src = work.src;
-          content.controls = false;
-          content.loop = true;
-          content.muted = false;
+          tile.style.width = `${width}px`;
+          tile.style.height = `${height}px`;
+        };
 
-          const soundIndicator = document.createElement('div');
-          soundIndicator.className = 'sound-indicator';
-          soundIndicator.innerHTML = '🔊';
-          soundIndicator.style.position = 'absolute';
-          soundIndicator.style.top = '8px';
-          soundIndicator.style.right = '8px';
-          soundIndicator.style.width = '20px';
-          soundIndicator.style.height = '20px';
-          soundIndicator.style.background = 'rgba(255, 107, 107, 0.8)';
-          soundIndicator.style.borderRadius = '50%';
-          soundIndicator.style.display = 'flex';
-          soundIndicator.style.alignItems = 'center';
-          soundIndicator.style.justifyContent = 'center';
-          soundIndicator.style.color = 'white';
-          soundIndicator.style.fontSize = '12px';
-          soundIndicator.style.pointerEvents = 'none';
-          soundIndicator.style.zIndex = 10;
-
-          tile.appendChild(soundIndicator);
-
-          content.onloadedmetadata = function () {
-            const aspectRatio = this.videoWidth / this.videoHeight;
-            const maxWidth = 600;
-            const maxHeight = 900;
-
-            let width, height;
-
-            if (aspectRatio > 1) {
-              width = Math.min(maxWidth, this.videoWidth * 0.75);
-              height = width / aspectRatio;
-            } else {
-              height = Math.min(maxHeight, this.videoHeight * 0.75);
-              width = height * aspectRatio;
-            }
-
-            width = Math.max(300, width);
-            height = Math.max(300, height);
-
-            tile.style.width = `${width}px`;
-            tile.style.height = `${height}px`;
-          };
-
-          content.onerror = function () {
-            console.error(`Failed to load video: ${work.src}`);
-            tile.style.width = '300px';
-            tile.style.height = '300px';
-            this.style.display = 'none';
-            const errorDiv = document.createElement('div');
-            errorDiv.className = 'error-placeholder';
-            errorDiv.textContent = `Loading error:\n${work.src}`;
-            tile.appendChild(errorDiv);
-          };
-
-          tile.addEventListener('mouseenter', () => {
-            if (!content.muted) {
-              content.play().catch(e => console.log("Playback failed:", e));
-            }
-          });
-
-          tile.addEventListener('mouseleave', () => {
-            content.pause();
-          });
-        }
-
-        tile.appendChild(content);
-
-        if (layout && layout[index]) {
-          tile.style.width = `${layout[index].width}px`;
-          tile.style.height = `${layout[index].height}px`;
-          tile.style.left = `${layout[index].left}px`;
-          tile.style.top = `${layout[index].top}px`;
-        } else {
+        content.onerror = function () {
+          console.error(`Failed to load image: ${work.src}`);
           tile.style.width = '300px';
           tile.style.height = '300px';
-          tile.style.left = `${nextX}px`;
-          tile.style.top = `${nextY}px`;
-          nextX += 225;
-          maxHeight = Math.max(maxHeight, 350);
-          if (nextX > window.innerWidth * 1.2) {
-            nextX = 40;
-            nextY += maxHeight + 30;
-            maxHeight = 0;
+          this.style.display = 'none';
+          const errorDiv = document.createElement('div');
+          errorDiv.className = 'error-placeholder';
+          errorDiv.textContent = `Loading error:\n${work.src}`;
+          tile.appendChild(errorDiv);
+        };
+      } else if (work.type === 'video') {
+        content = document.createElement('video');
+        content.src = work.src;
+        content.controls = false;
+        content.loop = true;
+        content.muted = false;
+
+        const soundIndicator = document.createElement('div');
+        soundIndicator.className = 'sound-indicator';
+        soundIndicator.innerHTML = '🔊';
+        soundIndicator.style.position = 'absolute';
+        soundIndicator.style.top = '8px';
+        soundIndicator.style.right = '8px';
+        soundIndicator.style.width = '20px';
+        soundIndicator.style.height = '20px';
+        soundIndicator.style.background = 'rgba(255, 107, 107, 0.8)';
+        soundIndicator.style.borderRadius = '50%';
+        soundIndicator.style.display = 'flex';
+        soundIndicator.style.alignItems = 'center';
+        soundIndicator.style.justifyContent = 'center';
+        soundIndicator.style.color = 'white';
+        soundIndicator.style.fontSize = '12px';
+        soundIndicator.style.pointerEvents = 'none';
+        soundIndicator.style.zIndex = 10;
+
+        tile.appendChild(soundIndicator);
+
+        content.onloadedmetadata = function () {
+          const aspectRatio = this.videoWidth / this.videoHeight;
+          const maxWidth = 600;
+          const maxHeight = 900;
+
+          let width, height;
+
+          if (aspectRatio > 1) {
+            width = Math.min(maxWidth, this.videoWidth * 0.75);
+            height = width / aspectRatio;
+          } else {
+            height = Math.min(maxHeight, this.videoHeight * 0.75);
+            width = height * aspectRatio;
           }
-        }
 
-        canvas.appendChild(tile);
-      });
+          width = Math.max(300, width);
+          height = Math.max(300, height);
 
-      if (layout) {
-        applyLayout(layout); // Применяем макет
+          tile.style.width = `${width}px`;
+          tile.style.height = `${height}px`;
+        };
+
+        content.onerror = function () {
+          console.error(`Failed to load video: ${work.src}`);
+          tile.style.width = '300px';
+          tile.style.height = '300px';
+          this.style.display = 'none';
+          const errorDiv = document.createElement('div');
+          errorDiv.className = 'error-placeholder';
+          errorDiv.textContent = `Loading error:\n${work.src}`;
+          tile.appendChild(errorDiv);
+        };
+
+        tile.addEventListener('mouseenter', () => {
+          if (!content.muted) {
+            content.play().catch(e => console.log("Playback failed:", e));
+          }
+        });
+
+        tile.addEventListener('mouseleave', () => {
+          content.pause();
+        });
       }
-    })();
+
+      tile.appendChild(content);
+
+      if (savedLayout && savedLayout[index]) {
+        tile.style.width = `${savedLayout[index].width}px`;
+        tile.style.height = `${savedLayout[index].height}px`;
+        tile.style.left = `${savedLayout[index].left}px`;
+        tile.style.top = `${savedLayout[index].top}px`;
+      } else {
+        tile.style.width = '300px';
+        tile.style.height = '300px';
+        tile.style.left = `${nextX}px`;
+        tile.style.top = `${nextY}px`;
+        nextX += 225;
+        maxHeight = Math.max(maxHeight, 350);
+        if (nextX > window.innerWidth * 1.2) {
+          nextX = 40;
+          nextY += maxHeight + 30;
+          maxHeight = 0;
+        }
+      }
+
+      canvas.appendChild(tile);
+    });
 
     // Drag & Zoom — без изменений
     let activeTile = null;
