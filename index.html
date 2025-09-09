@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, maximum-scale=3.0">
   <title>selfitisolated</title>
   <!-- Подключаем футуристический шрифт Orbitron -->
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
@@ -175,16 +174,12 @@
     }
 
     .canvas {
-      /* Мы используем относительное позиционирование, чтобы плитки оставались внутри, когда вы их перетаскиваете */
-     position: relative;
-     display: flex; /* Используем Flexbox */
-     flex-wrap: wrap; /* Разрешаем перенос плиток на следующую строку */
-     gap: 25px; /* Устанавливаем отступ между плитками */
-      padding: 50px; /* Отступы от края */
-      justify-content: center; /* Выравниваем по центру */
-      align-items: flex-start; /* Прижимаем к верху */
-     transition: transform 0.1s ease;
-      }
+      position: absolute;
+      top: 0;
+      left: 0;
+      transform-origin: top left;
+      transition: transform 0.1s ease;
+    }
 
     .tile {
       border-radius: 12px;
@@ -400,228 +395,12 @@
       0% { opacity: 1; }
       100% { opacity: 0; }
     }
-
-    /* Mobile Responsive Styles */
-    @media screen and (max-width: 768px) {
-      /* Adjust background pattern for mobile */
-      body {
-        background-size: 15px 15px;
-      }
-
-      /* Mobile Menu Button */
-      .menu-button {
-        width: 60px;
-        height: 60px;
-        top: 15px;
-        left: 15px;
-      }
-
-      .sound-wave {
-        width: 30px;
-        height: 24px;
-        gap: 3px;
-      }
-
-      .sound-wave span {
-        width: 3px;
-        height: 12px;
-      }
-
-      .sound-wave span:nth-child(1) { height: 18px; }
-      .sound-wave span:nth-child(2) { height: 12px; }
-      .sound-wave span:nth-child(3) { height: 6px; }
-      .sound-wave span:nth-child(4) { height: 12px; }
-      .sound-wave span:nth-child(5) { height: 18px; }
-
-      /* Mobile Dropdown Menu */
-      .dropdown-menu {
-        top: 85px;
-        left: 15px;
-        width: calc(100vw - 60px);
-        max-width: 300px;
-        padding: 15px;
-      }
-
-      .dropdown-menu-header .sound-wave {
-        width: 30px;
-        height: 24px;
-      }
-
-      .dropdown-menu a {
-        font-size: 18px;
-        padding: 8px 0;
-      }
-
-      .dropdown-menu li {
-        margin-bottom: 12px;
-      }
-
-      /* Mobile Welcome Screen */
-      .enter-text {
-        font-size: 24px;
-        letter-spacing: 4px;
-        text-align: center;
-        padding: 0 20px;
-      }
-
-      .glyph {
-        font-size: 18px;
-      }
-
-      /* Mobile Canvas and Tiles */
-      .workspace {
-        touch-action: pan-x pan-y pinch-zoom;
-      }
-
-      .canvas {
-        width: 100%;
-        min-width: 100vw;
-      }
-
-      /* Mobile Tile Adjustments */
-      .tile {
-        min-width: 150px !important;
-        min-height: 150px !important;
-        border-width: 2px;
-      }
-
-      .sound-indicator {
-        width: 24px;
-        height: 24px;
-        font-size: 14px;
-        top: 5px;
-        right: 5px;
-      }
-
-      .error-placeholder {
-        font-size: 12px;
-        padding: 10px;
-      }
-
-      /* Touch-friendly interactions */
-      .tile {
-        cursor: pointer;
-      }
-
-      .tile:active {
-        transform: scale(0.95);
-      }
-
-      /* Mobile-specific tile sizing */
-      .tile img,
-      .tile video {
-        object-fit: cover;
-      }
-    }
-
-    @media screen and (max-width: 480px) {
-      /* Extra small mobile devices */
-      .menu-button {
-        width: 50px;
-        height: 50px;
-        top: 10px;
-        left: 10px;
-      }
-
-      .sound-wave {
-        width: 25px;
-        height: 20px;
-        gap: 2px;
-      }
-
-      .sound-wave span {
-        width: 2px;
-        height: 10px;
-      }
-
-      .sound-wave span:nth-child(1) { height: 15px; }
-      .sound-wave span:nth-child(2) { height: 10px; }
-      .sound-wave span:nth-child(3) { height: 5px; }
-      .sound-wave span:nth-child(4) { height: 10px; }
-      .sound-wave span:nth-child(5) { height: 15px; }
-
-      .dropdown-menu {
-        top: 70px;
-        left: 10px;
-        width: calc(100vw - 40px);
-        padding: 12px;
-      }
-
-      .enter-text {
-        font-size: 20px;
-        letter-spacing: 2px;
-        padding: 0 15px;
-      }
-
-      .glyph {
-        font-size: 16px;
-      }
-
-      .tile {
-        min-width: 120px !important;
-        min-height: 120px !important;
-      }
-
-      .sound-indicator {
-        width: 20px;
-        height: 20px;
-        font-size: 12px;
-      }
-    }
-
-    /* Tablet landscape orientation */
-    @media screen and (min-width: 769px) and (max-width: 1024px) and (orientation: landscape) {
-      .dropdown-menu {
-        width: 250px;
-      }
-
-      .enter-text {
-        font-size: 36px;
-        letter-spacing: 6px;
-      }
-    }
-
-    /* Handle touch events better */
-    @media (hover: none) and (pointer: coarse) {
-      .menu-button:hover + .dropdown-menu,
-      .dropdown-menu:hover {
-        opacity: 0;
-        visibility: hidden;
-        transform: translateY(-10px);
-      }
-
-      .menu-button.active + .dropdown-menu,
-      .dropdown-menu.active {
-        opacity: 1;
-        visibility: visible;
-        transform: translateY(0);
-      }
-
-      .tile:hover {
-        box-shadow: none;
-      }
-
-      .dropdown-menu a:hover {
-        color: #ffffff;
-        transform: none;
-      }
-
-      .dropdown-menu a:hover::after {
-        width: 0;
-      }
-
-      .enter-text:hover {
-        transform: none;
-        filter: contrast(1.3);
-        text-shadow: 0 0 20px rgba(255, 255, 255, 0.3), 0 0 40px rgba(0, 0, 0, 0.5);
-      }
-    }
   </style>
 </head>
 <body>
 
   <!-- Menu Button -->
-  <div class="menu-button" id="menuButton">
+  <div class="menu-button">
     <div class="sound-wave">
       <span></span>
       <span></span>
@@ -645,7 +424,7 @@
     <ul>
       <li><a href="index.html">Isolated Page</a></li>
       <li><a href="commercial.html">Commercial</a></li>
-      <li><a href="workflows.html">Soon/.</a></li>
+      <li><a href="workflows.html">Workflows</a></li>
       <li><a href="socials.html">Socials, contact</a></li>
       <li><a href="about.html">About</a></li>
     </ul>
@@ -699,28 +478,6 @@
     let nextX = 40;
     let nextY = 100;
     let maxHeight = 0;
-    let isMobile = window.innerWidth <= 768;
-
-    // Mobile menu toggle functionality
-    const menuButton = document.getElementById('menuButton');
-    const menu = document.getElementById('menu');
-
-    menuButton.addEventListener('click', (e) => {
-      e.stopPropagation();
-      menuButton.classList.toggle('active');
-      menu.classList.toggle('active');
-    });
-
-    // Close menu when clicking close button
-    document.querySelector('.close-btn').addEventListener('click', () => {
-      menuButton.classList.remove('active');
-      menu.classList.remove('active');
-    });
-
-    // Update mobile detection on resize
-    window.addEventListener('resize', () => {
-      isMobile = window.innerWidth <= 768;
-    });
 
     // ← Спрятанная проверка — выглядит как кастомный параметр
     const urlParams = new URLSearchParams(window.location.search);
@@ -759,9 +516,8 @@
     function createGlyphs() {
       const container = document.getElementById('glyphContainer');
       const glyphs = '日月火水木金土山川風雲電光雷雨星宇宙神魔龍鳳亜乙丙丁戊己庚辛壬癸子丑寅卯辰巳午未申酉戌亥АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{}|;:,.<>?';
-      const glyphCount = isMobile ? 100 : 200;
 
-      for (let i = 0; i < glyphCount; i++) {
+      for (let i = 0; i < 200; i++) {
         const glyph = document.createElement('div');
         glyph.className = 'glyph';
         glyph.textContent = glyphs.charAt(Math.floor(Math.random() * glyphs.length));
@@ -777,9 +533,7 @@
     // Генератор пузырьков
     function createBubbles() {
       const container = document.getElementById('bubbleContainer');
-      const bubbleCount = isMobile ? 15 : 30;
-      
-      for (let i = 0; i < bubbleCount; i++) {
+      for (let i = 0; i < 30; i++) {
         const bubble = document.createElement('div');
         bubble.className = 'bubble';
         const size = Math.random() * 60 + 20;
@@ -798,8 +552,7 @@
       const textElement = document.querySelector('.enter-text');
 
       // Создаём трещины
-      const crackCount = isMobile ? 10 : 20;
-      for (let i = 0; i < crackCount; i++) {
+      for (let i = 0; i < 20; i++) {
         const crack = document.createElement('div');
         crack.className = 'crack-line';
         crack.style.top = (Math.random() * 100) + '%';
@@ -809,8 +562,7 @@
       }
 
       // Создаём "дымовые частицы"
-      const particleCount = isMobile ? 125 : 250;
-      for (let i = 0; i < particleCount; i++) {
+      for (let i = 0; i < 250; i++) {
         setTimeout(() => {
           const particle = document.createElement('div');
           particle.className = 'smoke-particle';
@@ -821,7 +573,7 @@
           particle.style.top = `${Math.random() * 100}%`;
           particle.style.animation = `smokeFloat ${Math.random() * 3 + 2}s ease-out forwards`;
           overlay.appendChild(particle);
-        }, i * (isMobile ? 12 : 8));
+        }, i * 8);
       }
 
       // Плавное исчезновение оверлея
@@ -871,21 +623,21 @@
         
         content.onload = function() {
           const aspectRatio = this.naturalWidth / this.naturalHeight;
-          const maxWidth = isMobile ? 250 : 400;
-          const maxHeight = isMobile ? 400 : 600;
+          const maxWidth = 400;
+          const maxHeight = 600;
           
           let width, height;
           
           if (aspectRatio > 1) {
-            width = Math.min(maxWidth, this.naturalWidth * (isMobile ? 0.4 : 0.5));
+            width = Math.min(maxWidth, this.naturalWidth * 0.5);
             height = width / aspectRatio;
           } else {
-            height = Math.min(maxHeight, this.naturalHeight * (isMobile ? 0.4 : 0.5));
+            height = Math.min(maxHeight, this.naturalHeight * 0.5);
             width = height * aspectRatio;
           }
           
-          width = Math.max(isMobile ? 150 : 200, width);
-          height = Math.max(isMobile ? 150 : 200, height);
+          width = Math.max(200, width);
+          height = Math.max(200, height);
           
           tile.style.width = `${width}px`;
           tile.style.height = `${height}px`;
@@ -893,8 +645,8 @@
         
         content.onerror = function() {
           console.error(`Failed to load image: ${work.src}`);
-          tile.style.width = isMobile ? '200px' : '300px';
-          tile.style.height = isMobile ? '200px' : '300px';
+          tile.style.width = '300px';
+          tile.style.height = '300px';
           this.style.display = 'none';
           const errorDiv = document.createElement('div');
           errorDiv.className = 'error-placeholder';
@@ -910,25 +662,13 @@
         content.loop = true;
         content.playsInline = true;
 
-        // Mobile touch events for video
-        if (isMobile) {
-          tile.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            content.play().catch(e => console.log("Playback failed:", e));
-          });
+        tile.addEventListener('mouseenter', () => {
+          content.play().catch(e => console.log("Playback failed:", e));
+        });
 
-          tile.addEventListener('touchend', () => {
-            setTimeout(() => content.pause(), 100);
-          });
-        } else {
-          tile.addEventListener('mouseenter', () => {
-            content.play().catch(e => console.log("Playback failed:", e));
-          });
-
-          tile.addEventListener('mouseleave', () => {
-            content.pause();
-          });
-        }
+        tile.addEventListener('mouseleave', () => {
+          content.pause();
+        });
         
         const soundIndicator = document.createElement('div');
         soundIndicator.className = 'sound-indicator';
@@ -937,21 +677,21 @@
         
         content.onloadedmetadata = function() {
           const aspectRatio = this.videoWidth / this.videoHeight;
-          const maxWidth = isMobile ? 250 : 400;
-          const maxHeight = isMobile ? 400 : 600;
+          const maxWidth = 400;
+          const maxHeight = 600;
           
           let width, height;
           
           if (aspectRatio > 1) {
-            width = Math.min(maxWidth, this.videoWidth * (isMobile ? 0.25 : 0.3));
+            width = Math.min(maxWidth, this.videoWidth * 0.3);
             height = width / aspectRatio;
           } else {
-            height = Math.min(maxHeight, this.videoHeight * (isMobile ? 0.25 : 0.3));
+            height = Math.min(maxHeight, this.videoHeight * 0.3);
             width = height * aspectRatio;
           }
           
-          width = Math.max(isMobile ? 150 : 200, width);
-          height = Math.max(isMobile ? 150 : 200, height);
+          width = Math.max(200, width);
+          height = Math.max(200, height);
           
           tile.style.width = `${width}px`;
           tile.style.height = `${height}px`;
@@ -959,8 +699,8 @@
         
         let fadeInterval = null;
         
-        const enableSound = () => {
-          if (!audioUnlocked || isMobile) return;
+        tile.addEventListener('mouseenter', async () => {
+          if (!audioUnlocked) return;
           
           if (fadeInterval) clearInterval(fadeInterval);
           
@@ -983,9 +723,9 @@
           } catch (error) {
             console.error('Error enabling sound:', error);
           }
-        };
-
-        const disableSound = () => {
+        });
+        
+        tile.addEventListener('mouseleave', () => {
           if (fadeInterval) clearInterval(fadeInterval);
           
           tile.classList.remove('sound-on');
@@ -1002,12 +742,7 @@
               fadeInterval = null;
             }
           }, 25);
-        };
-
-        if (!isMobile) {
-          tile.addEventListener('mouseenter', enableSound);
-          tile.addEventListener('mouseleave', disableSound);
-        }
+        });
         
         content.onerror = function() {
           console.error(`Failed to load video: ${work.src}`);
@@ -1024,29 +759,26 @@
       tile.appendChild(content);
       
       const savedLayout = JSON.parse(localStorage.getItem('tileLayout'));
-      if (savedLayout && savedLayout[index]) {
-        tile.style.width = `${savedLayout[index].width}px`;
-        tile.style.height = `${savedLayout[index].height}px`;
-        tile.style.left = `${savedLayout[index].left}px`;
-        tile.style.top = `${savedLayout[index].top}px`;
-      
+     if (savedLayout && savedLayout[index]) {
+     tile.style.width = `${savedLayout[index].width}px`;
+     tile.style.height = `${savedLayout[index].height}px`;
+     tile.style.left = `${savedLayout[index].left}px`;
+     tile.style.top = `${savedLayout[index].top}px`;
+     }
 
-      canvas.appendChild(tile);
-    });
+     canvas.appendChild(tile);
 
-    // Enhanced mobile drag & zoom functionality
+    // Drag & Zoom — без изменений
     let activeTile = null;
     let offsetX = 0;
     let offsetY = 0;
     let isDraggingCanvas = false;
     let dragStartX = 0;
     let dragStartY = 0;
-    let lastTouchTime = 0;
 
-    // Mouse events (desktop)
     document.addEventListener('mousedown', e => {
       const tile = e.target.closest('.tile');
-      if (tile && !isMobile) {
+      if (tile) {
         activeTile = tile;
         const rect = tile.getBoundingClientRect();
         offsetX = e.clientX - rect.left;
@@ -1054,7 +786,7 @@
         tile.classList.add('dragging');
         tile.style.zIndex = 1001;
         e.preventDefault();
-      } else if (!isMobile) {
+      } else {
         isDraggingCanvas = true;
         dragStartX = e.clientX;
         dragStartY = e.clientY;
@@ -1062,131 +794,29 @@
     });
 
     document.addEventListener('mousemove', e => {
-      if (activeTile && !isMobile) {
+      if (activeTile) {
         const canvasRect = canvas.getBoundingClientRect();
         const newX = (e.clientX - offsetX - canvasRect.left) / canvasScale;
         const newY = (e.clientY - offsetY - canvasRect.top) / canvasScale;
         activeTile.style.left = `${newX}px`;
         activeTile.style.top = `${newY}px`;
-      } else if (isDraggingCanvas && !isMobile) {
+      } else if (isDraggingCanvas) {
         const dx = e.clientX - dragStartX;
-const dy = e.clientY - dragStartY;
-
-// Ограничение панорамирования вверх
-const minY = -500; // Минимальное значение Y (можно изменить)
-canvasY = Math.max(minY, canvasY + dy);
-
-// Ограничение панорамирования вниз
-const maxY = 700; // Максимальное значение Y (можно изменить)
-canvasY = Math.min(maxY, canvasY);
-
-// Ограничение панорамирования влево
-const minX = -1100; // Минимальное значение X (можно изменить)
-canvasX = Math.max(minX, canvasX + dx);
-
-// Ограничение панорамирования вправо
-const maxX = 800; // Максимальное значение X (можно изменить)
-canvasX = Math.min(maxX, canvasX);
-
-dragStartX = e.clientX;
-dragStartY = e.clientY;
-updateCanvasTransform();
+        const dy = e.clientY - dragStartY;
+        canvasX += dx;
+        canvasY += dy;
+        dragStartX = e.clientX;
+        dragStartY = e.clientY;
+        updateCanvasTransform();
       }
     });
 
     document.addEventListener('mouseup', () => {
-      if (activeTile && !isMobile) {
-        activeTile.classList.remove('dragging');
-        activeTile.style.zIndex = 1000;
-        activeTile = null;
-      }
-      isDraggingCanvas = false;
-    });
-
-    // Touch events (mobile)
-    let touchStartTime = 0;
-    let isLongPress = false;
-    let longPressTimer = null;
-
-    document.addEventListener('touchstart', e => {
-      touchStartTime = Date.now();
-      isLongPress = false;
-      
-      if (e.touches.length === 1) {
-        const touch = e.touches[0];
-        const tile = touch.target.closest('.tile');
-        
-        if (tile && isEditMode) {
-          longPressTimer = setTimeout(() => {
-            isLongPress = true;
-            activeTile = tile;
-            const rect = tile.getBoundingClientRect();
-            offsetX = touch.clientX - rect.left;
-            offsetY = touch.clientY - rect.top;
-            tile.classList.add('dragging');
-            tile.style.zIndex = 1001;
-            navigator.vibrate && navigator.vibrate(50); // Haptic feedback
-          }, 500);
-        } else if (!tile) {
-          isDraggingCanvas = true;
-          dragStartX = touch.clientX;
-          dragStartY = touch.clientY;
-        }
-      } else if (e.touches.length === 2) {
-        // Pinch to zoom preparation
-        isDraggingCanvas = false;
-        if (longPressTimer) {
-          clearTimeout(longPressTimer);
-          longPressTimer = null;
-        }
-      }
-    }, { passive: false });
-
-    document.addEventListener('touchmove', e => {
-      if (longPressTimer) {
-        clearTimeout(longPressTimer);
-        longPressTimer = null;
-      }
-
-      if (e.touches.length === 1) {
-        const touch = e.touches[0];
-        
-        if (activeTile && isLongPress) {
-          e.preventDefault();
-          const canvasRect = canvas.getBoundingClientRect();
-          const newX = (touch.clientX - offsetX - canvasRect.left) / canvasScale;
-          const newY = (touch.clientY - offsetY - canvasRect.top) / canvasScale;
-          activeTile.style.left = `${newX}px`;
-          activeTile.style.top = `${newY}px`;
-        } else if (isDraggingCanvas) {
-          e.preventDefault();
-          const dx = touch.clientX - dragStartX;
-          const dy = touch.clientY - dragStartY;
-          canvasX += dx;
-          canvasY += dy;
-          dragStartX = touch.clientX;
-          dragStartY = touch.clientY;
-          updateCanvasTransform();
-        }
-      }
-    }, { passive: false });
-
-    document.addEventListener('touchend', e => {
-      if (longPressTimer) {
-        clearTimeout(longPressTimer);
-        longPressTimer = null;
-      }
-
-      const touchEndTime = Date.now();
-      const touchDuration = touchEndTime - touchStartTime;
-
       if (activeTile) {
         activeTile.classList.remove('dragging');
         activeTile.style.zIndex = 1000;
         activeTile = null;
       }
-      
-      isLongPress = false;
       isDraggingCanvas = false;
     });
 
@@ -1198,10 +828,7 @@ updateCanvasTransform();
       canvas.style.transform = `translate(${canvasX}px, ${canvasY}px) scale(${canvasScale})`;
     }
 
-    // Desktop wheel zoom
     document.addEventListener('wheel', e => {
-      if (isMobile) return;
-      
       e.preventDefault();
       const scaleAmount = e.deltaY > 0 ? 0.975 : 1.05;
       const rect = canvas.getBoundingClientRect();
@@ -1219,34 +846,6 @@ updateCanvasTransform();
       updateCanvasTransform();
     }, { passive: false });
 
-    // Mobile pinch zoom
-    let initialDistance = 0;
-    let initialScale = 1;
-
-    function getDistance(touches) {
-      const dx = touches[0].clientX - touches[1].clientX;
-      const dy = touches[0].clientY - touches[1].clientY;
-      return Math.sqrt(dx * dx + dy * dy);
-    }
-
-    document.addEventListener('touchstart', e => {
-      if (e.touches.length === 2) {
-        initialDistance = getDistance(e.touches);
-        initialScale = canvasScale;
-      }
-    });
-
-    document.addEventListener('touchmove', e => {
-      if (e.touches.length === 2) {
-        e.preventDefault();
-        const currentDistance = getDistance(e.touches);
-        const scaleChange = currentDistance / initialDistance;
-        canvasScale = initialScale * scaleChange;
-        canvasScale = Math.max(0.3, Math.min(canvasScale, 4));
-        updateCanvasTransform();
-      }
-    }, { passive: false });
-
     updateCanvasTransform();
 
     // Close menu when clicking outside
@@ -1255,19 +854,8 @@ updateCanvasTransform();
       const menuButton = document.querySelector('.menu-button');
       if (!menu.contains(e.target) && !menuButton.contains(e.target)) {
         menu.classList.remove('active');
-        menuButton.classList.remove('active');
       }
     });
-
-    // Prevent zoom on double tap for iOS
-    let lastTouchEnd = 0;
-    document.addEventListener('touchend', function (event) {
-      const now = (new Date()).getTime();
-      if (now - lastTouchEnd <= 300) {
-        event.preventDefault();
-      }
-      lastTouchEnd = now;
-    }, false);
   </script>
 
 </body>
