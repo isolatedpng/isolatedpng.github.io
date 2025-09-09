@@ -175,12 +175,15 @@
     }
 
     .canvas {
-      position: absolute;
-      top: 0;
-      left: 0;
-      transform-origin: top left;
-      transition: transform 0.1s ease;
-    }
+  position: relative; /* Оставляем, чтобы плитки оставались внутри */
+  transform-origin: top left;
+  transition: transform 0.1s ease;
+  display: flex; /* Активируем Flexbox */
+  flex-wrap: wrap; /* Разрешаем элементам переноситься на новую строку */
+  gap: 25px; /* Задаём расстояние между плитками */
+  padding: 50px; /* Добавляем отступы */
+  justify-content: center; /* Выравниваем по центру */
+}
 
     .tile {
       border-radius: 12px;
@@ -1019,33 +1022,7 @@
 
       tile.appendChild(content);
       
-      const savedLayout = JSON.parse(localStorage.getItem('tileLayout'));
-      if (savedLayout && savedLayout[index]) {
-        tile.style.width = `${savedLayout[index].width}px`;
-        tile.style.height = `${savedLayout[index].height}px`;
-        tile.style.left = `${savedLayout[index].left}px`;
-        tile.style.top = `${savedLayout[index].top}px`;
-      } else {
-        // Mobile layout: vertical stacking
-        if (isMobile) {
-          tile.style.width = '200px';
-          tile.style.height = '200px';
-          tile.style.left = `${20 + (index % 2) * 210}px`;
-          tile.style.top = `${120 + Math.floor(index / 2) * 220}px`;
-        } else {
-          tile.style.width = '300px';
-          tile.style.height = '300px';
-          tile.style.left = `${nextX}px`;
-          tile.style.top = `${nextY}px`;
-          nextX += 225;
-          maxHeight = Math.max(maxHeight, 350);
-          if (nextX > window.innerWidth * 1.2) {
-            nextX = 40;
-            nextY += maxHeight + 30;
-            maxHeight = 0;
-          }
-        }
-      }
+
 
       canvas.appendChild(tile);
     });
