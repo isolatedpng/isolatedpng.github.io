@@ -215,42 +215,63 @@
       margin-bottom: 20px;
     }
 
-    /* === ДОБАВЛЕНО: Стили для текста и логотипа === */
-    .creator-credit {
-      margin-top: 40px;
-      font-size: 16px;
-      line-height: 1.6;
-      color: #aaa;
+    /* === НОВЫЕ СТИЛИ ДЛЯ БРЕНДА И ЛОГО === */
+    .brand {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 900;
+      font-size: 18px;
+      color: white;
+      text-shadow: 0 0 5px rgba(255, 255, 255, 0.8), 0 0 10px rgba(255, 255, 255, 0.6);
+      display: inline-block;
+      vertical-align: middle;
+    }
+
+    .brand-logo {
+      width: 24px;
+      height: auto;
+      margin-left: 4px;
+      margin-right: 2px;
+      opacity: 0.9;
+      transition: all 0.3s ease;
+      animation: glow-pulse 2s infinite alternate;
+      filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.7));
+    }
+
+    @keyframes glow-pulse {
+      0% {
+        transform: scale(1);
+        opacity: 0.9;
+        filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.7));
+      }
+      100% {
+        transform: scale(1.05);
+        opacity: 1;
+        filter: drop-shadow(0 0 12px rgba(255, 255, 255, 0.9));
+      }
     }
 
     .dev-credit {
-      margin-top: 20px;
-      font-size: 16px;
-      color: #aaa;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
+      margin-top: 40px;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 20px;
+      font-weight: 900;
+      color: white;
+      text-align: center;
+      text-shadow: 0 0 8px rgba(255, 255, 255, 0.9), 0 0 16px rgba(255, 255, 255, 0.7);
+      animation: fadeInUp 1s ease-out;
     }
 
-    .dev-logo {
-      width: 40px; /* Размер под текст — гармонично */
-      height: auto;
-      opacity: 0.8;
-      transition: all 0.4s ease;
-      animation: breathe 3s ease-in-out infinite;
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
-
-    .dev-logo:hover {
-      transform: scale(1.1) rotate(5deg);
-      opacity: 1;
-    }
-
-    @keyframes breathe {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.03); }
-    }
-    /* === КОНЕЦ ДОБАВЛЕНИЯ === */
+    /* === КОНЕЦ НОВЫХ СТИЛЕЙ === */
   </style>
 </head>
 <body>
@@ -306,16 +327,15 @@
       From image generation to cinematic video workflows and automated design pipelines, I continuously integrate emerging tools into my creative process—often on the cutting edge of release. AI research and workflow innovation are at the heart of what I do.
     </p>
 
-    <!-- === ДОБАВЛЕНО: Тексты и логотип === -->
+    <!-- === НОВЫЕ БЛОКИ === -->
     <div class="creator-credit">
-      All artworks presented on this website were created by isolated.png. Most of these pieces were generated using cutting-edge artificial intelligence tools, blending algorithmic precision with creative vision.
+      All artworks presented on this website were created by <span class="brand">isolated</span><img src="/thumbs/isolatedlogotransparentw2048.png" alt="logo" class="brand-logo">. Most of these pieces were generated using cutting-edge artificial intelligence tools, blending algorithmic precision with creative vision.
     </div>
 
     <div class="dev-credit">
-      Web design and development by isolated.png
-      <img src="/thumbs/isolatedlogotransparentw2048.png" alt="isolated.png logo" class="dev-logo">
+      Web design and development by <span class="brand">isolated</span><img src="/thumbs/isolatedlogotransparentw2048.png" alt="logo" class="brand-logo">
     </div>
-    <!-- === КОНЕЦ ДОБАВЛЕНИЯ === -->
+    <!-- === КОНЕЦ НОВЫХ БЛОКОВ === -->
   </div>
 
 </body>
