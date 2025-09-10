@@ -650,8 +650,6 @@
     let nextY = 100;
     let maxHeight = 0;
     let isMobile = window.innerWidth <= 768;
-    let activeVideo = null; // ✅ Добавлено: отслеживаем текущее играющее видео
-
     // Mobile menu toggle functionality
     const menuButton = document.getElementById('menuButton');
     const menu = document.getElementById('menu');
@@ -986,34 +984,21 @@ ${work.src}`;
           tile.style.height = `${height}px`;
         };
 
-        // ✅ НОВАЯ ЛОГИКА ДЛЯ МОБИЛЬНЫХ — КАСАНИЕ = TOGGLE
+        // ✅ ЗАМЕНА: Новая логика для мобильных — tap to toggle, остановка при tap вне видео
         if (isMobile) {
           tile.addEventListener('touchstart', (e) => {
-            // ✅ Останавливаем предыдущее видео
-            if (activeVideo && activeVideo !== content) {
-              activeVideo.pause();
-              const prevTile = activeVideo.parentElement;
-              prevTile.classList.remove('sound-on');
-              const prevIndicator = prevTile.querySelector('.sound-indicator');
-              if (prevIndicator) prevIndicator.style.display = 'none';
-            }
-
-            // ✅ Переключаем текущее видео
             if (content.paused) {
               content.muted = false;
               content.play().catch(e => console.log("Playback failed:", e));
               tile.classList.add('sound-on');
               soundIndicator.style.display = 'flex';
-              activeVideo = content;
             } else {
               content.pause();
               tile.classList.remove('sound-on');
               soundIndicator.style.display = 'none';
-              activeVideo = null;
             }
           });
         } else {
-          // ✅ Для десктопа — оставляем старое поведение
           tile.addEventListener('mouseenter', () => {
             content.muted = false;
             content.play().catch(e => console.log("Playback failed:", e));
@@ -1063,16 +1048,24 @@ ${work.src}`;
       canvas.appendChild(tile);
     });
 
-    // ✅ Глобальный обработчик: остановка видео при tap вне его (только на мобильных)
+    // ✅ ДОБАВЛЕНО: Глобальный обработчик — остановка видео при tap вне его (только на мобильных)
     let touchStartX = 0;
     let touchStartY = 0;
     let touchStartTime = 0;
+    let activeVideo = null; // ✅ Добавлено только здесь — для отслеживания текущего видео
 
     document.addEventListener('touchstart', (e) => {
       if (!isMobile || e.touches.length !== 1) return;
       touchStartX = e.touches[0].clientX;
       touchStartY = e.touches[0].clientY;
       touchStartTime = Date.now();
+
+      // ✅ Определяем, какое видео сейчас играет
+      const targetTile = e.target.closest('.tile');
+      const targetVideo = targetTile ? targetTile.querySelector('video') : null;
+      if (targetVideo && !targetVideo.paused) {
+        activeVideo = targetVideo;
+      }
     }, { passive: true });
 
     document.addEventListener('touchmove', (e) => {
