@@ -524,48 +524,53 @@
       canvas.style.transform = `translate(${canvasX}px, ${canvasY}px) scale(${canvasScale})`;
     }
 
-    // Перетаскивание плитки
-    document.addEventListener('mousedown', e => {
-      const tile = e.target.closest('.tile');
-      if (tile) {
-        activeTile = tile;
-        const rect = tile.getBoundingClientRect();
-        const canvasRect = canvas.getBoundingClientRect();
+    // Перетаскивание плитки — ИСПРАВЛЕНО
+document.addEventListener('mousedown', e => {
+  const tile = e.target.closest('.tile');
+  if (tile) {
+    activeTile = tile;
+    const rect = tile.getBoundingClientRect();
+    const canvasRect = canvas.getBoundingClientRect();
 
-        const x = e.clientX - canvasRect.left;
-        const y = e.clientY - canvasRect.top;
+    // ✅ Учитываем масштаб холста — переводим координаты в систему холста
+    const xInCanvas = (e.clientX - canvasRect.left) / canvasScale;
+    const yInCanvas = (e.clientY - canvasRect.top) / canvasScale;
 
-        offsetX = x - rect.left;
-        offsetY = y - rect.top;
+    // ✅ Смещение тоже в координатах холста
+    offsetX = xInCanvas - (parseFloat(tile.style.left) || 0);
+    offsetY = yInCanvas - (parseFloat(tile.style.top) || 0);
 
-        tile.classList.add('dragging');
-        tile.style.zIndex = 1001;
-        e.preventDefault();
-      } else {
-        isDraggingCanvas = true;
-        dragStartX = e.clientX;
-        dragStartY = e.clientY;
-      }
-    });
+    tile.classList.add('dragging');
+    tile.style.zIndex = 1001;
+    e.preventDefault();
+  } else {
+    isDraggingCanvas = true;
+    dragStartX = e.clientX;
+    dragStartY = e.clientY;
+  }
+});
 
-    document.addEventListener('mousemove', e => {
-      if (activeTile) {
-        const canvasRect = canvas.getBoundingClientRect();
-        const x = e.clientX - canvasRect.left;
-        const y = e.clientY - canvasRect.top;
+document.addEventListener('mousemove', e => {
+  if (activeTile) {
+    const canvasRect = canvas.getBoundingClientRect();
 
-        activeTile.style.left = `${x - offsetX}px`;
-        activeTile.style.top = `${y - offsetY}px`;
-      } else if (isDraggingCanvas) {
-        const dx = e.clientX - dragStartX;
-        const dy = e.clientY - dragStartY;
-        canvasX += dx;
-        canvasY += dy;
-        dragStartX = e.clientX;
-        dragStartY = e.clientY;
-        updateCanvasTransform();
-      }
-    });
+    // ✅ Переводим текущую позицию мыши в координаты холста
+    const xInCanvas = (e.clientX - canvasRect.left) / canvasScale;
+    const yInCanvas = (e.clientY - canvasRect.top) / canvasScale;
+
+    // ✅ Устанавливаем позицию плитки в координатах холста
+    activeTile.style.left = `${xInCanvas - offsetX}px`;
+    activeTile.style.top = `${yInCanvas - offsetY}px`;
+  } else if (isDraggingCanvas) {
+    const dx = e.clientX - dragStartX;
+    const dy = e.clientY - dragStartY;
+    canvasX += dx;
+    canvasY += dy;
+    dragStartX = e.clientX;
+    dragStartY = e.clientY;
+    updateCanvasTransform();
+  }
+});
 
     document.addEventListener('mouseup', () => {
       if (activeTile) {
@@ -667,6 +672,7 @@
 
 </body>
 </html>
+
 
 
 
