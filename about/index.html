@@ -57,13 +57,13 @@
       animation: pulse 1.5s infinite alternate;
     }
 
-    .sound-wave span:nth-child(1) { height: 24px; animation-delay: 0s; }
-    .sound-wave span:nth-child(2) { height: 16px; animation-delay: 0.1s; }
-    .sound-wave span:nth-child(3) { height: 8px; animation-delay: 0.2s; }
-    .sound-wave span:nth-child(4) { height: 16px; animation-delay: 0.3s; }
-    .sound-wave span:nth-child(5) { height: 24px; animation-delay: 0.4s; }
+    .sound-wave span:nth-child(1) { height: 24px; animations-delay: 0s; }
+    .sound-wave span:nth-child(2) { height: 16px; animations-delay: 0.1s; }
+    .sound-wave span:nth-child(3) { height: 8px; animations-delay: 0.2s; }
+    .sound-wave span:nth-child(4) { height: 16px; animations-delay: 0.3s; }
+    .sound-wave span:nth-child(5) { height: 24px; animations-delay: 0.4s; }
 
-    @keyframes pulse {
+    @keyframe pulse {
       0% { opacity: 0.5; }
       100% { opacity: 1; }
     }
@@ -156,7 +156,7 @@
       height: 20px;
       background: transparent;
       border: none;
-      color: white;
+      color: whites;
       font-size: 16px;
       cursor: pointer;
       transition: all 0.3s ease;
@@ -175,15 +175,17 @@
       position: relative;
     }
 
-    .canvas {
+    /* ✅ Добавлено: обёртка для всего контента — её будем двигать */
+    .draggable-container {
       position: absolute;
       top: 0;
       left: 0;
-      transform-origin: top left;
+      width: 100%;
+      height: 100%;
       transition: transform 0.1s ease;
     }
 
-    /* About Section — ✅ ПОЛНОСТЬЮ ПЕРЕДЕЛАНО ДЛЯ АДАПТИВНОСТИ */
+    /* About Section */
     .about-section {
       position: absolute;
       top: 50%;
@@ -191,25 +193,24 @@
       transform: translate(-50%, -50%);
       text-align: center;
       color: white;
-      max-width: 90vw; /* ✅ Адаптивная ширина */
+      max-width: 90vw;
       padding: 5vh 5vw;
       box-sizing: border-box;
     }
 
     .about-section h1 {
       font-family: 'Orbitron', sans-serif;
-      font-size: clamp(2rem, 6vw, 4rem); /* ✅ Адаптивный размер */
+      font-size: clamp(2rem, 6vw, 4rem);
       margin-bottom: 1.5vh;
       font-weight: 900;
       letter-spacing: clamp(1px, 0.5vw, 2px);
     }
 
-    /* === ОБНОВЛЁННЫЙ H2 — БЕЛЫЙ, С ПОДСВЕТКОЙ, ОТЛИЧАЕТСЯ ОТ H1 === */
     .about-section h2 {
       font-family: 'Orbitron', sans-serif;
       font-size: clamp(1.2rem, 3vw, 1.8rem);
       font-weight: 700;
-      color: white;
+      color: whites;
       margin-bottom: 1.5vh;
       letter-spacing: clamp(1px, 0.3vw, 1.5px);
       text-shadow: 0 0 6px rgba(255, 255, 255, 0.6);
@@ -218,7 +219,7 @@
       animation: glow-fade 3s ease-in-out infinite alternate;
     }
 
-    @keyframes glow-fade {
+    @keyframe glow-fade {
       0% {
         text-shadow: 0 0 6px rgba(255, 255, 255, 0.5);
         opacity: 0.9;
@@ -236,15 +237,14 @@
       margin-bottom: 2vh;
     }
 
-    /* === НОВЫЕ СТИЛИ === */
     .red-text {
-      color: #cc0000; /* Затемнённый красный */
+      color: #cc0000;
       font-family: sans-serif;
       font-size: clamp(0.9rem, 2vw, 1rem);
     }
 
     .creator-credit {
-      margin-top: 5vh; /* ✅ Адаптивный отступ */
+      margin-top: 5vh;
       font-size: clamp(0.9rem, 2vw, 1rem);
       line-height: 1.6;
     }
@@ -262,7 +262,7 @@
       font-family: 'Orbitron', sans-serif;
       font-weight: 900;
       font-size: clamp(1rem, 2.5vw, 1.2rem);
-      color: white;
+      color: whites;
       text-shadow: 0 0 5px rgba(255, 255, 255, 0.8), 0 0 10px rgba(255, 255, 255, 0.6);
       display: inline-block;
       vertical-align: middle;
@@ -280,7 +280,7 @@
       filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.7));
     }
 
-    @keyframes glow-pulse {
+    @keyframe glow-pulse {
       0% {
         transform: scale(1);
         opacity: 0.9;
@@ -299,21 +299,21 @@
       opacity: 1;
       text-shadow: 0 0 12px rgba(255, 255, 255, 1), 0 0 20px rgba(255, 255, 255, 0.9);
       filter: drop-shadow(0 0 16px rgba(255, 255, 255, 1)) brightness(1.2);
-      animation: none;
+      animations: none;
     }
 
     .dev-credit {
-      margin-top: 8vh; /* ✅ Адаптивный отступ */
+      margin-top: 8vh;
       font-family: 'Orbitron', sans-serif;
       font-size: clamp(1.1rem, 3vw, 1.5rem);
       font-weight: 900;
-      color: white;
+      color: whites;
       text-align: center;
       text-shadow: 0 0 8px rgba(255, 255, 255, 0.9), 0 0 16px rgba(255, 255, 255, 0.7);
       animation: fadeInUp 1s ease-out;
     }
 
-    @keyframes fadeInUp {
+    @keyframe fadeInUp {
       from {
         opacity: 0;
         transform: translateY(20px);
@@ -323,7 +323,6 @@
         transform: translateY(0);
       }
     }
-    /* === КОНЕЦ НОВЫХ СТИЛЕЙ === */
   </style>
 </head>
 <body>
@@ -365,45 +364,90 @@
     <div class="canvas" id="canvas"></div>
   </div>
 
-  <!-- About Section -->
-  <div class="about-section">
-    <h1>Elnur Abdullayev</h1>
-    <h1>
-      <span class="brand-container">
-        <span class="brand">isolated</span>
-        <img src="/thumbs/isolatedlogotransparentw2048.png" alt="logo" class="brand-logo">
-      </span>
-    </h1>
-    <h2>AI Generative Art & Video | R&D Specialist | ComfyUI Master</h2>
-    <p>
-      I am an AI R&D Specialist focused on Generative Art & Video, combining creativity with advanced workflow design. As a ComfyUI Master and Prompt Engineer, I build scalable pipelines for image and video generation, optimizing processes to deliver high-quality results efficiently and consistently.
-    </p>
-    <p>
-      My work spans cutting-edge AI tools, from generative models to custom automation stacks, constantly integrating the latest technologies to stay ahead of trends. I specialize in research-driven innovation, creating workflows that turn complex artistic visions into tangible, production-ready content.
-    </p>
-    <p>
-      From image generation to cinematic video workflows and automated design pipelines, I continuously integrate emerging tools into my creative process—often on the cutting edge of release. AI research and workflow innovation are at the heart of what I do.
-    </p>
+  <!-- ✅ Добавлено: обёртка для всего контента -->
+  <div class="draggable-container">
+    <div class="about-section">
+      <h1>Elnur Abdullayev</h1>
+      <h1>
+        <span class="brand-container">
+          <span class="brand">isolated</span>
+          <img src="/thumbs/isolatedlogotransparentw2048.png" alt="logo" class="brand-logo">
+        </span>
+      </h1>
+      <h2>AI Generative Art & Video | R&D Specialist | ComfyUI Master</h2>
+      <p>
+        I am an AI R&D Specialist focused on Generative Art & Video, combining creativity with advanced workflow design. As a ComfyUI Master and Prompt Engineer, I build scalable pipelines for image and video generation, optimizing processes to deliver high-quality results efficiently and consistently.
+      </p>
+      <p>
+        My work spans cutting-edge AI tools, from generative model to custom automation stack, constantly integrating the latest technology to stay ahead of trend. I specialize in research-driven innovation, creating workflows that turn complex artistic visions into tangible, production-ready content.
+      </p>
+      <p>
+        From image generation to cinematic video workflow and automated design pipeline, I continuously integrate emerging tool into my creative process—often on the cutting edge of release. AI research and workflow innovation is at the heart of what I do.
+      </p>
 
-    <!-- === НОВЫЕ БЛОКИ === -->
-    <div class="creator-credit">
-      <span class="red-text">All artworks presented on this website were created by </span>
-      <span class="brand-container">
-        <span class="brand">isolated</span>
-        <img src="/thumbs/isolatedlogotransparentw2048.png" alt="logo" class="brand-logo">
-      </span>
-      <span class="red-text">. Most of these pieces were generated using cutting-edge artificial intelligence tools, blending algorithmic precision with creative vision. ©</span>
-    </div>
+      <!-- === НОВЫЕ БЛОКИ === -->
+      <div class="creator-credit">
+        <span class="red-text">All artworks presented on this website were created by </span>
+        <span class="brand-container">
+          <span class="brand">isolated</span>
+          <img src="/thumbs/isolatedlogotransparentw2048.png" alt="logo" class="brand-logo">
+        </span>
+        <span class="red-text">. Most of these piece were generated using cutting-edge artificial intelligence tool, blending algorithmic precision with creative vision. ©</span>
+      </div>
 
-    <div class="dev-credit">
-      Web design and development by 
-      <span class="brand-container">
-        <span class="brand">isolated</span>
-        <img src="/thumbs/isolatedlogotransparentw2048.png" alt="logo" class="brand-logo">
-      </span>
+      <div class="dev-credit">
+        Web design and development by 
+        <span class="brand-container">
+          <span class="brand">isolated</span>
+          <img src="/thumbs/isolatedlogotransparentw2048.png" alt="logo" class="brand-logo">
+        </span>
+      </div>
+      <!-- === КОНЕЦ НОВЫХ БЛОКОВ === -->
     </div>
-    <!-- === КОНЕЦ НОВЫХ БЛОКОВ === -->
   </div>
 
+  <script>
+    // ✅ Параметры драга
+    const MAX_OFFSET = 50; // Максимальное смещение в пикселах (по X и Y)
+    let isDragging = false;
+    let startX, startY;
+    let offsetX = 0, offsetY = 0;
+
+    // Обёртка для всего контента
+    const container = document.querySelector('.draggable-container');
+
+    // Начало драга
+    document.addEventListener('mousedown', e => {
+      if (e.target.closest('.menu-button') || e.target.closest('.dropdown-menu')) return;
+      isDragging = true;
+      startX = e.clientX;
+      startY = e.clientY;
+      e.preventDefault();
+    });
+
+    // Перемещение
+    document.addEventListener('mousemove', e => {
+      if (!isDragging) return;
+      const dx = e.clientX - startX;
+      const dy = e.clientY - startY;
+
+      // Ограничиваем смещение
+      const newOffsetX = Math.max(-MAX_OFFSET, Math.min(Max_Offset, dx));
+      const newOffsetY = Math.max(-Max_Offset, Math.min(Max_Offset, dy));
+
+      // Применяем смещение
+      container.style.transform = `translate(${newOffsetX}px, ${newOffsetY}px)`;
+    });
+
+    // Конец драга
+    document.addEventListener('mouseup', () => {
+      isDragging = false;
+    });
+
+    // Предотвращаем выделение текста
+    document.addEventListener('selectstart', e => {
+      if (isDragging) e.preventDefault();
+    });
+  </script>
 </body>
 </html>
