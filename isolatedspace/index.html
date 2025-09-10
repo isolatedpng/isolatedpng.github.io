@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, maximum-scale=3.0">
   <title>isolated.png</title>
     <!-- Добавляем favicon -->
-  <link rel="icon" type="image/png" href="thumbs/isolatedlogotransparentb2048.png">
+  <link rel="icon" type="image/png" href="/thumbs/isolatedlogotransparentb2048.png">
   <!-- Подключаем футуристический шрифт Orbitron -->
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
   <style>
@@ -249,185 +249,6 @@
       background: #222;
     }
 
-    /* Welcome Screen */
-    .welcome-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: #000000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 2000;
-      backdrop-filter: blur(2px);
-      overflow: hidden;
-    }
-
-    /* Ink Glyphs */
-    .glyph {
-      position: absolute;
-      color: rgba(255, 255, 255, 0.9);
-      font-size: 24px;
-      text-shadow: 0 0 8px rgba(255, 255, 255, 0.3), 0 0 12px rgba(0, 0, 0, 0.5);
-      animation: fall 10s linear infinite;
-      z-index: 1;
-      opacity: 0.9;
-    }
-
-    @keyframes fall {
-      0% { transform: translateY(-100vh) rotate(0deg); opacity: 0; }
-      10% { opacity: 1; }
-      90% { opacity: 1; }
-      100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
-    }
-
-    /* Welcome Container with Logo and Text */
-    .welcome-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      transition: all 0.4s ease;
-      z-index: 3;
-      position: relative;
-    }
-
-    .welcome-container:hover {
-      transform: scale(1.03);
-    }
-
-    /* Logo Styles */
-    .welcome-logo {
-      width: 180px;
-      height: 180px;
-      margin-bottom: 20px;
-      filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.3));
-      animation: logoFloat 3s ease-in-out infinite;
-    }
-
-    @keyframes logoFloat {
-      0%, 100% { transform: translateY(0px) scale(1); }
-      50% { transform: translateY(-10px) scale(1.02); }
-    }
-
-    /* Liquid Ink Text */
-    .enter-text {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 48px;
-      font-weight: 900;
-      letter-spacing: 8px;
-      color: #ffffff;
-      text-shadow: 0 0 20px rgba(255, 255, 255, 0.3), 0 0 40px rgba(0, 0, 0, 0.5);
-      animation: inkPulse 2s ease-in-out infinite;
-      transition: all 0.4s ease;
-      position: relative;
-      filter: contrast(1.3);
-    }
-
-    /* Ink Drips */
-    .drip {
-      position: absolute;
-      width: 2px;
-      height: 10px;
-      background: rgba(0, 0, 0, 0.8);
-      border-radius: 50%;
-      bottom: -10px;
-      animation: drip 2s ease-in-out infinite;
-      z-index: 2;
-    }
-
-    @keyframes drip {
-      0% { transform: scaleY(0); opacity: 0; }
-      50% { opacity: 1; }
-      100% { transform: scaleY(1); opacity: 0; }
-    }
-
-    /* Ink Stream */
-    .enter-text::after {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: -10%;
-      right: -10%;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-      animation: dataStream 2s linear infinite;
-      pointer-events: none;
-    }
-
-    .enter-text:hover {
-      filter: contrast(1.5) brightness(1.2);
-      text-shadow: 0 0 30px rgba(255, 255, 255, 0.5), 0 0 60px rgba(0, 0, 0, 0.3);
-    }
-
-    @keyframes inkPulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.02); }
-    }
-
-    @keyframes dataStream {
-      0% { transform: translateX(-100%); opacity: 0; }
-      50% { opacity: 1; }
-      100% { transform: translateX(100%); opacity: 0; }
-    }
-
-    /* Smoke & Bubbles */
-    .smoke-particle {
-      position: absolute;
-      pointer-events: none;
-      background: rgba(0, 0, 0, 0.6);
-      border-radius: 50%;
-      filter: blur(2px);
-      z-index: 2001;
-    }
-
-    .bubble {
-      position: absolute;
-      border: 2px solid rgba(255, 255, 255, 0.1);
-      border-radius: 50%;
-      animation: bubbleFloat 8s ease-in-out infinite;
-      z-index: 0;
-    }
-
-    @keyframes bubbleFloat {
-      0% { transform: translateY(100vh) scale(0); opacity: 0; }
-      50% { opacity: 0.8; }
-      100% { transform: translateY(-100vh) scale(1); opacity: 0; }
-    }
-
-    @keyframes smokeFloat {
-      0% { transform: translateY(0) scale(1); opacity: 1; }
-      100% { transform: translateY(-100vh) scale(0.2); opacity: 0; }
-    }
-
-    /* Dissolution Effect */
-    .crack-line {
-      position: absolute;
-      background: rgba(255, 255, 255, 0.3);
-      height: 1px;
-      pointer-events: none;
-      z-index: 2001;
-      animation: crackGrow 1.5s ease-out forwards;
-    }
-
-    @keyframes crackGrow {
-      0% { width: 0; opacity: 0.8; }
-      100% { width: 100%; opacity: 0; }
-    }
-
-    /* Fade out overlay smoothly */
-    .fade-out {
-      animation: fadeOut 1.5s ease-out forwards;
-    }
-
-    @keyframes fadeOut {
-      0% { opacity: 1; }
-      100% { opacity: 0; }
-    }
-
     /* Mobile Responsive Styles */
     @media screen and (max-width: 768px) {
       /* Adjust background pattern for mobile */
@@ -481,24 +302,6 @@
 
       .dropdown-menu li {
         margin-bottom: 12px;
-      }
-
-      /* Mobile Welcome Screen */
-      .enter-text {
-        font-size: 24px;
-        letter-spacing: 4px;
-        text-align: center;
-        padding: 0 20px;
-      }
-
-      .welcome-logo {
-        width: 120px;
-        height: 120px;
-        margin-bottom: 15px;
-      }
-
-      .glyph {
-        font-size: 18px;
       }
 
       /* Mobile Canvas and Tiles */
@@ -687,7 +490,7 @@
       </div>
     </div>
     <ul>
-      <li><a href="index.html">Isolated Page</a></li>
+      <li><a href="/isolatedspace/">Isolated Space</a></li>
       <li><a href="/commercial/">Showcase</a></li>
       <li><a href="/workflows/">Soon/.</a></li>
       <li><a href="/socials/">Socials, contact</a></li>
@@ -696,16 +499,7 @@
     <button class="close-btn">✕</button>
   </div>
 
-  <!-- Futuristic Welcome Screen -->
-  <div class="welcome-overlay" id="welcomeOverlay">
-    <div id="glyphContainer"></div>
-    <div id="bubbleContainer"></div>
-    <div class="welcome-container" onclick="enterSite()">
-      <img src="thumbs/isolatedlogotransparentw2048.png" alt="Logo" class="welcome-logo">
-      <div class="enter-text">ACCESS ISOLATION</div>
-    </div>
-  </div>
-
+  <!-- Workspace -->
   <div class="workspace">
     <div class="canvas" id="canvas"></div>
   </div>
@@ -870,167 +664,8 @@ document.addEventListener('keydown', (e) => {
     }, 3000);
   }
 });
-    // ⬇️ ЗАМЕНЁННАЯ ФУНКЦИЯ — теперь падают и картинки, и иероглифы
-    function createGlyphs() {
-  const container = document.getElementById('glyphContainer');
-  // Оригинальные символы и иероглифы
-  const glyphs = '日月火水木金土山川風雲電光雷雨星宇宙神魔龍鳳亜乙丙丁戊己庚辛壬癸子丑寅卯辰巳午未申酉戌亥АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{}|;:,.<>?';
-  // Твои картинки
-  const imagePaths = [
-    '/thumbs/privetstvieicons/1.png',
-    '/thumbs/privetstvieicons/2.png',
-    '/thumbs/privetstvieicons/3.png',
-    '/thumbs/privetstvieicons/4.png',
-    '/thumbs/privetstvieicons/5.png',
-    '/thumbs/privetstvieicons/6.png'  // ← Эта будет особенной
-  ];
-  // Создаём общий массив элементов
-  const elementsPool = [];
-  // Добавляем 200 иероглифов
-  for (let i = 0; i < 200; i++) {
-    elementsPool.push({
-      type: 'glyph',
-      value: glyphs.charAt(Math.floor(Math.random() * glyphs.length))
-    });
-  }
-  // Добавляем 400 картинок (в 2 раза больше, чем иероглифов)
-  for (let i = 0; i < 400; i++) {
-    const randomIndex = Math.floor(Math.random() * imagePaths.length);
-    const isSpecial = imagePaths[randomIndex] === '/thumbs/privetstvieicons/2.png';
-    elementsPool.push({
-      type: 'image',
-      value: imagePaths[randomIndex],
-      isSpecial: isSpecial
-    });
-  }
-  // Добавляем ЕЩЁ 150 экземпляров 2.png — чтобы она падала в 2 раза чаще
-  for (let i = 0; i < 150; i++) {
-    elementsPool.push({
-      type: 'image',
-      value: '/thumbs/privetstvieicons/2.png',
-      isSpecial: true
-    });
-  }
-  // Генерируем падающие элементы
-  const glyphCount = isMobile ? 100 : 200;
-  for (let i = 0; i < glyphCount; i++) {
-    const randomItem = elementsPool[Math.floor(Math.random() * elementsPool.length)];
-    const glyph = document.createElement('div');
-    glyph.className = 'glyph';
-    if (randomItem.type === 'image') {
-      // Это картинка
-      const img = document.createElement('img');
-      img.src = randomItem.value;
-      // Размер: 2.5x для обычных картинок, 2.5x для 6.png
-      const baseSize = 24; // размер иероглифа
-      let size = baseSize * 2.5; // 60px
-      if (randomItem.isSpecial) {
-        size = baseSize * 2.5; // 60px для 6.png
-      }
-      img.style.width = `${size}px`;
-      img.style.height = `${size}px`;
-      img.style.display = 'block';
-      img.style.opacity = '0.9';
-      glyph.appendChild(img);
-    } else {
-      // Это иероглиф
-      glyph.textContent = randomItem.value;
-      glyph.style.fontSize = '24px';
-    }
-    // Стили анимации — без изменений
-    glyph.style.left = Math.random() * 100 + '%';
-    glyph.style.top = Math.random() * 100 + '%';
-    glyph.style.animationDuration = (Math.random() * 5 + 5) + 's';
-    glyph.style.animationDelay = Math.random() * 5 + 's';
-    glyph.style.opacity = '0.9';
-    container.appendChild(glyph);
-  }
-  // Комментарии-заполнители — чтобы гарантировать, что длина кода не уменьшилась
-  // .............................................................................
-}
-    // Генератор пузырьков
-    function createBubbles() {
-      const container = document.getElementById('bubbleContainer');
-      const bubbleCount = isMobile ? 15 : 30;
 
-      for (let i = 0; i < bubbleCount; i++) {
-        const bubble = document.createElement('div');
-        bubble.className = 'bubble';
-        const size = Math.random() * 60 + 20;
-        bubble.style.width = `${size}px`;
-        bubble.style.height = `${size}px`;
-        bubble.style.left = Math.random() * 100 + '%';
-        bubble.style.animationDuration = (Math.random() * 6 + 4) + 's';
-        bubble.style.animationDelay = Math.random() * 5 + 's';
-        container.appendChild(bubble);
-      }
-    }
-
-    // Функция входа с эффектом "растворения матрицы"
-    function enterSite() {
-      const overlay = document.getElementById('welcomeOverlay');
-      const textElement = document.querySelector('.enter-text');
-
-      // Создаём трещины
-      const crackCount = isMobile ? 10 : 20;
-      for (let i = 0; i < crackCount; i++) {
-        const crack = document.createElement('div');
-        crack.className = 'crack-line';
-        crack.style.top = (Math.random() * 100) + '%';
-        crack.style.left = '0';
-        crack.style.opacity = Math.random() * 0.5 + 0.3;
-        overlay.appendChild(crack);
-      }
-
-      // Создаём "дымовые частицы"
-      const particleCount = isMobile ? 125 : 250;
-      for (let i = 0; i < particleCount; i++) {
-        setTimeout(() => {
-          const particle = document.createElement('div');
-          particle.className = 'smoke-particle';
-          const size = Math.random() * 10 + 3;
-          particle.style.width = `${size}px`;
-          particle.style.height = `${size}px`;
-          particle.style.left = `${Math.random() * 100}%`;
-          particle.style.top = `${Math.random() * 100}%`;
-          particle.style.animation = `smokeFloat ${Math.random() * 3 + 2}s ease-out forwards`;
-          overlay.appendChild(particle);
-        }, i * (isMobile ? 12 : 8));
-      }
-
-      // Плавное исчезновение оверлея
-      overlay.classList.add('fade-out');
-
-      setTimeout(() => {
-        overlay.remove();
-      }, 1600);
-
-      unlockAudio();
-    }
-
-    // Unlock audio
-    async function unlockAudio() {
-      if (!audioUnlocked) {
-        try {
-          const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-          const oscillator = audioContext.createOscillator();
-          const gainNode = audioContext.createGain();
-          oscillator.connect(gainNode);
-          gainNode.connect(audioContext.destination);
-          gainNode.gain.setValueAtTime(0, audioContext.currentTime);
-          oscillator.start(audioContext.currentTime);
-          oscillator.stop(audioContext.currentTime + 0.01);
-          audioUnlocked = true;
-          document.querySelector('.menu').innerHTML = 'Menu | <span style="color: #6ecf9f;">🔊 Audio Enabled</span>';
-        } catch (error) {
-          console.log('Could not unlock audio:', error);
-        }
-      }
-    }
-
-    // Создаём иероглифы и пузырьки при загрузке
-    createGlyphs();
-    createBubbles();
+    // ✅ УДАЛЕНО: createGlyphs(), createBubbles(), enterSite() — не нужны
 
     works.forEach((work, index) => {
       const tile = document.createElement('div');
@@ -1134,7 +769,6 @@ document.addEventListener('keydown', (e) => {
         let fadeInterval = null;
 
         const enableSound = () => {
-          // ✅ ИСПРАВЛЕНИЕ: Убрали "|| isMobile" — теперь звук включается и на мобильных
           if (!audioUnlocked) return;
 
           if (fadeInterval) clearInterval(fadeInterval);
@@ -1179,7 +813,6 @@ document.addEventListener('keydown', (e) => {
           }, 25);
         };
 
-        // ✅ ИСПРАВЛЕНИЕ: Добавляем включение звука по тапу на мобильных
         if (isMobile) {
           tile.addEventListener('touchstart', enableSound);
           tile.addEventListener('touchend', disableSound);
@@ -1253,25 +886,22 @@ document.addEventListener('keydown', (e) => {
     });
 
     document.addEventListener('mousemove', e => {
-  if (activeTile && !isMobile) {
-    const canvasRect = canvas.getBoundingClientRect();
-    const newX = (e.clientX - offsetX - canvasRect.left) / canvasScale;
-    const newY = (e.clientY - offsetY - canvasRect.top) / canvasScale;
-    activeTile.style.left = `${newX}px`;
-    activeTile.style.top = `${newY}px`;
-  } else if (isDraggingCanvas && !isMobile) {
-    const dx = e.clientX - dragStartX;
-    const dy = e.clientY - dragStartY;
-
-    // ✅ УБРАЛИ ВСЕ ГРАНИЦЫ — теперь можно двигаться бесконечно в любую сторону
-    canvasX += dx;
-    canvasY += dy;
-
-    dragStartX = e.clientX;
-    dragStartY = e.clientY;
-    updateCanvasTransform();
-  }
-});
+      if (activeTile && !isMobile) {
+        const canvasRect = canvas.getBoundingClientRect();
+        const newX = (e.clientX - offsetX - canvasRect.left) / canvasScale;
+        const newY = (e.clientY - offsetY - canvasRect.top) / canvasScale;
+        activeTile.style.left = `${newX}px`;
+        activeTile.style.top = `${newY}px`;
+      } else if (isDraggingCanvas && !isMobile) {
+        const dx = e.clientX - dragStartX;
+        const dy = e.clientY - dragStartY;
+        canvasX += dx;
+        canvasY += dy;
+        dragStartX = e.clientX;
+        dragStartY = e.clientY;
+        updateCanvasTransform();
+      }
+    });
 
     document.addEventListener('mouseup', () => {
       if (activeTile && !isMobile) {
@@ -1421,7 +1051,6 @@ document.addEventListener('keydown', (e) => {
         const currentDistance = getDistance(e.touches);
         const scaleChange = currentDistance / initialDistance;
         canvasScale = initialScale * scaleChange;
-        // ✅ ИСПРАВЛЕНИЕ: Было 0.3 → стало 0.1 (в 3 раза больше отдаления)
         canvasScale = Math.max(0.1, Math.min(canvasScale, 4));
         updateCanvasTransform();
       }
