@@ -741,7 +741,8 @@
             // ✅ НОВАЯ ЛОГИКА ДЛЯ МОБИЛЬНЫХ — ТОЛЬКО ЭТО ИЗМЕНЕНО
             if (isMobile) {
               tile.addEventListener('touchstart', (e) => {
-                e.stopPropagation(); // не даём событию уйти наверх
+                // ✅ УДАЛЕНО: e.stopPropagation() — чтобы пинч-зум работал везде
+
                 if (activeVideo && activeVideo !== content) {
                   // Останавливаем предыдущее видео
                   activeVideo.pause();
@@ -1105,22 +1106,48 @@ document.addEventListener('keydown', (e) => {
       lastTouchEnd = now;
     }, false);
 
-    // ✅ ГЛОБАЛЬНЫЙ ОБРАБОТЧИК: касание в любом месте — остановить видео
+    // ✅ Умный глобальный обработчик: остановка видео ТОЛЬКО при коротком касании (tap), а не при свайпе
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let touchStartTime = 0;
+
     document.addEventListener('touchstart', (e) => {
-      if (!isMobile || !activeVideo) return;
+      if (!isMobile || e.touches.length !== 1) return;
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+      touchStartTime = Date.now();
+    }, { passive: true });
 
-      const targetTile = e.target.closest('.tile');
-      const targetVideo = targetTile ? targetTile.querySelector('video') : null;
-
-      if (targetVideo !== activeVideo) {
-        activeVideo.pause();
-        const tile = activeVideo.parentElement;
-        tile.classList.remove('sound-on');
-        const indicator = tile.querySelector('.sound-indicator');
-        if (indicator) indicator.style.display = 'none';
-        activeVideo = null;
+    document.addEventListener('touchmove', (e) => {
+      if (!isMobile || !activeVideo || e.touches.length !== 1) return;
+      const dx = Math.abs(e.touches[0].clientX - touchStartX);
+      const dy = Math.abs(e.touches[0].clientY - touchStartY);
+      if (dx > 10 || dy > 10) {
+        touchStartTime = 0; // отменяем "tap"
       }
-    }, { passive: false });
+    }, { passive: true });
+
+    document.addEventListener('touchend', (e) => {
+      if (!isMobile || !activeVideo || touchStartTime === 0) return;
+
+      const touchEndTime = Date.now();
+      const touchDuration = touchEndTime - touchStartTime;
+
+      // Считаем "tap", если касание было коротким и без движения
+      if (touchDuration < 300) {
+        const targetTile = e.target.closest('.tile');
+        const targetVideo = targetTile ? targetTile.querySelector('video') : null;
+
+        if (targetVideo !== activeVideo) {
+          activeVideo.pause();
+          const tile = activeVideo.parentElement;
+          tile.classList.remove('sound-on');
+          const indicator = tile.querySelector('.sound-indicator');
+          if (indicator) indicator.style.display = 'none';
+          activeVideo = null;
+        }
+      }
+    }, { passive: true });
 
   </script>
 
