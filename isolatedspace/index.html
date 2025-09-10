@@ -1045,33 +1045,54 @@ document.addEventListener('keydown', (e) => {
       updateCanvasTransform();
     }, { passive: false });
 
-    // Mobile pinch zoom
-    let initialDistance = 0;
+    // ✅ ИСПРАВЛЕНО: Пинч-зум как в commercial.html
+    let initialDistance = null;
     let initialScale = 1;
-
-    function getDistance(touches) {
-      const dx = touches[0].clientX - touches[1].clientX;
-      const dy = touches[0].clientY - touches[1].clientY;
-      return Math.sqrt(dx * dx + dy * dy);
-    }
+    let pinchCenterX = 0;
+    let pinchCenterY = 0;
 
     document.addEventListener('touchstart', e => {
       if (e.touches.length === 2) {
-        initialDistance = getDistance(e.touches);
+        const touch1 = e.touches[0];
+        const touch2 = e.touches[1];
+        initialDistance = Math.hypot(touch2.clientX - touch1.clientX, touch2.clientY - touch1.clientY);
         initialScale = canvasScale;
+
+        // ✅ Вычисляем центр пинча в координатах ХОЛСТА
+        const centerX = (touch1.clientX + touch2.clientX) / 2;
+        const centerY = (touch1.clientY + touch2.clientY) / 2;
+
+        pinchCenterX = (centerX - canvasX) / canvasScale;
+        pinchCenterY = (centerY - canvasY) / canvasScale;
       }
     });
 
     document.addEventListener('touchmove', e => {
-      if (e.touches.length === 2) {
+      if (e.touches.length === 2 && initialDistance !== null) {
         e.preventDefault();
-        const currentDistance = getDistance(e.touches);
+
+        const touch1 = e.touches[0];
+        const touch2 = e.touches[1];
+        const currentDistance = Math.hypot(touch2.clientX - touch1.clientX, touch2.clientY - touch1.clientY);
+
         const scaleChange = currentDistance / initialDistance;
-        canvasScale = initialScale * scaleChange;
-        canvasScale = Math.max(0.1, Math.min(canvasScale, 4));
+        const newScale = initialScale * scaleChange;
+        canvasScale = Math.max(0.1, Math.min(newScale, 4));
+
+        // ✅ Пересчитываем смещение, чтобы зум был относительно центра пинча
+        const centerX = (touch1.clientX + touch2.clientX) / 2;
+        const centerY = (touch1.clientY + touch2.clientY) / 2;
+
+        canvasX = centerX - pinchCenterX * canvasScale;
+        canvasY = centerY - pinchCenterY * canvasScale;
+
         updateCanvasTransform();
       }
-    }, { passive: false });
+    });
+
+    document.addEventListener('touchend', () => {
+      initialDistance = null;
+    });
 
     updateCanvasTransform();
 
