@@ -237,9 +237,18 @@
 
     /* === НОВЫЕ СТИЛИ === */
     .red-text {
-      color: #ff0000;
+      color: #cc0000; /* Затемнённый красный */
       font-family: sans-serif;
       font-size: 16px;
+    }
+
+    .brand-container {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+      min-width: 100px;
+      transition: all 0.3s ease;
     }
 
     .brand {
@@ -277,8 +286,8 @@
       }
     }
 
-    .brand:hover,
-    .brand-logo:hover {
+    .brand-container:hover .brand,
+    .brand-container:hover .brand-logo {
       transform: scale(1.15) rotate(8deg);
       opacity: 1;
       text-shadow: 0 0 12px rgba(255, 255, 255, 1), 0 0 20px rgba(255, 255, 255, 0.9);
@@ -351,7 +360,12 @@
 
   <!-- About Section -->
   <div class="about-section">
-    <h1>Elnur Abdullayev</h1>
+    <h1>Elnur ( </span>
+      <span class="brand-container">
+        <span class="brand">isolated</span>
+        <img src="/thumbs/isolatedlogotransparentw2048.png" alt="logo" class="brand-logo">
+      </span>
+      <span class="red-text"> )  Abdullayev</h1>
     <h2>AI Generative Art & Video | R&D Specialist | ComfyUI Master</h2>
     <p>
       I am an AI R&D Specialist focused on Generative Art & Video, combining creativity with advanced workflow design. As a ComfyUI Master and Prompt Engineer, I build scalable pipelines for image and video generation, optimizing processes to deliver high-quality results efficiently and consistently.
@@ -365,11 +379,24 @@
 
     <!-- === НОВЫЕ БЛОКИ === -->
     <div class="creator-credit">
-      <span class="red-text">All artworks presented on this website were created by </span><span class="brand">isolated</span><img src="/thumbs/isolatedlogotransparentw2048.png" alt="logo" class="brand-logo"><span class="red-text">. Most of these pieces were generated using cutting-edge artificial intelligence tools, blending algorithmic precision with creative vision. ©</span>
+      <span class="red-text">All artworks presented on this website were created by </span>
+      <span class="brand-container">
+        <span class="brand">isolated</span>
+        <img src="/thumbs/isolatedlogotransparentw2048.png" alt="logo" class="brand-logo">
+      </span>
+      <span class="red-text">. Most of these pieces were generated using cutting-edge artificial intelligence tools, blending algorithmic precision with creative vision. ©</span>
     </div>
 
+
+
+
+    
     <div class="dev-credit">
-      Web design and development by <span class="brand">isolated</span><img src="/thumbs/isolatedlogotransparentw2048.png" alt="logo" class="brand-logo">
+      Web design and development by 
+      <span class="brand-container">
+        <span class="brand">isolated</span>
+        <img src="/thumbs/isolatedlogotransparentw2048.png" alt="logo" class="brand-logo">
+      </span>
     </div>
     <!-- === КОНЕЦ НОВЫХ БЛОКОВ === -->
   </div>
