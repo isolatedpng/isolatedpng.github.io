@@ -1134,7 +1134,7 @@ document.addEventListener('keydown', (e) => {
         let fadeInterval = null;
 
         const enableSound = () => {
-          // ✅ ИЗМЕНЕНИЕ 1: Убрали "|| isMobile" — теперь звук включается и на мобильных
+          // ✅ ИСПРАВЛЕНИЕ: Убрали "|| isMobile" — теперь звук включается и на мобильных
           if (!audioUnlocked) return;
 
           if (fadeInterval) clearInterval(fadeInterval);
@@ -1179,7 +1179,11 @@ document.addEventListener('keydown', (e) => {
           }, 25);
         };
 
-        if (!isMobile) {
+        // ✅ ИСПРАВЛЕНИЕ: Добавляем включение звука по тапу на мобильных
+        if (isMobile) {
+          tile.addEventListener('touchstart', enableSound);
+          tile.addEventListener('touchend', disableSound);
+        } else {
           tile.addEventListener('mouseenter', enableSound);
           tile.addEventListener('mouseleave', disableSound);
         }
@@ -1429,7 +1433,7 @@ document.addEventListener('keydown', (e) => {
         const currentDistance = getDistance(e.touches);
         const scaleChange = currentDistance / initialDistance;
         canvasScale = initialScale * scaleChange;
-        // ✅ ИЗМЕНЕНИЕ 2: Было 0.3 → стало 0.1 (в 3 раза больше отдаления)
+        // ✅ ИСПРАВЛЕНИЕ: Было 0.3 → стало 0.1 (в 3 раза больше отдаления)
         canvasScale = Math.max(0.1, Math.min(canvasScale, 4));
         updateCanvasTransform();
       }
