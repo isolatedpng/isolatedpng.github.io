@@ -173,7 +173,7 @@
       height: 100vh;
       overflow: hidden;
       position: relative;
-      /* ✅ УБРАНО: cursor: grab; — теперь обычный курсор */
+      /* ✅ Убран cursor: grab — обычный курсор */
     }
 
     .canvas {
@@ -183,7 +183,7 @@
       width: 100%;
       height: 100%;
       transform-origin: top left;
-      /* transition: transform 0.1s ease; ← ЗАКОММЕНТИРУЙ ИЛИ УДАЛИ ЭТУ СТРОКУ, если хочешь убрать лаги */
+      transition: transform 0.1s ease;
     }
 
     /* About Section */
@@ -404,50 +404,66 @@
   </div>
 
   <script>
-    // ✅ Логика drag как в commercial.html, но БЕЗ ЗУМА и с ограничением смещения
     const canvas = document.getElementById('canvas');
-    let isDraggingCanvas = false;
-    let dragStartX = 0;
-    let dragStartY = 0;
-
-    // Смещение canvas (без масштаба)
-    let canvasX = 0;
-    let canvasY = 0;
-    const MAX_DRAG = 100; // Маленькая дистанция — можно изменить
+    let isDragging = false;
+    let startX = 0, startY = 0;
+    let canvasX = 0, canvasY = 0;
+    const MAX_DRAG = 100; // ✅ Маленькая дистанция — одинаково на всех устройствах
 
     function updateCanvasTransform() {
-      // Ограничиваем смещение
       const clampedX = Math.max(-MAX_DRAG, Math.min(MAX_DRAG, canvasX));
       const clampedY = Math.max(-MAX_DRAG, Math.min(MAX_DRAG, canvasY));
       canvas.style.transform = `translate(${clampedX}px, ${clampedY}px)`;
     }
 
-    // Drag всей страницы
+    // === DESKTOP DRAG ===
     document.addEventListener('mousedown', e => {
-      // Не трогаем меню
       if (e.target.closest('.menu-button') || e.target.closest('.dropdown-menu')) return;
-      isDraggingCanvas = true;
-      dragStartX = e.clientX;
-      dragStartY = e.clientY;
-      // ✅ УБРАНО: document.body.style.cursor = 'grabbing'; — курсор не меняется
+      isDragging = true;
+      startX = e.clientX;
+      startY = e.clientY;
       e.preventDefault();
     });
 
     document.addEventListener('mousemove', e => {
-      if (isDraggingCanvas) {
-        const dx = e.clientX - dragStartX;
-        const dy = e.clientY - dragStartY;
-        canvasX += dx;
-        canvasY += dy;
-        dragStartX = e.clientX;
-        dragStartY = e.clientY;
-        updateCanvasTransform();
-      }
+      if (!isDragging) return;
+      const dx = e.clientX - startX;
+      const dy = e.clientY - startY;
+      canvasX += dx;
+      canvasY += dy;
+      startX = e.clientX;
+      startY = e.clientY;
+      updateCanvasTransform();
     });
 
     document.addEventListener('mouseup', () => {
-      isDraggingCanvas = false;
-      // ✅ УБРАНО: сброс курсора — он всегда обычный
+      isDragging = false;
+    });
+
+    // === MOBILE DRAG ===
+    document.addEventListener('touchstart', e => {
+      if (e.touches.length !== 1) return;
+      if (e.target.closest('.menu-button') || e.target.closest('.dropdown-menu')) return;
+      isDragging = true;
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+      e.preventDefault();
+    }, { passive: false });
+
+    document.addEventListener('touchmove', e => {
+      if (!isDragging || e.touches.length !== 1) return;
+      const dx = e.touches[0].clientX - startX;
+      const dy = e.touches[0].clientY - startY;
+      canvasX += dx;
+      canvasY += dy;
+      startX = e.touches[0].clientX;
+      startY = e.touches[0].clientY;
+      updateCanvasTransform();
+      e.preventDefault(); // важно — иначе будет скролл страницы
+    }, { passive: false });
+
+    document.addEventListener('touchend', () => {
+      isDragging = false;
     });
 
     // Закрытие меню при клике вне его
@@ -463,4 +479,3 @@
 
 </body>
 </html>
-
