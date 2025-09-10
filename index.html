@@ -1437,19 +1437,23 @@ document.addEventListener('keydown', (e) => {
       return Math.sqrt(dx * dx + dy * dy);
     }
 
+    // Pinch zoom handlers (separate from main touch handlers)
+    let pinchStartDistance = 0;
+    let pinchStartScale = 1;
+    
     document.addEventListener('touchstart', e => {
       if (e.touches.length === 2) {
-        initialDistance = getDistance(e.touches);
-        initialScale = canvasScale;
+        pinchStartDistance = getDistance(e.touches);
+        pinchStartScale = canvasScale;
       }
-    });
+    }, { passive: false });
 
     document.addEventListener('touchmove', e => {
       if (e.touches.length === 2) {
         e.preventDefault();
         const currentDistance = getDistance(e.touches);
-        const scaleChange = currentDistance / initialDistance;
-        canvasScale = initialScale * scaleChange;
+        const scaleChange = currentDistance / pinchStartDistance;
+        canvasScale = pinchStartScale * scaleChange;
         canvasScale = Math.max(0.1, Math.min(canvasScale, 4));
         updateCanvasTransform();
       }
