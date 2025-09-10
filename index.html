@@ -864,18 +864,18 @@
   // Создаём общий массив элементов
   const elementsPool = [];
 
-  // Добавляем 100 иероглифов
-  for (let i = 0; i < 100; i++) {
+  // Добавляем 200 иероглифов
+  for (let i = 0; i < 200; i++) {
     elementsPool.push({
       type: 'glyph',
       value: glyphs.charAt(Math.floor(Math.random() * glyphs.length))
     });
   }
 
-  // Добавляем 400 картинок (в 4 раза больше, чем иероглифов)
+  // Добавляем 400 картинок (в 2 раза больше, чем иероглифов)
   for (let i = 0; i < 400; i++) {
     const randomIndex = Math.floor(Math.random() * imagePaths.length);
-    const isSpecial = imagePaths[randomIndex] === '/thumbs/privetstvieicons/6.png';
+    const isSpecial = imagePaths[randomIndex] === '/thumbs/privetstvieicons/2.png';
     
     elementsPool.push({
       type: 'image',
@@ -884,11 +884,11 @@
     });
   }
 
-  // Добавляем ЕЩЁ 200 экземпляров 6.png — чтобы она падала в 2 раза чаще
-  for (let i = 0; i < 200; i++) {
+  // Добавляем ЕЩЁ 150 экземпляров 2.png — чтобы она падала в 2 раза чаще
+  for (let i = 0; i < 150; i++) {
     elementsPool.push({
       type: 'image',
-      value: '/thumbs/privetstvieicons/6.png',
+      value: '/thumbs/privetstvieicons/2.png',
       isSpecial: true
     });
   }
