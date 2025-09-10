@@ -606,7 +606,7 @@
 
     (async function loadLayoutFromFile() {
       try {
-        const res = await fetch('./tile-layout.json?t=' + Date.now());
+        const res = await fetch('/tile-layout.json?t=' + Date.now());
         if (!res.ok) {
           console.warn('tile-layout.json fetch failed:', res.status);
           return;
