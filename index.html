@@ -1253,37 +1253,25 @@ document.addEventListener('keydown', (e) => {
     });
 
     document.addEventListener('mousemove', e => {
-      if (activeTile && !isMobile) {
-        const canvasRect = canvas.getBoundingClientRect();
-        const newX = (e.clientX - offsetX - canvasRect.left) / canvasScale;
-        const newY = (e.clientY - offsetY - canvasRect.top) / canvasScale;
-        activeTile.style.left = `${newX}px`;
-        activeTile.style.top = `${newY}px`;
-      } else if (isDraggingCanvas && !isMobile) {
-        const dx = e.clientX - dragStartX;
-        const dy = e.clientY - dragStartY;
+  if (activeTile && !isMobile) {
+    const canvasRect = canvas.getBoundingClientRect();
+    const newX = (e.clientX - offsetX - canvasRect.left) / canvasScale;
+    const newY = (e.clientY - offsetY - canvasRect.top) / canvasScale;
+    activeTile.style.left = `${newX}px`;
+    activeTile.style.top = `${newY}px`;
+  } else if (isDraggingCanvas && !isMobile) {
+    const dx = e.clientX - dragStartX;
+    const dy = e.clientY - dragStartY;
 
-        // Ограничение панорамирования вверх
-        const minY = -500; // Минимальное значение Y (можно изменить)
-        canvasY = Math.max(minY, canvasY + dy);
+    // ✅ УБРАЛИ ВСЕ ГРАНИЦЫ — теперь можно двигаться бесконечно в любую сторону
+    canvasX += dx;
+    canvasY += dy;
 
-        // Ограничение панорамирования вниз
-        const maxY = 700; // Максимальное значение Y (можно изменить)
-        canvasY = Math.min(maxY, canvasY);
-
-        // Ограничение панорамирования влево
-        const minX = -1100; // Минимальное значение X (можно изменить)
-        canvasX = Math.max(minX, canvasX + dx);
-
-        // Ограничение панорамирования вправо
-        const maxX = 800; // Максимальное значение X (можно изменить)
-        canvasX = Math.min(maxX, canvasX);
-
-        dragStartX = e.clientX;
-        dragStartY = e.clientY;
-        updateCanvasTransform();
-      }
-    });
+    dragStartX = e.clientX;
+    dragStartY = e.clientY;
+    updateCanvasTransform();
+  }
+});
 
     document.addEventListener('mouseup', () => {
       if (activeTile && !isMobile) {
