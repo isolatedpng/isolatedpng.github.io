@@ -567,7 +567,7 @@
     let nextY = 100;
     let maxHeight = 0;
     let isMobile = window.innerWidth <= 768;
-    let activeVideo = null; // 👈 Добавлено: будет хранить текущее играющее видео
+    let activeVideo = null;
 
     // Mobile menu toggle functionality
     const menuButton = document.getElementById('menuButton');
@@ -579,18 +579,15 @@
       menu.classList.toggle('active');
     });
 
-    // Close menu when clicking close button
     document.querySelector('.close-btn').addEventListener('click', () => {
       menuButton.classList.remove('active');
       menu.classList.remove('active');
     });
 
-    // Update mobile detection on resize
     window.addEventListener('resize', () => {
       isMobile = window.innerWidth <= 768;
     });
 
-    // ← Спрятанная проверка — выглядит как кастомный параметр
     const urlParams = new URLSearchParams(window.location.search);
     const v = urlParams.get('v');
     let isEditMode = false;
@@ -604,7 +601,7 @@
       }, 1000);
     }
 
-    // ✅ ДОБАВЛЕНО: функция loadTileLayout — чтобы не было ошибки
+    // ✅ Заглушка для loadTileLayout — чтобы не было ошибки
     async function loadTileLayout() {
       try {
         const saved = localStorage.getItem('tileLayout');
@@ -615,7 +612,6 @@
       }
     }
 
-    // Загрузка расположения плиток при загрузке страницы
     document.addEventListener('DOMContentLoaded', async () => {
       const savedLayout = await loadTileLayout();
       if (savedLayout) {
@@ -644,7 +640,7 @@
       try { localStorage.setItem('tileLayout', JSON.stringify(layout)); } catch (e) {}
     }
 
-    // ✅ Загружаем макет И ТОЛЬКО ПОТОМ создаём плитки — как в commercial.html
+    // ✅ Загружаем макет И ТОЛЬКО ПОТОМ создаём плитки
     (async function loadLayoutFromFile() {
       try {
         const res = await fetch('/tile-layout.json?t=' + Date.now());
@@ -655,7 +651,6 @@
         const layout = await res.json();
         console.log('Loaded tile-layout.json:', layout);
 
-        // ✅ Показываем LOADING... на 0.5 секунды, затем плавно убираем
         setTimeout(() => {
           const loadingOverlay = document.getElementById('loadingOverlay');
           if (loadingOverlay) {
@@ -669,7 +664,6 @@
           }
         }, 500);
 
-        // ✅ Создаём плитки ТОЛЬКО ПОСЛЕ того, как загружен макет
         works.forEach((work, index) => {
           const tile = document.createElement('div');
           tile.className = 'tile';
@@ -718,7 +712,7 @@
             content = document.createElement('video');
             content.src = work.src;
             content.autoplay = false;
-            content.muted = false;
+            content.muted = false; // ✅ Важно: не глушим
             content.loop = true;
             content.playsInline = true;
 
@@ -749,13 +743,12 @@
               tile.style.height = `${height}px`;
             };
 
-            // ✅ НОВАЯ ЛОГИКА ДЛЯ МОБИЛЬНЫХ — ТОЛЬКО ЭТО ИЗМЕНЕНО
+            // ✅ Мобильное поведение — tap to toggle
             if (isMobile) {
               tile.addEventListener('touchstart', (e) => {
-                // ✅ УДАЛЕНО: e.stopPropagation() — чтобы пинч-зум работал везде
+                // ✅ НЕ останавливаем всплытие — пинч-зум должен работать
 
                 if (activeVideo && activeVideo !== content) {
-                  // Останавливаем предыдущее видео
                   activeVideo.pause();
                   const prevTile = activeVideo.parentElement;
                   prevTile.classList.remove('sound-on');
@@ -763,12 +756,10 @@
                   if (prevIndicator) prevIndicator.style.display = 'none';
                 }
 
-                // Переключаем текущее видео
                 if (content.paused) {
                   content.play().catch(e => console.log("Playback failed:", e));
                   tile.classList.add('sound-on');
                   soundIndicator.style.display = 'flex';
-                  content.volume = 0.6;
                   activeVideo = content;
                 } else {
                   content.pause();
@@ -778,12 +769,11 @@
                 }
               });
             } else {
-              // Для десктопа — оставляем старое поведение
+              // ✅ Десктоп — hover to play
               tile.addEventListener('mouseenter', () => {
                 content.play().catch(e => console.log("Playback failed:", e));
                 tile.classList.add('sound-on');
                 soundIndicator.style.display = 'flex';
-                content.volume = 0.6;
               });
 
               tile.addEventListener('mouseleave', () => {
@@ -807,14 +797,12 @@
 
           tile.appendChild(content);
 
-          // ✅ Применяем позицию из макета — если он есть
           if (layout && layout[index]) {
             tile.style.width = `${layout[index].width}px`;
             tile.style.height = `${layout[index].height}px`;
             tile.style.left = `${layout[index].left}px`;
             tile.style.top = `${layout[index].top}px`;
           } else {
-            // ✅ Иначе — используем дефолтное размещение
             if (isMobile) {
               tile.style.width = '200px';
               tile.style.height = '200px';
@@ -840,8 +828,6 @@
 
       } catch (err) {
         console.error('Error loading tile-layout.json:', err);
-
-        // ✅ На всякий случай — убираем LOADING... даже если ошибка
         setTimeout(() => {
           const loadingOverlay = document.getElementById('loadingOverlay');
           if (loadingOverlay) {
@@ -850,6 +836,44 @@
         }, 500);
       }
     })();
+
+    // ✅ Умный глобальный обработчик — остановка видео только при tap вне видео
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let touchStartTime = 0;
+
+    document.addEventListener('touchstart', (e) => {
+      if (!isMobile || e.touches.length !== 1) return;
+      touchStartX = e.touches[0].clientX;
+      touchStartY = e.touches[0].clientY;
+      touchStartTime = Date.now();
+    }, { passive: true });
+
+    document.addEventListener('touchmove', (e) => {
+      if (!isMobile || !activeVideo || e.touches.length !== 1) return;
+      const dx = Math.abs(e.touches[0].clientX - touchStartX);
+      const dy = Math.abs(e.touches[0].clientY - touchStartY);
+      if (dx > 10 || dy > 10) {
+        touchStartTime = 0; // отменяем tap при свайпе
+      }
+    }, { passive: true });
+
+    document.addEventListener('touchend', (e) => {
+      if (!isMobile || !activeVideo || touchStartTime === 0) return;
+      const touchDuration = Date.now() - touchStartTime;
+      if (touchDuration < 300) { // только короткое касание
+        const targetTile = e.target.closest('.tile');
+        const targetVideo = targetTile ? targetTile.querySelector('video') : null;
+        if (targetVideo !== activeVideo) {
+          activeVideo.pause();
+          const tile = activeVideo.parentElement;
+          tile.classList.remove('sound-on');
+          const indicator = tile.querySelector('.sound-indicator');
+          if (indicator) indicator.style.display = 'none';
+          activeVideo = null;
+        }
+      }
+    }, { passive: true });
 
 // При нажатии S в режиме редактирования — выводим позиции плиток в консоль
 document.addEventListener('keydown', (e) => {
@@ -867,14 +891,12 @@ document.addEventListener('keydown', (e) => {
       };
       layout.push(item);
     });
-    // Выводим в консоль красиво
     console.clear();
     console.log(`%c 🧱 [ISOLATED.PNG] Плитки сохранены (${layout.length} шт.) — скопируй этот массив:`, 
                 'color: #ff6b6b; font-size: 16px; font-weight: bold;');
     console.log(JSON.stringify(layout, null, 2));
     console.log('%c ✅ Готово! Можешь вставить этот массив в tile-layout.json вручную.', 
                 'color: #6ecf9f; font-weight: bold;');
-    // Показываем уведомление на экране
     const notification = document.createElement('div');
     notification.style.position = 'fixed';
     notification.style.top = '20px';
@@ -904,9 +926,7 @@ document.addEventListener('keydown', (e) => {
     let isDraggingCanvas = false;
     let dragStartX = 0;
     let dragStartY = 0;
-    let lastTouchTime = 0;
 
-    // Mouse events (desktop)
     document.addEventListener('mousedown', e => {
       const tile = e.target.closest('.tile');
       if (tile && !isMobile) {
@@ -952,62 +972,35 @@ document.addEventListener('keydown', (e) => {
     });
 
     // Touch events (mobile)
-    let touchStartTime = 0;
-    let isLongPress = false;
-    let longPressTimer = null;
-
     document.addEventListener('touchstart', e => {
-      touchStartTime = Date.now();
-      isLongPress = false;
-      
       if (e.touches.length === 1) {
         const touch = e.touches[0];
         const tile = touch.target.closest('.tile');
-        
         if (tile && isEditMode) {
-          longPressTimer = setTimeout(() => {
-            isLongPress = true;
-            activeTile = tile;
-            const rect = tile.getBoundingClientRect();
-            offsetX = touch.clientX - rect.left;
-            offsetY = touch.clientY - rect.top;
-            tile.classList.add('dragging');
-            tile.style.zIndex = 1001;
-            navigator.vibrate && navigator.vibrate(50); // Haptic feedback
-          }, 500);
+          activeTile = tile;
+          const rect = tile.getBoundingClientRect();
+          offsetX = touch.clientX - rect.left;
+          offsetY = touch.clientY - rect.top;
+          tile.classList.add('dragging');
+          tile.style.zIndex = 1001;
         } else if (!tile) {
           isDraggingCanvas = true;
           dragStartX = touch.clientX;
           dragStartY = touch.clientY;
         }
-      } else if (e.touches.length === 2) {
-        // Pinch to zoom preparation
-        isDraggingCanvas = false;
-        if (longPressTimer) {
-          clearTimeout(longPressTimer);
-          longPressTimer = null;
-        }
       }
     }, { passive: false });
 
     document.addEventListener('touchmove', e => {
-      if (longPressTimer) {
-        clearTimeout(longPressTimer);
-        longPressTimer = null;
-      }
-
       if (e.touches.length === 1) {
         const touch = e.touches[0];
-        
-        if (activeTile && isLongPress) {
-          e.preventDefault();
+        if (activeTile && isEditMode) {
           const canvasRect = canvas.getBoundingClientRect();
           const newX = (touch.clientX - offsetX - canvasRect.left) / canvasScale;
           const newY = (touch.clientY - offsetY - canvasRect.top) / canvasScale;
           activeTile.style.left = `${newX}px`;
           activeTile.style.top = `${newY}px`;
         } else if (isDraggingCanvas) {
-          e.preventDefault();
           const dx = touch.clientX - dragStartX;
           const dy = touch.clientY - dragStartY;
           canvasX += dx;
@@ -1019,22 +1012,12 @@ document.addEventListener('keydown', (e) => {
       }
     }, { passive: false });
 
-    document.addEventListener('touchend', e => {
-      if (longPressTimer) {
-        clearTimeout(longPressTimer);
-        longPressTimer = null;
-      }
-
-      const touchEndTime = Date.now();
-      const touchDuration = touchEndTime - touchStartTime;
-
+    document.addEventListener('touchend', () => {
       if (activeTile) {
         activeTile.classList.remove('dragging');
         activeTile.style.zIndex = 1000;
         activeTile = null;
       }
-      
-      isLongPress = false;
       isDraggingCanvas = false;
     });
 
@@ -1046,24 +1029,19 @@ document.addEventListener('keydown', (e) => {
       canvas.style.transform = `translate(${canvasX}px, ${canvasY}px) scale(${canvasScale})`;
     }
 
-    // Desktop wheel zoom
     document.addEventListener('wheel', e => {
       if (isMobile) return;
-      
       e.preventDefault();
       const scaleAmount = e.deltaY > 0 ? 0.975 : 1.05;
       const rect = canvas.getBoundingClientRect();
       const mouseX = e.clientX - rect.left;
       const mouseY = e.clientY - rect.top;
-      
       const oldScale = canvasScale;
       canvasScale *= scaleAmount;
       canvasScale = Math.max(0.5, Math.min(canvasScale, 3));
-      
       const scaleChange = canvasScale / oldScale;
       canvasX = mouseX - (mouseX - canvasX) * scaleChange;
       canvasY = mouseY - (mouseY - canvasY) * scaleChange;
-      
       updateCanvasTransform();
     }, { passive: false });
 
@@ -1097,7 +1075,6 @@ document.addEventListener('keydown', (e) => {
 
     updateCanvasTransform();
 
-    // Close menu when clicking outside
     document.addEventListener('click', (e) => {
       const menu = document.getElementById('menu');
       const menuButton = document.querySelector('.menu-button');
@@ -1107,7 +1084,6 @@ document.addEventListener('keydown', (e) => {
       }
     });
 
-    // Prevent zoom on double tap for iOS
     let lastTouchEnd = 0;
     document.addEventListener('touchend', function (event) {
       const now = (new Date()).getTime();
@@ -1116,50 +1092,6 @@ document.addEventListener('keydown', (e) => {
       }
       lastTouchEnd = now;
     }, false);
-
-    // ✅ Умный глобальный обработчик: остановка видео ТОЛЬКО при коротком касании (tap), а не при свайпе
-    let touchStartX = 0;
-    let touchStartY = 0;
-    let touchStartTime = 0;
-
-    document.addEventListener('touchstart', (e) => {
-      if (!isMobile || e.touches.length !== 1) return;
-      touchStartX = e.touches[0].clientX;
-      touchStartY = e.touches[0].clientY;
-      touchStartTime = Date.now();
-    }, { passive: true });
-
-    document.addEventListener('touchmove', (e) => {
-      if (!isMobile || !activeVideo || e.touches.length !== 1) return;
-      const dx = Math.abs(e.touches[0].clientX - touchStartX);
-      const dy = Math.abs(e.touches[0].clientY - touchStartY);
-      if (dx > 10 || dy > 10) {
-        touchStartTime = 0; // отменяем "tap"
-      }
-    }, { passive: true });
-
-    document.addEventListener('touchend', (e) => {
-      if (!isMobile || !activeVideo || touchStartTime === 0) return;
-
-      const touchEndTime = Date.now();
-      const touchDuration = touchEndTime - touchStartTime;
-
-      // Считаем "tap", если касание было коротким и без движения
-      if (touchDuration < 300) {
-        const targetTile = e.target.closest('.tile');
-        const targetVideo = targetTile ? targetTile.querySelector('video') : null;
-
-        if (targetVideo !== activeVideo) {
-          activeVideo.pause();
-          const tile = activeVideo.parentElement;
-          tile.classList.remove('sound-on');
-          const indicator = tile.querySelector('.sound-indicator');
-          if (indicator) indicator.style.display = 'none';
-          activeVideo = null;
-        }
-      }
-    }, { passive: true });
-
   </script>
 
   <!-- тут твои остальные <script> -->
