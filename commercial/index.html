@@ -334,7 +334,7 @@
     // Загрузка макета из JSON-файла
     async function loadLayout() {
       try {
-        const res = await fetch('./tile-layout-commercial.json?t=' + Date.now());
+        const res = await fetch('/tile-layout-commercial.json?t=' + Date.now());
         if (res.ok) {
           const layout = await res.json();
           console.log('Loaded tile-layout-commercial.json:', layout);
@@ -672,6 +672,7 @@ document.addEventListener('mousemove', e => {
 
 </body>
 </html>
+
 
 
 
