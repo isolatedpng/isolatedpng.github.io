@@ -1180,8 +1180,8 @@ document.addEventListener('keydown', (e) => {
         };
 
         if (!isMobile) {
-          tile.addEventListener('touchstart', enableSound);
-          tile.addEventListener('touchend', disableSound);
+          tile.addEventListener('mouseenter', enableSound);
+          tile.addEventListener('mouseleave', disableSound);
         }
 
         content.onerror = function() {
