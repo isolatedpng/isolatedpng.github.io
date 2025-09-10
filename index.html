@@ -825,24 +825,56 @@
       }
     })();
 
-    // Сохранение расположения плиток по клавише S
-    document.addEventListener('keydown', async (e) => {
-      if (isEditMode && (e.key === 's' || e.key === 'S')) {
-        e.preventDefault();
-        const tiles = document.querySelectorAll('.tile');
-        const layout = [];
-        tiles.forEach(tile => {
-          layout.push({
-            left: parseFloat(tile.style.left),
-            top: parseFloat(tile.style.top),
-            width: parseFloat(tile.style.width),
-            height: parseFloat(tile.style.height),
-          });
-        });
-        await saveTileLayout(layout);
-        alert('✅ Layout saved to GitHub!');
-      }
+// При нажатии S в режиме редактирования — выводим позиции плиток в консоль
+document.addEventListener('keydown', (e) => {
+  if (isEditMode && (e.key === 's' || e.key === 'S')) {
+    e.preventDefault();
+    
+    const tiles = document.querySelectorAll('.tile');
+    const layout = [];
+    
+    tiles.forEach((tile, index) => {
+      const item = {
+        id: index + 1,
+        left: parseFloat(tile.style.left) || 0,
+        top: parseFloat(tile.style.top) || 0,
+        width: parseFloat(tile.style.width) || 200,
+        height: parseFloat(tile.style.height) || 200,
+      };
+      layout.push(item);
     });
+
+    // Выводим в консоль красиво
+    console.clear();
+    console.log(`%c 🧱 [ISOLATED.PNG] Плитки сохранены (${layout.length} шт.) — скопируй этот массив:`, 
+                'color: #ff6b6b; font-size: 16px; font-weight: bold;');
+    console.log(JSON.stringify(layout, null, 2));
+    console.log('%c ✅ Готово! Можешь вставить этот массив в tile-layout.json вручную.', 
+                'color: #6ecf9f; font-weight: bold;');
+
+    // Показываем уведомление на экране
+    const notification = document.createElement('div');
+    notification.style.position = 'fixed';
+    notification.style.top = '20px';
+    notification.style.right = '20px';
+    notification.style.padding = '12px 20px';
+    notification.style.background = 'rgba(0,0,0,0.8)';
+    notification.style.color = '#6ecf9f';
+    notification.style.borderRadius = '8px';
+    notification.style.zIndex = '9999';
+    notification.style.fontFamily = 'monospace';
+    notification.style.fontSize = '14px';
+    notification.style.boxShadow = '0 4px 20px rgba(0,0,0,0.5)';
+    notification.innerHTML = '✅ Плитки сохранены в консоль (F12)';
+    document.body.appendChild(notification);
+
+    setTimeout(() => {
+      notification.style.opacity = '0';
+      notification.style.transition = 'opacity 0.5s ease';
+      setTimeout(() => notification.remove(), 500);
+    }, 3000);
+  }
+});
 
     // ⬇️ ЗАМЕНЁННАЯ ФУНКЦИЯ — теперь падают и картинки, и иероглифы
     function createGlyphs() {
