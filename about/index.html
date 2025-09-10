@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>isolated.png - About</title>
-      <!-- Добавляем favicon -->
+  <!-- Добавляем favicon -->
   <link rel="icon" type="image/png" href="/thumbs/isolatedlogotransparentb2048.png">
   <!-- Подключаем футуристический шрифт Orbitron -->
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
@@ -214,6 +214,43 @@
       line-height: 1.6;
       margin-bottom: 20px;
     }
+
+    /* === ДОБАВЛЕНО: Стили для текста и логотипа === */
+    .creator-credit {
+      margin-top: 40px;
+      font-size: 16px;
+      line-height: 1.6;
+      color: #aaa;
+    }
+
+    .dev-credit {
+      margin-top: 20px;
+      font-size: 16px;
+      color: #aaa;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .dev-logo {
+      width: 40px; /* Размер под текст — гармонично */
+      height: auto;
+      opacity: 0.8;
+      transition: all 0.4s ease;
+      animation: breathe 3s ease-in-out infinite;
+    }
+
+    .dev-logo:hover {
+      transform: scale(1.1) rotate(5deg);
+      opacity: 1;
+    }
+
+    @keyframes breathe {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.03); }
+    }
+    /* === КОНЕЦ ДОБАВЛЕНИЯ === */
   </style>
 </head>
 <body>
@@ -268,18 +305,18 @@
     <p>
       From image generation to cinematic video workflows and automated design pipelines, I continuously integrate emerging tools into my creative process—often on the cutting edge of release. AI research and workflow innovation are at the heart of what I do.
     </p>
+
+    <!-- === ДОБАВЛЕНО: Тексты и логотип === -->
+    <div class="creator-credit">
+      All artworks presented on this website were created by isolated.png. Most of these pieces were generated using cutting-edge artificial intelligence tools, blending algorithmic precision with creative vision.
+    </div>
+
+    <div class="dev-credit">
+      Web design and development by isolated.png
+      <img src="/thumbs/isolatedlogotransparentw2048.png" alt="isolated.png logo" class="dev-logo">
+    </div>
+    <!-- === КОНЕЦ ДОБАВЛЕНИЯ === -->
   </div>
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
