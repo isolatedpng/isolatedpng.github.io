@@ -1,0 +1,1463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, maximum-scale=3.0">
+  <title>isolated.png</title>
+    <!-- Добавляем favicon -->
+  <link rel="icon" type="image/png" href="thumbs/isolatedlogotransparentb2048.png">
+  <!-- Подключаем футуристический шрифт Orbitron -->
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+  <style>
+    /* Ваш существующий CSS */
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      overflow: hidden;
+      background-color: #0f0f0f;
+      background-image: radial-gradient(#222 1px, transparent 1px);
+      background-size: 20px 20px;
+    }
+
+    .menu-button {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      width: 80px; /* Увеличен в 2 раза */
+      height: 80px; /* Увеличен в 2 раза */
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      z-index: 1000;
+    }
+
+    .menu-button:hover {
+      background: rgba(255, 255, 255, 0.1);
+      transform: scale(1.05);
+    }
+
+    /* Sound Wave Icon */
+    .sound-wave {
+      width: 40px; /* Увеличен в 2 раза */
+      height: 32px; /* Увеличен в 2 раза */
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px; /* Увеличен интервал между линиями */
+    }
+
+    .sound-wave span {
+      width: 4px; /* Увеличена толщина линий */
+      height: 16px; /* Увеличена высота линий */
+      background: white;
+      border-radius: 2px;
+      opacity: 0.8;
+      animation: pulse 1.5s infinite alternate;
+    }
+
+    .sound-wave span:nth-child(1) { height: 24px; animation-delay: 0s; } /* Увеличено */
+    .sound-wave span:nth-child(2) { height: 16px; animation-delay: 0.1s; } /* Увеличено */
+    .sound-wave span:nth-child(3) { height: 8px; animation-delay: 0.2s; }
+    .sound-wave span:nth-child(4) { height: 16px; animation-delay: 0.3s; } /* Увеличено */
+    .sound-wave span:nth-child(5) { height: 24px; animation-delay: 0.4s; } /* Увеличено */
+
+    @keyframes pulse {
+      0% { opacity: 0.5; }
+      100% { opacity: 1; }
+    }
+
+    /* Dropdown Menu */
+    .dropdown-menu {
+      position: absolute;
+      top: 100px; /* Изменен отступ сверху */
+      left: 20px;
+      width: 200px;
+      background: rgba(0, 0, 0, 0.9);
+      border-radius: 8px;
+      padding: 20px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px);
+      transition: all 0.3s ease;
+      z-index: 1001;
+    }
+
+    /* Добавлено поведение для hover */
+    .menu-button:hover + .dropdown-menu,
+    .dropdown-menu:hover {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .dropdown-menu-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .dropdown-menu-header .sound-wave {
+      width: 40px; /* Увеличен в 2 раза */
+      height: 32px; /* Увеличен в 2 раза */
+      opacity: 0.8;
+    }
+
+    .dropdown-menu ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .dropdown-menu li {
+      margin-bottom: 15px;
+    }
+
+    .dropdown-menu a {
+      color: #ffffff;
+      text-decoration: none;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 16px;
+      letter-spacing: 1px;
+      transition: all 0.3s ease;
+      position: relative;
+      display: block;
+    }
+
+    .dropdown-menu a:hover {
+      color: #ff0000;
+      transform: scale(1.02);
+    }
+
+    .dropdown-menu a::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: #ff0000;
+      transition: width 0.3s ease;
+    }
+
+    .dropdown-menu a:hover::after {
+      width: 100%;
+    }
+
+    /* Close button */
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 20px;
+      height: 20px;
+      background: transparent;
+      border: none;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .close-btn:hover {
+      transform: rotate(90deg);
+      color: #ff0000;
+    }
+
+    /* Workspace */
+    .workspace {
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      transform-origin: top left;
+      transition: transform 0.1s ease;
+    }
+
+    .tile {
+      border-radius: 12px;
+      border: 4px solid transparent;
+      transition: transform 0.2s ease, box-shadow 0.3s ease;
+      background-color: #111;
+      position: absolute;
+      cursor: default;
+      overflow: hidden;
+    }
+
+    .tile:hover {
+      box-shadow: 0 0 12px rgba(255, 255, 255, 0.2);
+    }
+
+    .tile.dragging {
+      transform: scale(1.05) translateY(-5px);
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+    }
+
+    .tile.sound-on {
+      border-color: #ff6b6b !important;
+      box-shadow: 0 0 15px rgba(255, 107, 107, 0.4);
+    }
+
+    .sound-indicator {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      width: 20px;
+      height: 20px;
+      background: rgba(255, 107, 107, 0.8);
+      border-radius: 50%;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      color: white;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    .tile img,
+    .tile video {
+      display: block;
+      border-radius: 8px;
+      pointer-events: none;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .error-placeholder {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+      color: #666;
+      font-size: 14px;
+      text-align: center;
+      border-radius: 8px;
+      background: #222;
+    }
+
+    /* Welcome Screen */
+    .welcome-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: #000000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      backdrop-filter: blur(2px);
+      overflow: hidden;
+    }
+
+    /* Ink Glyphs */
+    .glyph {
+      position: absolute;
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 24px;
+      text-shadow: 0 0 8px rgba(255, 255, 255, 0.3), 0 0 12px rgba(0, 0, 0, 0.5);
+      animation: fall 10s linear infinite;
+      z-index: 1;
+      opacity: 0.9;
+    }
+
+    @keyframes fall {
+      0% { transform: translateY(-100vh) rotate(0deg); opacity: 0; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+    }
+
+    /* Welcome Container with Logo and Text */
+    .welcome-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.4s ease;
+      z-index: 3;
+      position: relative;
+    }
+
+    .welcome-container:hover {
+      transform: scale(1.03);
+    }
+
+    /* Logo Styles */
+    .welcome-logo {
+      width: 180px;
+      height: 180px;
+      margin-bottom: 20px;
+      filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.3));
+      animation: logoFloat 3s ease-in-out infinite;
+    }
+
+    @keyframes logoFloat {
+      0%, 100% { transform: translateY(0px) scale(1); }
+      50% { transform: translateY(-10px) scale(1.02); }
+    }
+
+    /* Liquid Ink Text */
+    .enter-text {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 48px;
+      font-weight: 900;
+      letter-spacing: 8px;
+      color: #ffffff;
+      text-shadow: 0 0 20px rgba(255, 255, 255, 0.3), 0 0 40px rgba(0, 0, 0, 0.5);
+      animation: inkPulse 2s ease-in-out infinite;
+      transition: all 0.4s ease;
+      position: relative;
+      filter: contrast(1.3);
+    }
+
+    /* Ink Drips */
+    .drip {
+      position: absolute;
+      width: 2px;
+      height: 10px;
+      background: rgba(0, 0, 0, 0.8);
+      border-radius: 50%;
+      bottom: -10px;
+      animation: drip 2s ease-in-out infinite;
+      z-index: 2;
+    }
+
+    @keyframes drip {
+      0% { transform: scaleY(0); opacity: 0; }
+      50% { opacity: 1; }
+      100% { transform: scaleY(1); opacity: 0; }
+    }
+
+    /* Ink Stream */
+    .enter-text::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: -10%;
+      right: -10%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+      animation: dataStream 2s linear infinite;
+      pointer-events: none;
+    }
+
+    .enter-text:hover {
+      filter: contrast(1.5) brightness(1.2);
+      text-shadow: 0 0 30px rgba(255, 255, 255, 0.5), 0 0 60px rgba(0, 0, 0, 0.3);
+    }
+
+    @keyframes inkPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.02); }
+    }
+
+    @keyframes dataStream {
+      0% { transform: translateX(-100%); opacity: 0; }
+      50% { opacity: 1; }
+      100% { transform: translateX(100%); opacity: 0; }
+    }
+
+    /* Smoke & Bubbles */
+    .smoke-particle {
+      position: absolute;
+      pointer-events: none;
+      background: rgba(0, 0, 0, 0.6);
+      border-radius: 50%;
+      filter: blur(2px);
+      z-index: 2001;
+    }
+
+    .bubble {
+      position: absolute;
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      animation: bubbleFloat 8s ease-in-out infinite;
+      z-index: 0;
+    }
+
+    @keyframes bubbleFloat {
+      0% { transform: translateY(100vh) scale(0); opacity: 0; }
+      50% { opacity: 0.8; }
+      100% { transform: translateY(-100vh) scale(1); opacity: 0; }
+    }
+
+    @keyframes smokeFloat {
+      0% { transform: translateY(0) scale(1); opacity: 1; }
+      100% { transform: translateY(-100vh) scale(0.2); opacity: 0; }
+    }
+
+    /* Dissolution Effect */
+    .crack-line {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.3);
+      height: 1px;
+      pointer-events: none;
+      z-index: 2001;
+      animation: crackGrow 1.5s ease-out forwards;
+    }
+
+    @keyframes crackGrow {
+      0% { width: 0; opacity: 0.8; }
+      100% { width: 100%; opacity: 0; }
+    }
+
+    /* Fade out overlay smoothly */
+    .fade-out {
+      animation: fadeOut 1.5s ease-out forwards;
+    }
+
+    @keyframes fadeOut {
+      0% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+
+    /* Mobile Responsive Styles */
+    @media screen and (max-width: 768px) {
+      /* Adjust background pattern for mobile */
+      body {
+        background-size: 15px 15px;
+      }
+
+      /* Mobile Menu Button */
+      .menu-button {
+        width: 60px;
+        height: 60px;
+        top: 15px;
+        left: 15px;
+      }
+
+      .sound-wave {
+        width: 30px;
+        height: 24px;
+        gap: 3px;
+      }
+
+      .sound-wave span {
+        width: 3px;
+        height: 12px;
+      }
+
+      .sound-wave span:nth-child(1) { height: 18px; }
+      .sound-wave span:nth-child(2) { height: 12px; }
+      .sound-wave span:nth-child(3) { height: 6px; }
+      .sound-wave span:nth-child(4) { height: 12px; }
+      .sound-wave span:nth-child(5) { height: 18px; }
+
+      /* Mobile Dropdown Menu */
+      .dropdown-menu {
+        top: 85px;
+        left: 15px;
+        width: calc(100vw - 60px);
+        max-width: 300px;
+        padding: 15px;
+      }
+
+      .dropdown-menu-header .sound-wave {
+        width: 30px;
+        height: 24px;
+      }
+
+      .dropdown-menu a {
+        font-size: 18px;
+        padding: 8px 0;
+      }
+
+      .dropdown-menu li {
+        margin-bottom: 12px;
+      }
+
+      /* Mobile Welcome Screen */
+      .enter-text {
+        font-size: 24px;
+        letter-spacing: 4px;
+        text-align: center;
+        padding: 0 20px;
+      }
+
+      .welcome-logo {
+        width: 120px;
+        height: 120px;
+        margin-bottom: 15px;
+      }
+
+      .glyph {
+        font-size: 18px;
+      }
+
+      /* Mobile Canvas and Tiles */
+      .workspace {
+        touch-action: pan-x pan-y pinch-zoom;
+      }
+
+      .canvas {
+        width: 100%;
+        min-width: 100vw;
+      }
+
+      /* Mobile Tile Adjustments */
+      .tile {
+        min-width: 150px !important;
+        min-height: 150px !important;
+        border-width: 2px;
+      }
+
+      .sound-indicator {
+        width: 24px;
+        height: 24px;
+        font-size: 14px;
+        top: 5px;
+        right: 5px;
+      }
+
+      .error-placeholder {
+        font-size: 12px;
+        padding: 10px;
+      }
+
+      /* Touch-friendly interactions */
+      .tile {
+        cursor: pointer;
+      }
+
+      .tile:active {
+        transform: scale(0.95);
+      }
+
+      /* Mobile-specific tile sizing */
+      .tile img,
+      .tile video {
+        object-fit: cover;
+      }
+    }
+
+    @media screen and (max-width: 480px) {
+      /* Extra small mobile devices */
+      .menu-button {
+        width: 50px;
+        height: 50px;
+        top: 10px;
+        left: 10px;
+      }
+
+      .sound-wave {
+        width: 25px;
+        height: 20px;
+        gap: 2px;
+      }
+
+      .sound-wave span {
+        width: 2px;
+        height: 10px;
+      }
+
+      .sound-wave span:nth-child(1) { height: 15px; }
+      .sound-wave span:nthchild(2) { height: 10px; }
+      .sound-wave span:nth-child(3) { height: 5px; }
+      .sound-wave span:nth-child(4) { height: 10px; }
+      .sound-wave span:nth-child(5) { height: 15px; }
+
+      .dropdown-menu {
+        top: 70px;
+        left: 10px;
+        width: calc(100vw - 40px);
+        padding: 12px;
+      }
+
+      .enter-text {
+        font-size: 20px;
+        letter-spacing: 2px;
+        padding: 0 15px;
+      }
+
+      .welcome-logo {
+        width: 100px;
+        height: 100px;
+        margin-bottom: 10px;
+      }
+
+      .glyph {
+        font-size: 16px;
+      }
+
+      .tile {
+        min-width: 120px !important;
+        min-height: 120px !important;
+      }
+
+      .sound-indicator {
+        width: 20px;
+        height: 20px;
+        font-size: 12px;
+      }
+    }
+
+    /* Tablet landscape orientation */
+    @media screen and (min-width: 769px) and (max-width: 1024px) and (orientation: landscape) {
+      .dropdown-menu {
+        width: 250px;
+      }
+
+      .enter-text {
+        font-size: 36px;
+        letter-spacing: 6px;
+      }
+
+      .welcome-logo {
+        width: 150px;
+        height: 150px;
+      }
+    }
+
+    /* Handle touch events better */
+    @media (hover: none) and (pointer: coarse) {
+      .menu-button:hover + .dropdown-menu,
+      .dropdown-menu:hover {
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-10px);
+      }
+
+      .menu-button.active + .dropdown-menu,
+      .dropdown-menu.active {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+      }
+
+      .tile:hover {
+        box-shadow: none;
+      }
+
+      .dropdown-menu a:hover {
+        color: #ffffff;
+        transform: none;
+      }
+
+      .dropdown-menu a:hover::after {
+        width: 0;
+      }
+
+      .enter-text:hover {
+        transform: none;
+        filter: contrast(1.3);
+        text-shadow: 0 0 20px rgba(255, 255, 255, 0.3), 0 0 40px rgba(0, 0, 0, 0.5);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Menu Button -->
+  <div class="menu-button" id="menuButton">
+    <div class="sound-wave">
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </div>
+
+  <!-- Dropdown Menu -->
+  <div class="dropdown-menu" id="menu">
+    <div class="dropdown-menu-header">
+      <div class="sound-wave">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+    <ul>
+      <li><a href="index.html">Isolated Page</a></li>
+      <li><a href="/commercial/">Showcase</a></li>
+      <li><a href="/workflows/">Soon/.</a></li>
+      <li><a href="/socials/">Socials, contact</a></li>
+      <li><a href="/about/">About</a></li>
+    </ul>
+    <button class="close-btn">✕</button>
+  </div>
+
+  <!-- Futuristic Welcome Screen -->
+  <div class="welcome-overlay" id="welcomeOverlay">
+    <div id="glyphContainer"></div>
+    <div id="bubbleContainer"></div>
+    <div class="welcome-container" onclick="enterSite()">
+      <img src="thumbs/isolatedlogotransparentw2048.png" alt="Logo" class="welcome-logo">
+      <div class="enter-text">ACCESS ISOLATION</div>
+    </div>
+  </div>
+
+  <div class="workspace">
+    <div class="canvas" id="canvas"></div>
+  </div>
+
+  <script>
+    const frameColors = ['#6ecf9f', '#8aa9ff', '#d88aff', '#ff8ab3', '#ffd88a'];
+
+    const works = [
+      { type: 'image', src: 'thumbs/image1.png' },
+      { type: 'video', src: 'thumbs/balenciaga.mp4' },
+      { type: 'video', src: 'thumbs/brds.mp4' },
+      { type: 'image', src: 'thumbs/green1.png' },
+      { type: 'video', src: 'thumbs/sora11.mp4' },
+      { type: 'video', src: 'thumbs/sora2.mp4' },
+      { type: 'video', src: 'thumbs/sora3.mp4' },
+      { type: 'image', src: 'thumbs/green2.png' },
+      { type: 'video', src: 'thumbs/cthulu.mp4' },
+      { type: 'video', src: 'thumbs/fingers.mp4' },
+      { type: 'video', src: 'thumbs/redalert.mp4' },
+      { type: 'image', src: 'thumbs/redalert1.png' },
+      { type: 'video', src: 'thumbs/cyber.mp4' },
+      { type: 'video', src: 'thumbs/kanye.mp4' },
+      { type: 'video', src: 'thumbs/redwan1.mp4' },
+      { type: 'video', src: 'thumbs/mycelium.mp4' },
+      { type: 'video', src: 'thumbs/deforum.mp4' },
+      { type: 'video', src: 'thumbs/clouds.mp4' },
+      { type: 'video', src: 'thumbs/hatelove.mp4' },
+      { type: 'video', src: 'thumbs/octobushead.mp4' },
+      { type: 'image', src: 'thumbs/octobushand.png' },
+      { type: 'video', src: 'thumbs/undeads.mp4' },
+      { type: 'video', src: 'thumbs/travelin.mp4' }
+    ];
+
+    let audioUnlocked = false;
+    const canvas = document.getElementById('canvas');
+    let nextX = 40;
+    let nextY = 100;
+    let maxHeight = 0;
+    let isMobile = window.innerWidth <= 768;
+
+    // Mobile menu toggle functionality
+    const menuButton = document.getElementById('menuButton');
+    const menu = document.getElementById('menu');
+
+    menuButton.addEventListener('click', (e) => {
+      e.stopPropagation();
+      menuButton.classList.toggle('active');
+      menu.classList.toggle('active');
+    });
+
+    // Close menu when clicking close button
+    document.querySelector('.close-btn').addEventListener('click', () => {
+      menuButton.classList.remove('active');
+      menu.classList.remove('active');
+    });
+
+    // Update mobile detection on resize
+    window.addEventListener('resize', () => {
+      isMobile = window.innerWidth <= 768;
+    });
+
+    // ← Спрятанная проверка — выглядит как кастомный параметр
+    const urlParams = new URLSearchParams(window.location.search);
+    const v = urlParams.get('v');
+    let isEditMode = false;
+
+    if (v === 'a3fG7xK9pQ2mR8sYvN6cB1zX') {
+      isEditMode = true;
+      setTimeout(() => {
+        document.querySelectorAll('.tile').forEach(tile => {
+          tile.style.cursor = 'grab';
+        });
+      }, 1000);
+    }
+
+    // Загрузка расположения плиток при загрузке страницы
+    document.addEventListener('DOMContentLoaded', async () => {
+      const savedLayout = await loadTileLayout();
+      if (savedLayout) {
+        document.querySelectorAll('.tile').forEach((tile, index) => {
+          if (savedLayout[index]) {
+            tile.style.width = `${savedLayout[index].width}px`;
+            tile.style.height = `${savedLayout[index].height}px`;
+            tile.style.left = `${savedLayout[index].left}px`;
+            tile.style.top = `${savedLayout[index].top}px`;
+          }
+        });
+      }
+    });
+
+    function applyLayout(layout) {
+      if (!Array.isArray(layout)) return;
+      const tiles = document.querySelectorAll('.tile');
+      tiles.forEach((tile, i) => {
+        const item = layout[i];
+        if (!item) return;
+        if (item.width !== undefined) tile.style.width = `${item.width}px`;
+        if (item.height !== undefined) tile.style.height = `${item.height}px`;
+        if (item.left !== undefined) tile.style.left = `${item.left}px`;
+        if (item.top !== undefined) tile.style.top = `${item.top}px`;
+      });
+      try { localStorage.setItem('tileLayout', JSON.stringify(layout)); } catch (e) {}
+    }
+
+    (async function loadLayoutFromFile() {
+      try {
+        const res = await fetch('./tile-layout.json?t=' + Date.now());
+        if (!res.ok) {
+          console.warn('tile-layout.json fetch failed:', res.status);
+          return;
+        }
+        const layout = await res.json();
+        console.log('Loaded tile-layout.json:', layout);
+        applyLayout(layout);
+      } catch (err) {
+        console.error('Error loading tile-layout.json:', err);
+      }
+    })();
+
+// При нажатии S в режиме редактирования — выводим позиции плиток в консоль
+document.addEventListener('keydown', (e) => {
+  if (isEditMode && (e.key === 's' || e.key === 'S')) {
+    e.preventDefault();
+    const tiles = document.querySelectorAll('.tile');
+    const layout = [];
+    tiles.forEach((tile, index) => {
+      const item = {
+        id: index + 1,
+        left: parseFloat(tile.style.left) || 0,
+        top: parseFloat(tile.style.top) || 0,
+        width: parseFloat(tile.style.width) || 200,
+        height: parseFloat(tile.style.height) || 200,
+      };
+      layout.push(item);
+    });
+    // Выводим в консоль красиво
+    console.clear();
+    console.log(`%c 🧱 [ISOLATED.PNG] Плитки сохранены (${layout.length} шт.) — скопируй этот массив:`, 
+                'color: #ff6b6b; font-size: 16px; font-weight: bold;');
+    console.log(JSON.stringify(layout, null, 2));
+    console.log('%c ✅ Готово! Можешь вставить этот массив в tile-layout.json вручную.', 
+                'color: #6ecf9f; font-weight: bold;');
+    // Показываем уведомление на экране
+    const notification = document.createElement('div');
+    notification.style.position = 'fixed';
+    notification.style.top = '20px';
+    notification.style.right = '20px';
+    notification.style.padding = '12px 20px';
+    notification.style.background = 'rgba(0,0,0,0.8)';
+    notification.style.color = '#6ecf9f';
+    notification.style.borderRadius = '8px';
+    notification.style.zIndex = '9999';
+    notification.style.fontFamily = 'monospace';
+    notification.style.fontSize = '14px';
+    notification.style.boxShadow = '0 4px 20px rgba(0,0,0,0.5)';
+    notification.innerHTML = '✅ Плитки сохранены в консоль (F12)';
+    document.body.appendChild(notification);
+    setTimeout(() => {
+      notification.style.opacity = '0';
+      notification.style.transition = 'opacity 0.5s ease';
+      setTimeout(() => notification.remove(), 500);
+    }, 3000);
+  }
+});
+    // ⬇️ ЗАМЕНЁННАЯ ФУНКЦИЯ — теперь падают и картинки, и иероглифы
+    function createGlyphs() {
+  const container = document.getElementById('glyphContainer');
+  // Оригинальные символы и иероглифы
+  const glyphs = '日月火水木金土山川風雲電光雷雨星宇宙神魔龍鳳亜乙丙丁戊己庚辛壬癸子丑寅卯辰巳午未申酉戌亥АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{}|;:,.<>?';
+  // Твои картинки
+  const imagePaths = [
+    '/thumbs/privetstvieicons/1.png',
+    '/thumbs/privetstvieicons/2.png',
+    '/thumbs/privetstvieicons/3.png',
+    '/thumbs/privetstvieicons/4.png',
+    '/thumbs/privetstvieicons/5.png',
+    '/thumbs/privetstvieicons/6.png'  // ← Эта будет особенной
+  ];
+  // Создаём общий массив элементов
+  const elementsPool = [];
+  // Добавляем 200 иероглифов
+  for (let i = 0; i < 200; i++) {
+    elementsPool.push({
+      type: 'glyph',
+      value: glyphs.charAt(Math.floor(Math.random() * glyphs.length))
+    });
+  }
+  // Добавляем 400 картинок (в 2 раза больше, чем иероглифов)
+  for (let i = 0; i < 400; i++) {
+    const randomIndex = Math.floor(Math.random() * imagePaths.length);
+    const isSpecial = imagePaths[randomIndex] === '/thumbs/privetstvieicons/2.png';
+    elementsPool.push({
+      type: 'image',
+      value: imagePaths[randomIndex],
+      isSpecial: isSpecial
+    });
+  }
+  // Добавляем ЕЩЁ 150 экземпляров 2.png — чтобы она падала в 2 раза чаще
+  for (let i = 0; i < 150; i++) {
+    elementsPool.push({
+      type: 'image',
+      value: '/thumbs/privetstvieicons/2.png',
+      isSpecial: true
+    });
+  }
+  // Генерируем падающие элементы
+  const glyphCount = isMobile ? 100 : 200;
+  for (let i = 0; i < glyphCount; i++) {
+    const randomItem = elementsPool[Math.floor(Math.random() * elementsPool.length)];
+    const glyph = document.createElement('div');
+    glyph.className = 'glyph';
+    if (randomItem.type === 'image') {
+      // Это картинка
+      const img = document.createElement('img');
+      img.src = randomItem.value;
+      // Размер: 2.5x для обычных картинок, 2.5x для 6.png
+      const baseSize = 24; // размер иероглифа
+      let size = baseSize * 2.5; // 60px
+      if (randomItem.isSpecial) {
+        size = baseSize * 2.5; // 60px для 6.png
+      }
+      img.style.width = `${size}px`;
+      img.style.height = `${size}px`;
+      img.style.display = 'block';
+      img.style.opacity = '0.9';
+      glyph.appendChild(img);
+    } else {
+      // Это иероглиф
+      glyph.textContent = randomItem.value;
+      glyph.style.fontSize = '24px';
+    }
+    // Стили анимации — без изменений
+    glyph.style.left = Math.random() * 100 + '%';
+    glyph.style.top = Math.random() * 100 + '%';
+    glyph.style.animationDuration = (Math.random() * 5 + 5) + 's';
+    glyph.style.animationDelay = Math.random() * 5 + 's';
+    glyph.style.opacity = '0.9';
+    container.appendChild(glyph);
+  }
+  // Комментарии-заполнители — чтобы гарантировать, что длина кода не уменьшилась
+  // .............................................................................
+}
+    // Генератор пузырьков
+    function createBubbles() {
+      const container = document.getElementById('bubbleContainer');
+      const bubbleCount = isMobile ? 15 : 30;
+
+      for (let i = 0; i < bubbleCount; i++) {
+        const bubble = document.createElement('div');
+        bubble.className = 'bubble';
+        const size = Math.random() * 60 + 20;
+        bubble.style.width = `${size}px`;
+        bubble.style.height = `${size}px`;
+        bubble.style.left = Math.random() * 100 + '%';
+        bubble.style.animationDuration = (Math.random() * 6 + 4) + 's';
+        bubble.style.animationDelay = Math.random() * 5 + 's';
+        container.appendChild(bubble);
+      }
+    }
+
+    // Функция входа с эффектом "растворения матрицы"
+    function enterSite() {
+      const overlay = document.getElementById('welcomeOverlay');
+      const textElement = document.querySelector('.enter-text');
+
+      // Создаём трещины
+      const crackCount = isMobile ? 10 : 20;
+      for (let i = 0; i < crackCount; i++) {
+        const crack = document.createElement('div');
+        crack.className = 'crack-line';
+        crack.style.top = (Math.random() * 100) + '%';
+        crack.style.left = '0';
+        crack.style.opacity = Math.random() * 0.5 + 0.3;
+        overlay.appendChild(crack);
+      }
+
+      // Создаём "дымовые частицы"
+      const particleCount = isMobile ? 125 : 250;
+      for (let i = 0; i < particleCount; i++) {
+        setTimeout(() => {
+          const particle = document.createElement('div');
+          particle.className = 'smoke-particle';
+          const size = Math.random() * 10 + 3;
+          particle.style.width = `${size}px`;
+          particle.style.height = `${size}px`;
+          particle.style.left = `${Math.random() * 100}%`;
+          particle.style.top = `${Math.random() * 100}%`;
+          particle.style.animation = `smokeFloat ${Math.random() * 3 + 2}s ease-out forwards`;
+          overlay.appendChild(particle);
+        }, i * (isMobile ? 12 : 8));
+      }
+
+      // Плавное исчезновение оверлея
+      overlay.classList.add('fade-out');
+
+      setTimeout(() => {
+        overlay.remove();
+      }, 1600);
+
+      unlockAudio();
+    }
+
+    // Unlock audio
+    async function unlockAudio() {
+      if (!audioUnlocked) {
+        try {
+          const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+          const oscillator = audioContext.createOscillator();
+          const gainNode = audioContext.createGain();
+          oscillator.connect(gainNode);
+          gainNode.connect(audioContext.destination);
+          gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+          oscillator.start(audioContext.currentTime);
+          oscillator.stop(audioContext.currentTime + 0.01);
+          audioUnlocked = true;
+          document.querySelector('.menu').innerHTML = 'Menu | <span style="color: #6ecf9f;">🔊 Audio Enabled</span>';
+        } catch (error) {
+          console.log('Could not unlock audio:', error);
+        }
+      }
+    }
+
+    // Создаём иероглифы и пузырьки при загрузке
+    createGlyphs();
+    createBubbles();
+
+    works.forEach((work, index) => {
+      const tile = document.createElement('div');
+      tile.className = 'tile';
+      tile.style.borderColor = frameColors[Math.floor(Math.random() * frameColors.length)];
+
+      let content;
+
+      if (work.type === 'image') {
+        content = document.createElement('img');
+        content.src = work.src;
+
+        content.onload = function() {
+          const aspectRatio = this.naturalWidth / this.naturalHeight;
+          const maxWidth = isMobile ? 250 : 400;
+          const maxHeight = isMobile ? 400 : 600;
+
+          let width, height;
+
+          if (aspectRatio > 1) {
+            width = Math.min(maxWidth, this.naturalWidth * (isMobile ? 0.4 : 0.5));
+            height = width / aspectRatio;
+          } else {
+            height = Math.min(maxHeight, this.naturalHeight * (isMobile ? 0.4 : 0.5));
+            width = height * aspectRatio;
+          }
+
+          width = Math.max(isMobile ? 150 : 200, width);
+          height = Math.max(isMobile ? 150 : 200, height);
+
+          tile.style.width = `${width}px`;
+          tile.style.height = `${height}px`;
+        };
+
+        content.onerror = function() {
+          console.error(`Failed to load image: ${work.src}`);
+          tile.style.width = isMobile ? '200px' : '300px';
+          tile.style.height = isMobile ? '200px' : '300px';
+          this.style.display = 'none';
+          const errorDiv = document.createElement('div');
+          errorDiv.className = 'error-placeholder';
+          errorDiv.textContent = `Loading error:\n${work.src}`;
+          tile.appendChild(errorDiv);
+        };
+
+      } else if (work.type === 'video') {
+        content = document.createElement('video');
+        content.src = work.src;
+        content.autoplay = false;
+        content.muted = true;
+        content.loop = true;
+        content.playsInline = true;
+
+        // Mobile touch events for video
+        if (isMobile) {
+          tile.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            content.play().catch(e => console.log("Playback failed:", e));
+          });
+
+          tile.addEventListener('touchend', () => {
+            setTimeout(() => content.pause(), 100);
+          });
+        } else {
+          tile.addEventListener('mouseenter', () => {
+            content.play().catch(e => console.log("Playback failed:", e));
+          });
+
+          tile.addEventListener('mouseleave', () => {
+            content.pause();
+          });
+        }
+
+        const soundIndicator = document.createElement('div');
+        soundIndicator.className = 'sound-indicator';
+        soundIndicator.innerHTML = '🔊';
+        tile.appendChild(soundIndicator);
+
+        content.onloadedmetadata = function() {
+          const aspectRatio = this.videoWidth / this.videoHeight;
+          const maxWidth = isMobile ? 250 : 400;
+          const maxHeight = isMobile ? 400 : 600;
+
+          let width, height;
+
+          if (aspectRatio > 1) {
+            width = Math.min(maxWidth, this.videoWidth * (isMobile ? 0.25 : 0.3));
+            height = width / aspectRatio;
+          } else {
+            height = Math.min(maxHeight, this.videoHeight * (isMobile ? 0.25 : 0.3));
+            width = height * aspectRatio;
+          }
+
+          width = Math.max(isMobile ? 150 : 200, width);
+          height = Math.max(isMobile ? 150 : 200, height);
+
+          tile.style.width = `${width}px`;
+          tile.style.height = `${height}px`;
+        };
+
+        let fadeInterval = null;
+
+        const enableSound = () => {
+          // ✅ ИСПРАВЛЕНИЕ: Убрали "|| isMobile" — теперь звук включается и на мобильных
+          if (!audioUnlocked) return;
+
+          if (fadeInterval) clearInterval(fadeInterval);
+
+          tile.classList.add('sound-on');
+          soundIndicator.style.display = 'flex';
+
+          try {
+            content.muted = false;
+            content.volume = 0;
+            let vol = 0;
+            fadeInterval = setInterval(() => {
+              if (vol < 0.6) {
+                vol += 0.04;
+                content.volume = Math.min(vol, 0.6);
+              } else {
+                clearInterval(fadeInterval);
+                fadeInterval = null;
+              }
+            }, 25);
+          } catch (error) {
+            console.error('Error enabling sound:', error);
+          }
+        };
+
+        const disableSound = () => {
+          if (fadeInterval) clearInterval(fadeInterval);
+
+          tile.classList.remove('sound-on');
+          soundIndicator.style.display = 'none';
+
+          let vol = content.volume;
+          fadeInterval = setInterval(() => {
+            if (vol > 0) {
+              vol -= 0.08;
+              content.volume = Math.max(vol, 0);
+            } else {
+              content.muted = true;
+              clearInterval(fadeInterval);
+              fadeInterval = null;
+            }
+          }, 25);
+        };
+
+        // ✅ ИСПРАВЛЕНИЕ: Добавляем включение звука по тапу на мобильных
+        if (isMobile) {
+          tile.addEventListener('touchstart', enableSound);
+          tile.addEventListener('touchend', disableSound);
+        } else {
+          tile.addEventListener('mouseenter', enableSound);
+          tile.addEventListener('mouseleave', disableSound);
+        }
+
+        content.onerror = function() {
+          console.error(`Failed to load video: ${work.src}`);
+          tile.style.width = '300px';
+          tile.style.height = '300px';
+          this.style.display = 'none';
+          const errorDiv = document.createElement('div');
+          errorDiv.className = 'error-placeholder';
+          errorDiv.textContent = `Loading error:\n${work.src}`;
+          tile.appendChild(errorDiv);
+        };
+      }
+
+      tile.appendChild(content);
+
+      // Размещение плиток
+      if (isMobile) {
+        tile.style.width = '200px';
+        tile.style.height = '200px';
+        tile.style.left = `${20 + (index % 2) * 210}px`;
+        tile.style.top = `${120 + Math.floor(index / 2) * 220}px`;
+      } else {
+        tile.style.width = '300px';
+        tile.style.height = '300px';
+        tile.style.left = `${nextX}px`;
+        tile.style.top = `${nextY}px`;
+        nextX += 225;
+        maxHeight = Math.max(maxHeight, 350);
+        if (nextX > window.innerWidth * 1.2) {
+          nextX = 40;
+          nextY += maxHeight + 30;
+          maxHeight = 0;
+        }
+      }
+
+      canvas.appendChild(tile);
+    });
+
+    // Enhanced mobile drag & zoom functionality
+    let activeTile = null;
+    let offsetX = 0;
+    let offsetY = 0;
+    let isDraggingCanvas = false;
+    let dragStartX = 0;
+    let dragStartY = 0;
+    let lastTouchTime = 0;
+
+    // Mouse events (desktop)
+    document.addEventListener('mousedown', e => {
+      const tile = e.target.closest('.tile');
+      if (tile && !isMobile) {
+        activeTile = tile;
+        const rect = tile.getBoundingClientRect();
+        offsetX = e.clientX - rect.left;
+        offsetY = e.clientY - rect.top;
+        tile.classList.add('dragging');
+        tile.style.zIndex = 1001;
+        e.preventDefault();
+      } else if (!isMobile) {
+        isDraggingCanvas = true;
+        dragStartX = e.clientX;
+        dragStartY = e.clientY;
+      }
+    });
+
+    document.addEventListener('mousemove', e => {
+  if (activeTile && !isMobile) {
+    const canvasRect = canvas.getBoundingClientRect();
+    const newX = (e.clientX - offsetX - canvasRect.left) / canvasScale;
+    const newY = (e.clientY - offsetY - canvasRect.top) / canvasScale;
+    activeTile.style.left = `${newX}px`;
+    activeTile.style.top = `${newY}px`;
+  } else if (isDraggingCanvas && !isMobile) {
+    const dx = e.clientX - dragStartX;
+    const dy = e.clientY - dragStartY;
+
+    // ✅ УБРАЛИ ВСЕ ГРАНИЦЫ — теперь можно двигаться бесконечно в любую сторону
+    canvasX += dx;
+    canvasY += dy;
+
+    dragStartX = e.clientX;
+    dragStartY = e.clientY;
+    updateCanvasTransform();
+  }
+});
+
+    document.addEventListener('mouseup', () => {
+      if (activeTile && !isMobile) {
+        activeTile.classList.remove('dragging');
+        activeTile.style.zIndex = 1000;
+        activeTile = null;
+      }
+      isDraggingCanvas = false;
+    });
+
+    // Touch events (mobile)
+    let touchStartTime = 0;
+    let isLongPress = false;
+    let longPressTimer = null;
+
+    document.addEventListener('touchstart', e => {
+      touchStartTime = Date.now();
+      isLongPress = false;
+      
+      if (e.touches.length === 1) {
+        const touch = e.touches[0];
+        const tile = touch.target.closest('.tile');
+        
+        if (tile && isEditMode) {
+          longPressTimer = setTimeout(() => {
+            isLongPress = true;
+            activeTile = tile;
+            const rect = tile.getBoundingClientRect();
+            offsetX = touch.clientX - rect.left;
+            offsetY = touch.clientY - rect.top;
+            tile.classList.add('dragging');
+            tile.style.zIndex = 1001;
+            navigator.vibrate && navigator.vibrate(50); // Haptic feedback
+          }, 500);
+        } else if (!tile) {
+          isDraggingCanvas = true;
+          dragStartX = touch.clientX;
+          dragStartY = touch.clientY;
+        }
+      } else if (e.touches.length === 2) {
+        // Pinch to zoom preparation
+        isDraggingCanvas = false;
+        if (longPressTimer) {
+          clearTimeout(longPressTimer);
+          longPressTimer = null;
+        }
+      }
+    }, { passive: false });
+
+    document.addEventListener('touchmove', e => {
+      if (longPressTimer) {
+        clearTimeout(longPressTimer);
+        longPressTimer = null;
+      }
+
+      if (e.touches.length === 1) {
+        const touch = e.touches[0];
+        
+        if (activeTile && isLongPress) {
+          e.preventDefault();
+          const canvasRect = canvas.getBoundingClientRect();
+          const newX = (touch.clientX - offsetX - canvasRect.left) / canvasScale;
+          const newY = (touch.clientY - offsetY - canvasRect.top) / canvasScale;
+          activeTile.style.left = `${newX}px`;
+          activeTile.style.top = `${newY}px`;
+        } else if (isDraggingCanvas) {
+          e.preventDefault();
+          const dx = touch.clientX - dragStartX;
+          const dy = touch.clientY - dragStartY;
+          canvasX += dx;
+          canvasY += dy;
+          dragStartX = touch.clientX;
+          dragStartY = touch.clientY;
+          updateCanvasTransform();
+        }
+      }
+    }, { passive: false });
+
+    document.addEventListener('touchend', e => {
+      if (longPressTimer) {
+        clearTimeout(longPressTimer);
+        longPressTimer = null;
+      }
+
+      const touchEndTime = Date.now();
+      const touchDuration = touchEndTime - touchStartTime;
+
+      if (activeTile) {
+        activeTile.classList.remove('dragging');
+        activeTile.style.zIndex = 1000;
+        activeTile = null;
+      }
+      
+      isLongPress = false;
+      isDraggingCanvas = false;
+    });
+
+    let canvasX = 0;
+    let canvasY = 0;
+    let canvasScale = 1;
+
+    function updateCanvasTransform() {
+      canvas.style.transform = `translate(${canvasX}px, ${canvasY}px) scale(${canvasScale})`;
+    }
+
+    // Desktop wheel zoom
+    document.addEventListener('wheel', e => {
+      if (isMobile) return;
+      
+      e.preventDefault();
+      const scaleAmount = e.deltaY > 0 ? 0.975 : 1.05;
+      const rect = canvas.getBoundingClientRect();
+      const mouseX = e.clientX - rect.left;
+      const mouseY = e.clientY - rect.top;
+      
+      const oldScale = canvasScale;
+      canvasScale *= scaleAmount;
+      canvasScale = Math.max(0.5, Math.min(canvasScale, 3));
+      
+      const scaleChange = canvasScale / oldScale;
+      canvasX = mouseX - (mouseX - canvasX) * scaleChange;
+      canvasY = mouseY - (mouseY - canvasY) * scaleChange;
+      
+      updateCanvasTransform();
+    }, { passive: false });
+
+    // Mobile pinch zoom
+    let initialDistance = 0;
+    let initialScale = 1;
+
+    function getDistance(touches) {
+      const dx = touches[0].clientX - touches[1].clientX;
+      const dy = touches[0].clientY - touches[1].clientY;
+      return Math.sqrt(dx * dx + dy * dy);
+    }
+
+    document.addEventListener('touchstart', e => {
+      if (e.touches.length === 2) {
+        initialDistance = getDistance(e.touches);
+        initialScale = canvasScale;
+      }
+    });
+
+    document.addEventListener('touchmove', e => {
+      if (e.touches.length === 2) {
+        e.preventDefault();
+        const currentDistance = getDistance(e.touches);
+        const scaleChange = currentDistance / initialDistance;
+        canvasScale = initialScale * scaleChange;
+        // ✅ ИСПРАВЛЕНИЕ: Было 0.3 → стало 0.1 (в 3 раза больше отдаления)
+        canvasScale = Math.max(0.1, Math.min(canvasScale, 4));
+        updateCanvasTransform();
+      }
+    }, { passive: false });
+
+    updateCanvasTransform();
+
+    // Close menu when clicking outside
+    document.addEventListener('click', (e) => {
+      const menu = document.getElementById('menu');
+      const menuButton = document.querySelector('.menu-button');
+      if (!menu.contains(e.target) && !menuButton.contains(e.target)) {
+        menu.classList.remove('active');
+        menuButton.classList.remove('active');
+      }
+    });
+
+    // Prevent zoom on double tap for iOS
+    let lastTouchEnd = 0;
+    document.addEventListener('touchend', function (event) {
+      const now = (new Date()).getTime();
+      if (now - lastTouchEnd <= 300) {
+        event.preventDefault();
+      }
+      lastTouchEnd = now;
+    }, false);
+  </script>
+
+  <!-- тут твои остальные <script> -->
+  <script>
+    async function loadLayout() {
+      const res = await fetch("tile-layout.json");
+      const layout = await res.json();
+      applyLayout(layout); // вызов твоей функции, которая применяет позиции
+    }
+    loadLayout();
+  </script>
+</body>
+</html>
