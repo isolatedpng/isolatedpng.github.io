@@ -173,7 +173,7 @@
       height: 100vh;
       overflow: hidden;
       position: relative;
-      cursor: grab;
+      /* ✅ УБРАНО: cursor: grab; — теперь обычный курсор */
     }
 
     .canvas {
@@ -413,7 +413,7 @@
     // Смещение canvas (без масштаба)
     let canvasX = 0;
     let canvasY = 0;
-    const MAX_DRAG = 100; // ✅ Маленькая дистанция — можно изменить
+    const MAX_DRAG = 100; // Маленькая дистанция — можно изменить
 
     function updateCanvasTransform() {
       // Ограничиваем смещение
@@ -429,7 +429,7 @@
       isDraggingCanvas = true;
       dragStartX = e.clientX;
       dragStartY = e.clientY;
-      document.body.style.cursor = 'grabbing';
+      // ✅ УБРАНО: document.body.style.cursor = 'grabbing'; — курсор не меняется
       e.preventDefault();
     });
 
@@ -447,7 +447,7 @@
 
     document.addEventListener('mouseup', () => {
       isDraggingCanvas = false;
-      document.body.style.cursor = 'default';
+      // ✅ УБРАНО: сброс курсора — он всегда обычный
     });
 
     // Закрытие меню при клике вне его
