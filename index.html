@@ -283,6 +283,36 @@
       100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
     }
 
+    /* Welcome Container with Logo and Text */
+    .welcome-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.4s ease;
+      z-index: 3;
+      position: relative;
+    }
+
+    .welcome-container:hover {
+      transform: scale(1.03);
+    }
+
+    /* Logo Styles */
+    .welcome-logo {
+      width: 180px;
+      height: 180px;
+      margin-bottom: 20px;
+      filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.3));
+      animation: logoFloat 3s ease-in-out infinite;
+    }
+
+    @keyframes logoFloat {
+      0%, 100% { transform: translateY(0px) scale(1); }
+      50% { transform: translateY(-10px) scale(1.02); }
+    }
+
     /* Liquid Ink Text */
     .enter-text {
       font-family: 'Orbitron', sans-serif;
@@ -292,7 +322,6 @@
       color: #ffffff;
       text-shadow: 0 0 20px rgba(255, 255, 255, 0.3), 0 0 40px rgba(0, 0, 0, 0.5);
       animation: inkPulse 2s ease-in-out infinite;
-      cursor: pointer;
       transition: all 0.4s ease;
       position: relative;
       filter: contrast(1.3);
@@ -330,7 +359,6 @@
     }
 
     .enter-text:hover {
-      transform: scale(1.03);
       filter: contrast(1.5) brightness(1.2);
       text-shadow: 0 0 30px rgba(255, 255, 255, 0.5), 0 0 60px rgba(0, 0, 0, 0.3);
     }
@@ -463,6 +491,12 @@
         padding: 0 20px;
       }
 
+      .welcome-logo {
+        width: 120px;
+        height: 120px;
+        margin-bottom: 15px;
+      }
+
       .glyph {
         font-size: 18px;
       }
@@ -552,6 +586,12 @@
         padding: 0 15px;
       }
 
+      .welcome-logo {
+        width: 100px;
+        height: 100px;
+        margin-bottom: 10px;
+      }
+
       .glyph {
         font-size: 16px;
       }
@@ -577,6 +617,11 @@
       .enter-text {
         font-size: 36px;
         letter-spacing: 6px;
+      }
+
+      .welcome-logo {
+        width: 150px;
+        height: 150px;
       }
     }
 
@@ -655,8 +700,9 @@
   <div class="welcome-overlay" id="welcomeOverlay">
     <div id="glyphContainer"></div>
     <div id="bubbleContainer"></div>
-    <div class="welcome-container">
-      <div class="enter-text" onclick="enterSite()">ACCESS ISOLATION</div>
+    <div class="welcome-container" onclick="enterSite()">
+      <img src="thumbs/isolatedlogotransparentw2048.png" alt="Logo" class="welcome-logo">
+      <div class="enter-text">ACCESS ISOLATION</div>
     </div>
   </div>
 
@@ -935,158 +981,158 @@
         };
 
         content.onerror = function() {
-  console.error(`Failed to load image: ${work.src}`);
-  tile.style.width = isMobile ? '200px' : '300px';
-  tile.style.height = isMobile ? '200px' : '300px';
-  this.style.display = 'none';
-  const errorDiv = document.createElement('div');
-  errorDiv.className = 'error-placeholder';
-  errorDiv.textContent = `Loading error:\n${work.src}`;
-  tile.appendChild(errorDiv);
-};
+          console.error(`Failed to load image: ${work.src}`);
+          tile.style.width = isMobile ? '200px' : '300px';
+          tile.style.height = isMobile ? '200px' : '300px';
+          this.style.display = 'none';
+          const errorDiv = document.createElement('div');
+          errorDiv.className = 'error-placeholder';
+          errorDiv.textContent = `Loading error:\n${work.src}`;
+          tile.appendChild(errorDiv);
+        };
 
-} else if (work.type === 'video') {
-  content = document.createElement('video');
-  content.src = work.src;
-  content.autoplay = false;
-  content.muted = true;
-  content.loop = true;
-  content.playsInline = true;
-
-  // Mobile touch events for video
-  if (isMobile) {
-    tile.addEventListener('touchstart', (e) => {
-      e.preventDefault();
-      content.play().catch(e => console.log("Playback failed:", e));
-    });
-
-    tile.addEventListener('touchend', () => {
-      setTimeout(() => content.pause(), 100);
-    });
-  } else {
-    tile.addEventListener('mouseenter', () => {
-      content.play().catch(e => console.log("Playback failed:", e));
-    });
-
-    tile.addEventListener('mouseleave', () => {
-      content.pause();
-    });
-  }
-
-  const soundIndicator = document.createElement('div');
-  soundIndicator.className = 'sound-indicator';
-  soundIndicator.innerHTML = '🔊';
-  tile.appendChild(soundIndicator);
-
-  content.onloadedmetadata = function() {
-    const aspectRatio = this.videoWidth / this.videoHeight;
-    const maxWidth = isMobile ? 250 : 400;
-    const maxHeight = isMobile ? 400 : 600;
-
-    let width, height;
-
-    if (aspectRatio > 1) {
-      width = Math.min(maxWidth, this.videoWidth * (isMobile ? 0.25 : 0.3));
-      height = width / aspectRatio;
-    } else {
-      height = Math.min(maxHeight, this.videoHeight * (isMobile ? 0.25 : 0.3));
-      width = height * aspectRatio;
-    }
-
-    width = Math.max(isMobile ? 150 : 200, width);
-    height = Math.max(isMobile ? 150 : 200, height);
-
-    tile.style.width = `${width}px`;
-    tile.style.height = `${height}px`;
-  };
-
-  let fadeInterval = null;
-
-  const enableSound = () => {
-    if (!audioUnlocked || isMobile) return;
-
-    if (fadeInterval) clearInterval(fadeInterval);
-
-    tile.classList.add('sound-on');
-    soundIndicator.style.display = 'flex';
-
-    try {
-      content.muted = false;
-      content.volume = 0;
-      let vol = 0;
-      fadeInterval = setInterval(() => {
-        if (vol < 0.6) {
-          vol += 0.04;
-          content.volume = Math.min(vol, 0.6);
-        } else {
-          clearInterval(fadeInterval);
-          fadeInterval = null;
-        }
-      }, 25);
-    } catch (error) {
-      console.error('Error enabling sound:', error);
-    }
-  };
-
-  const disableSound = () => {
-    if (fadeInterval) clearInterval(fadeInterval);
-
-    tile.classList.remove('sound-on');
-    soundIndicator.style.display = 'none';
-
-    let vol = content.volume;
-    fadeInterval = setInterval(() => {
-      if (vol > 0) {
-        vol -= 0.08;
-        content.volume = Math.max(vol, 0);
-      } else {
+      } else if (work.type === 'video') {
+        content = document.createElement('video');
+        content.src = work.src;
+        content.autoplay = false;
         content.muted = true;
-        clearInterval(fadeInterval);
-        fadeInterval = null;
+        content.loop = true;
+        content.playsInline = true;
+
+        // Mobile touch events for video
+        if (isMobile) {
+          tile.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            content.play().catch(e => console.log("Playback failed:", e));
+          });
+
+          tile.addEventListener('touchend', () => {
+            setTimeout(() => content.pause(), 100);
+          });
+        } else {
+          tile.addEventListener('mouseenter', () => {
+            content.play().catch(e => console.log("Playback failed:", e));
+          });
+
+          tile.addEventListener('mouseleave', () => {
+            content.pause();
+          });
+        }
+
+        const soundIndicator = document.createElement('div');
+        soundIndicator.className = 'sound-indicator';
+        soundIndicator.innerHTML = '🔊';
+        tile.appendChild(soundIndicator);
+
+        content.onloadedmetadata = function() {
+          const aspectRatio = this.videoWidth / this.videoHeight;
+          const maxWidth = isMobile ? 250 : 400;
+          const maxHeight = isMobile ? 400 : 600;
+
+          let width, height;
+
+          if (aspectRatio > 1) {
+            width = Math.min(maxWidth, this.videoWidth * (isMobile ? 0.25 : 0.3));
+            height = width / aspectRatio;
+          } else {
+            height = Math.min(maxHeight, this.videoHeight * (isMobile ? 0.25 : 0.3));
+            width = height * aspectRatio;
+          }
+
+          width = Math.max(isMobile ? 150 : 200, width);
+          height = Math.max(isMobile ? 150 : 200, height);
+
+          tile.style.width = `${width}px`;
+          tile.style.height = `${height}px`;
+        };
+
+        let fadeInterval = null;
+
+        const enableSound = () => {
+          if (!audioUnlocked || isMobile) return;
+
+          if (fadeInterval) clearInterval(fadeInterval);
+
+          tile.classList.add('sound-on');
+          soundIndicator.style.display = 'flex';
+
+          try {
+            content.muted = false;
+            content.volume = 0;
+            let vol = 0;
+            fadeInterval = setInterval(() => {
+              if (vol < 0.6) {
+                vol += 0.04;
+                content.volume = Math.min(vol, 0.6);
+              } else {
+                clearInterval(fadeInterval);
+                fadeInterval = null;
+              }
+            }, 25);
+          } catch (error) {
+            console.error('Error enabling sound:', error);
+          }
+        };
+
+        const disableSound = () => {
+          if (fadeInterval) clearInterval(fadeInterval);
+
+          tile.classList.remove('sound-on');
+          soundIndicator.style.display = 'none';
+
+          let vol = content.volume;
+          fadeInterval = setInterval(() => {
+            if (vol > 0) {
+              vol -= 0.08;
+              content.volume = Math.max(vol, 0);
+            } else {
+              content.muted = true;
+              clearInterval(fadeInterval);
+              fadeInterval = null;
+            }
+          }, 25);
+        };
+
+        if (!isMobile) {
+          tile.addEventListener('mouseenter', enableSound);
+          tile.addEventListener('mouseleave', disableSound);
+        }
+
+        content.onerror = function() {
+          console.error(`Failed to load video: ${work.src}`);
+          tile.style.width = '300px';
+          tile.style.height = '300px';
+          this.style.display = 'none';
+          const errorDiv = document.createElement('div');
+          errorDiv.className = 'error-placeholder';
+          errorDiv.textContent = `Loading error:\n${work.src}`;
+          tile.appendChild(errorDiv);
+        };
       }
-    }, 25);
-  };
 
-  if (!isMobile) {
-    tile.addEventListener('mouseenter', enableSound);
-    tile.addEventListener('mouseleave', disableSound);
-  }
+      tile.appendChild(content);
 
-  content.onerror = function() {
-    console.error(`Failed to load video: ${work.src}`);
-    tile.style.width = '300px';
-    tile.style.height = '300px';
-    this.style.display = 'none';
-    const errorDiv = document.createElement('div');
-    errorDiv.className = 'error-placeholder';
-    errorDiv.textContent = `Loading error:\n${work.src}`;
-    tile.appendChild(errorDiv);
-  };
-}
+      // Размещение плиток
+      if (isMobile) {
+        tile.style.width = '200px';
+        tile.style.height = '200px';
+        tile.style.left = `${20 + (index % 2) * 210}px`;
+        tile.style.top = `${120 + Math.floor(index / 2) * 220}px`;
+      } else {
+        tile.style.width = '300px';
+        tile.style.height = '300px';
+        tile.style.left = `${nextX}px`;
+        tile.style.top = `${nextY}px`;
+        nextX += 225;
+        maxHeight = Math.max(maxHeight, 350);
+        if (nextX > window.innerWidth * 1.2) {
+          nextX = 40;
+          nextY += maxHeight + 30;
+          maxHeight = 0;
+        }
+      }
 
-tile.appendChild(content);
-
-// Размещение плиток
-if (isMobile) {
-  tile.style.width = '200px';
-  tile.style.height = '200px';
-  tile.style.left = `${20 + (index % 2) * 210}px`;
-  tile.style.top = `${120 + Math.floor(index / 2) * 220}px`;
-} else {
-  tile.style.width = '300px';
-  tile.style.height = '300px';
-  tile.style.left = `${nextX}px`;
-  tile.style.top = `${nextY}px`;
-  nextX += 225;
-  maxHeight = Math.max(maxHeight, 350);
-  if (nextX > window.innerWidth * 1.2) {
-    nextX = 40;
-    nextY += maxHeight + 30;
-    maxHeight = 0;
-  }
-}
-
-canvas.appendChild(tile);
+      canvas.appendChild(tile);
     });
 
     // Enhanced mobile drag & zoom functionality
@@ -1125,27 +1171,27 @@ canvas.appendChild(tile);
         activeTile.style.top = `${newY}px`;
       } else if (isDraggingCanvas && !isMobile) {
         const dx = e.clientX - dragStartX;
-const dy = e.clientY - dragStartY;
+        const dy = e.clientY - dragStartY;
 
-// Ограничение панорамирования вверх
-const minY = -500; // Минимальное значение Y (можно изменить)
-canvasY = Math.max(minY, canvasY + dy);
+        // Ограничение панорамирования вверх
+        const minY = -500; // Минимальное значение Y (можно изменить)
+        canvasY = Math.max(minY, canvasY + dy);
 
-// Ограничение панорамирования вниз
-const maxY = 700; // Максимальное значение Y (можно изменить)
-canvasY = Math.min(maxY, canvasY);
+        // Ограничение панорамирования вниз
+        const maxY = 700; // Максимальное значение Y (можно изменить)
+        canvasY = Math.min(maxY, canvasY);
 
-// Ограничение панорамирования влево
-const minX = -1100; // Минимальное значение X (можно изменить)
-canvasX = Math.max(minX, canvasX + dx);
+        // Ограничение панорамирования влево
+        const minX = -1100; // Минимальное значение X (можно изменить)
+        canvasX = Math.max(minX, canvasX + dx);
 
-// Ограничение панорамирования вправо
-const maxX = 800; // Максимальное значение X (можно изменить)
-canvasX = Math.min(maxX, canvasX);
+        // Ограничение панорамирования вправо
+        const maxX = 800; // Максимальное значение X (можно изменить)
+        canvasX = Math.min(maxX, canvasX);
 
-dragStartX = e.clientX;
-dragStartY = e.clientY;
-updateCanvasTransform();
+        dragStartX = e.clientX;
+        dragStartY = e.clientY;
+        updateCanvasTransform();
       }
     });
 
@@ -1337,4 +1383,3 @@ updateCanvasTransform();
   </script>
 </body>
 </html>
-
