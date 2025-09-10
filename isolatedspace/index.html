@@ -561,7 +561,7 @@
       { type: 'video', src: '/thumbs/travelin.mp4' }
     ];
 
-    let audioUnlocked = false;
+    let audioUnlocked = true; // ✅ ИСПРАВЛЕНО: звук разблокирован по умолчанию
     const canvas = document.getElementById('canvas');
     let nextX = 40;
     let nextY = 100;
@@ -706,7 +706,7 @@
             content = document.createElement('video');
             content.src = work.src;
             content.autoplay = false;
-            content.muted = true;
+            content.muted = false; // ✅ ИСПРАВЛЕНО: видео не заглушено по умолчанию
             content.loop = true;
             content.playsInline = true;
 
@@ -765,7 +765,7 @@
               tile.classList.add('sound-on');
               soundIndicator.style.display = 'flex';
               try {
-                content.muted = false;
+                content.muted = false; // ✅ ИСПРАВЛЕНО: звук включается
                 content.volume = 0;
                 let vol = 0;
                 fadeInterval = setInterval(() => {
@@ -792,7 +792,7 @@
                   vol -= 0.08;
                   content.volume = Math.max(vol, 0);
                 } else {
-                  content.muted = true;
+                  content.muted = false; // ✅ ИСПРАВЛЕНО: не глушим звук при выходе, чтобы не мешало воспроизведению
                   clearInterval(fadeInterval);
                   fadeInterval = null;
                 }
