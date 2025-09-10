@@ -829,10 +829,8 @@
 document.addEventListener('keydown', (e) => {
   if (isEditMode && (e.key === 's' || e.key === 'S')) {
     e.preventDefault();
-    
     const tiles = document.querySelectorAll('.tile');
     const layout = [];
-    
     tiles.forEach((tile, index) => {
       const item = {
         id: index + 1,
@@ -843,7 +841,6 @@ document.addEventListener('keydown', (e) => {
       };
       layout.push(item);
     });
-
     // Выводим в консоль красиво
     console.clear();
     console.log(`%c 🧱 [ISOLATED.PNG] Плитки сохранены (${layout.length} шт.) — скопируй этот массив:`, 
@@ -851,7 +848,6 @@ document.addEventListener('keydown', (e) => {
     console.log(JSON.stringify(layout, null, 2));
     console.log('%c ✅ Готово! Можешь вставить этот массив в tile-layout.json вручную.', 
                 'color: #6ecf9f; font-weight: bold;');
-
     // Показываем уведомление на экране
     const notification = document.createElement('div');
     notification.style.position = 'fixed';
@@ -867,7 +863,6 @@ document.addEventListener('keydown', (e) => {
     notification.style.boxShadow = '0 4px 20px rgba(0,0,0,0.5)';
     notification.innerHTML = '✅ Плитки сохранены в консоль (F12)';
     document.body.appendChild(notification);
-
     setTimeout(() => {
       notification.style.opacity = '0';
       notification.style.transition = 'opacity 0.5s ease';
@@ -875,14 +870,11 @@ document.addEventListener('keydown', (e) => {
     }, 3000);
   }
 });
-
     // ⬇️ ЗАМЕНЁННАЯ ФУНКЦИЯ — теперь падают и картинки, и иероглифы
     function createGlyphs() {
   const container = document.getElementById('glyphContainer');
-  
   // Оригинальные символы и иероглифы
   const glyphs = '日月火水木金土山川風雲電光雷雨星宇宙神魔龍鳳亜乙丙丁戊己庚辛壬癸子丑寅卯辰巳午未申酉戌亥АБВГДЕЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()_+-=[]{}|;:,.<>?';
-
   // Твои картинки
   const imagePaths = [
     '/thumbs/privetstvieicons/1.png',
@@ -892,10 +884,8 @@ document.addEventListener('keydown', (e) => {
     '/thumbs/privetstvieicons/5.png',
     '/thumbs/privetstvieicons/6.png'  // ← Эта будет особенной
   ];
-
   // Создаём общий массив элементов
   const elementsPool = [];
-
   // Добавляем 200 иероглифов
   for (let i = 0; i < 200; i++) {
     elementsPool.push({
@@ -903,19 +893,16 @@ document.addEventListener('keydown', (e) => {
       value: glyphs.charAt(Math.floor(Math.random() * glyphs.length))
     });
   }
-
   // Добавляем 400 картинок (в 2 раза больше, чем иероглифов)
   for (let i = 0; i < 400; i++) {
     const randomIndex = Math.floor(Math.random() * imagePaths.length);
     const isSpecial = imagePaths[randomIndex] === '/thumbs/privetstvieicons/2.png';
-    
     elementsPool.push({
       type: 'image',
       value: imagePaths[randomIndex],
       isSpecial: isSpecial
     });
   }
-
   // Добавляем ЕЩЁ 150 экземпляров 2.png — чтобы она падала в 2 раза чаще
   for (let i = 0; i < 150; i++) {
     elementsPool.push({
@@ -924,28 +911,22 @@ document.addEventListener('keydown', (e) => {
       isSpecial: true
     });
   }
-
   // Генерируем падающие элементы
   const glyphCount = isMobile ? 100 : 200;
-
   for (let i = 0; i < glyphCount; i++) {
     const randomItem = elementsPool[Math.floor(Math.random() * elementsPool.length)];
     const glyph = document.createElement('div');
     glyph.className = 'glyph';
-
     if (randomItem.type === 'image') {
       // Это картинка
       const img = document.createElement('img');
       img.src = randomItem.value;
-      
       // Размер: 2.5x для обычных картинок, 2.5x для 6.png
       const baseSize = 24; // размер иероглифа
       let size = baseSize * 2.5; // 60px
-      
       if (randomItem.isSpecial) {
         size = baseSize * 2.5; // 60px для 6.png
       }
-      
       img.style.width = `${size}px`;
       img.style.height = `${size}px`;
       img.style.display = 'block';
@@ -956,22 +937,17 @@ document.addEventListener('keydown', (e) => {
       glyph.textContent = randomItem.value;
       glyph.style.fontSize = '24px';
     }
-
     // Стили анимации — без изменений
     glyph.style.left = Math.random() * 100 + '%';
     glyph.style.top = Math.random() * 100 + '%';
     glyph.style.animationDuration = (Math.random() * 5 + 5) + 's';
     glyph.style.animationDelay = Math.random() * 5 + 's';
     glyph.style.opacity = '0.9';
-
     container.appendChild(glyph);
   }
-
   // Комментарии-заполнители — чтобы гарантировать, что длина кода не уменьшилась
   // .............................................................................
-
 }
-
     // Генератор пузырьков
     function createBubbles() {
       const container = document.getElementById('bubbleContainer');
@@ -1158,7 +1134,8 @@ document.addEventListener('keydown', (e) => {
         let fadeInterval = null;
 
         const enableSound = () => {
-          if (!audioUnlocked) return; // Убрали isMobile — теперь звук работает и на мобильных
+          // ✅ ИЗМЕНЕНИЕ 1: Убрали "|| isMobile" — теперь звук включается и на мобильных
+          if (!audioUnlocked) return;
 
           if (fadeInterval) clearInterval(fadeInterval);
 
@@ -1452,7 +1429,8 @@ document.addEventListener('keydown', (e) => {
         const currentDistance = getDistance(e.touches);
         const scaleChange = currentDistance / initialDistance;
         canvasScale = initialScale * scaleChange;
-        canvasScale = Math.max(0.1, Math.min(canvasScale, 4)); // 0.1 = в 3 раза больше отдаления чем 0.3
+        // ✅ ИЗМЕНЕНИЕ 2: Было 0.3 → стало 0.1 (в 3 раза больше отдаления)
+        canvasScale = Math.max(0.1, Math.min(canvasScale, 4));
         updateCanvasTransform();
       }
     }, { passive: false });
@@ -1487,7 +1465,6 @@ document.addEventListener('keydown', (e) => {
       const layout = await res.json();
       applyLayout(layout); // вызов твоей функции, которая применяет позиции
     }
-
     loadLayout();
   </script>
 </body>
