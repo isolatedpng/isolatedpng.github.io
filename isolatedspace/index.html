@@ -561,12 +561,13 @@
       { type: 'video', src: '/thumbs/travelin.mp4' }
     ];
 
-    let audioUnlocked = true; // ✅ ИСПРАВЛЕНО: звук разблокирован по умолчанию
+    let audioUnlocked = true;
     const canvas = document.getElementById('canvas');
     let nextX = 40;
     let nextY = 100;
     let maxHeight = 0;
     let isMobile = window.innerWidth <= 768;
+    let activeVideo = null; // 👈 Добавлено: будет хранить текущее играющее видео
 
     // Mobile menu toggle functionality
     const menuButton = document.getElementById('menuButton');
@@ -706,29 +707,9 @@
             content = document.createElement('video');
             content.src = work.src;
             content.autoplay = false;
-            content.muted = false; // ✅ ИСПРАВЛЕНО: видео не заглушено по умолчанию
+            content.muted = false;
             content.loop = true;
             content.playsInline = true;
-
-            // Mobile touch events for video
-            if (isMobile) {
-              tile.addEventListener('touchstart', (e) => {
-                e.preventDefault();
-                content.play().catch(e => console.log("Playback failed:", e));
-              });
-
-              tile.addEventListener('touchend', () => {
-                setTimeout(() => content.pause(), 100);
-              });
-            } else {
-              tile.addEventListener('mouseenter', () => {
-                content.play().catch(e => console.log("Playback failed:", e));
-              });
-
-              tile.addEventListener('mouseleave', () => {
-                content.pause();
-              });
-            }
 
             const soundIndicator = document.createElement('div');
             soundIndicator.className = 'sound-indicator';
@@ -757,54 +738,47 @@
               tile.style.height = `${height}px`;
             };
 
-            let fadeInterval = null;
-
-            const enableSound = () => {
-              if (!audioUnlocked) return;
-              if (fadeInterval) clearInterval(fadeInterval);
-              tile.classList.add('sound-on');
-              soundIndicator.style.display = 'flex';
-              try {
-                content.muted = false; // ✅ ИСПРАВЛЕНО: звук включается
-                content.volume = 0;
-                let vol = 0;
-                fadeInterval = setInterval(() => {
-                  if (vol < 0.6) {
-                    vol += 0.04;
-                    content.volume = Math.min(vol, 0.6);
-                  } else {
-                    clearInterval(fadeInterval);
-                    fadeInterval = null;
-                  }
-                }, 25);
-              } catch (error) {
-                console.error('Error enabling sound:', error);
-              }
-            };
-
-            const disableSound = () => {
-              if (fadeInterval) clearInterval(fadeInterval);
-              tile.classList.remove('sound-on');
-              soundIndicator.style.display = 'none';
-              let vol = content.volume;
-              fadeInterval = setInterval(() => {
-                if (vol > 0) {
-                  vol -= 0.08;
-                  content.volume = Math.max(vol, 0);
-                } else {
-                  content.muted = false; // ✅ ИСПРАВЛЕНО: не глушим звук при выходе, чтобы не мешало воспроизведению
-                  clearInterval(fadeInterval);
-                  fadeInterval = null;
-                }
-              }, 25);
-            };
-
+            // ✅ НОВАЯ ЛОГИКА ДЛЯ МОБИЛЬНЫХ — ТОЛЬКО ЭТО ИЗМЕНЕНО
             if (isMobile) {
-              tile.addEventListener('touchstart', enableSound);
-              tile.addEventListener('touchend', disableSound);
+              tile.addEventListener('touchstart', (e) => {
+                e.stopPropagation(); // не даём событию уйти наверх
+                if (activeVideo && activeVideo !== content) {
+                  // Останавливаем предыдущее видео
+                  activeVideo.pause();
+                  const prevTile = activeVideo.parentElement;
+                  prevTile.classList.remove('sound-on');
+                  const prevIndicator = prevTile.querySelector('.sound-indicator');
+                  if (prevIndicator) prevIndicator.style.display = 'none';
+                }
+
+                // Переключаем текущее видео
+                if (content.paused) {
+                  content.play().catch(e => console.log("Playback failed:", e));
+                  tile.classList.add('sound-on');
+                  soundIndicator.style.display = 'flex';
+                  content.volume = 0.6;
+                  activeVideo = content;
+                } else {
+                  content.pause();
+                  tile.classList.remove('sound-on');
+                  soundIndicator.style.display = 'none';
+                  activeVideo = null;
+                }
+              });
             } else {
-              tile.addEventListener('mouseenter', enableSound);
-              tile.addEventListener('mouseleave', disableSound);
+              // Для десктопа — оставляем старое поведение
+              tile.addEventListener('mouseenter', () => {
+                content.play().catch(e => console.log("Playback failed:", e));
+                tile.classList.add('sound-on');
+                soundIndicator.style.display = 'flex';
+                content.volume = 0.6;
+              });
+
+              tile.addEventListener('mouseleave', () => {
+                content.pause();
+                tile.classList.remove('sound-on');
+                soundIndicator.style.display = 'none';
+              });
             }
 
             content.onerror = function() {
@@ -1130,6 +1104,24 @@ document.addEventListener('keydown', (e) => {
       }
       lastTouchEnd = now;
     }, false);
+
+    // ✅ ГЛОБАЛЬНЫЙ ОБРАБОТЧИК: касание в любом месте — остановить видео
+    document.addEventListener('touchstart', (e) => {
+      if (!isMobile || !activeVideo) return;
+
+      const targetTile = e.target.closest('.tile');
+      const targetVideo = targetTile ? targetTile.querySelector('video') : null;
+
+      if (targetVideo !== activeVideo) {
+        activeVideo.pause();
+        const tile = activeVideo.parentElement;
+        tile.classList.remove('sound-on');
+        const indicator = tile.querySelector('.sound-indicator');
+        if (indicator) indicator.style.display = 'none';
+        activeVideo = null;
+      }
+    }, { passive: false });
+
   </script>
 
   <!-- тут твои остальные <script> -->
