@@ -265,73 +265,21 @@
       overflow: hidden;
     }
 
-    /* Matrix Code Rain Background */
-    .code-rain {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      z-index: 1;
-    }
-
-    .code-column {
-      position: absolute;
-      top: -100px;
-      color: rgba(0, 255, 0, 0.8);
-      font-family: 'Courier New', monospace;
-      font-size: 14px;
-      font-weight: normal;
-      white-space: pre;
-      text-shadow: 0 0 5px rgba(0, 255, 0, 0.5);
-      animation: codeRain linear infinite;
-      opacity: 0.6;
-    }
-
-    .code-column.bright {
-      color: rgba(255, 255, 255, 0.9);
-      text-shadow: 0 0 8px rgba(255, 255, 255, 0.7);
-      opacity: 0.9;
-    }
-
-    .code-column.dim {
-      color: rgba(0, 255, 0, 0.3);
-      opacity: 0.3;
-    }
-
-    @keyframes codeRain {
-      0% { 
-        transform: translateY(-100vh); 
-        opacity: 0; 
-      }
-      10% { 
-        opacity: 1; 
-      }
-      90% { 
-        opacity: 1; 
-      }
-      100% { 
-        transform: translateY(100vh); 
-        opacity: 0; 
-      }
-    }
-
-    /* Ink Glyphs (reduced quantity for code rain) */
+    /* Ink Glyphs */
     .glyph {
       position: absolute;
-      color: rgba(255, 255, 255, 0.4);
-      font-size: 18px;
-      text-shadow: 0 0 5px rgba(255, 255, 255, 0.2);
-      animation: fall 15s linear infinite;
-      z-index: 2;
-      opacity: 0.4;
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 24px;
+      text-shadow: 0 0 8px rgba(255, 255, 255, 0.3), 0 0 12px rgba(0, 0, 0, 0.5);
+      animation: fall 10s linear infinite;
+      z-index: 1;
+      opacity: 0.9;
     }
 
     @keyframes fall {
       0% { transform: translateY(-100vh) rotate(0deg); opacity: 0; }
-      10% { opacity: 0.4; }
-      90% { opacity: 0.4; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
       100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
     }
 
@@ -550,11 +498,7 @@
       }
 
       .glyph {
-        font-size: 14px;
-      }
-
-      .code-column {
-        font-size: 10px;
+        font-size: 18px;
       }
 
       /* Mobile Canvas and Tiles */
@@ -624,7 +568,7 @@
       }
 
       .sound-wave span:nth-child(1) { height: 15px; }
-      .sound-wave span:nth-child(2) { height: 10px; }
+      .sound-wave span:nthchild(2) { height: 10px; }
       .sound-wave span:nth-child(3) { height: 5px; }
       .sound-wave span:nth-child(4) { height: 10px; }
       .sound-wave span:nth-child(5) { height: 15px; }
@@ -649,11 +593,7 @@
       }
 
       .glyph {
-        font-size: 12px;
-      }
-
-      .code-column {
-        font-size: 8px;
+        font-size: 16px;
       }
 
       .tile {
@@ -758,7 +698,6 @@
 
   <!-- Futuristic Welcome Screen -->
   <div class="welcome-overlay" id="welcomeOverlay">
-    <div class="code-rain" id="codeRain"></div>
     <div id="glyphContainer"></div>
     <div id="bubbleContainer"></div>
     <div class="welcome-container" onclick="enterSite()">
