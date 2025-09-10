@@ -604,10 +604,10 @@
       try { localStorage.setItem('tileLayout', JSON.stringify(layout)); } catch (e) {}
     }
 
-    // ✅ Красивая загрузка плиток — с анимацией и задержкой
+    // ✅ Загрузка с экраном LOADING... — БЕЗ анимации плиток
     (async function loadLayoutFromFile() {
       try {
-        // Показываем затемнение (опционально)
+        // Показываем затемнение
         const loadingOverlay = document.createElement('div');
         loadingOverlay.style.position = 'fixed';
         loadingOverlay.style.top = '0';
@@ -622,7 +622,8 @@
         loadingOverlay.innerHTML = `<div style="color: #6ecf9f; font-family: 'Orbitron', sans-serif; font-size: 24px; letter-spacing: 2px;">LOADING...</div>`;
         document.body.appendChild(loadingOverlay);
 
-        // Ждём 0.3 сек — для эффекта
+        // ⚙️ НАСТРОЙКА: Измени это число (в миллисекундах), чтобы сделать экран LOADING... короче или дольше
+        // Сейчас: 300 мс = 0.3 секунды
         await new Promise(r => setTimeout(r, 300));
 
         const res = await fetch('/tile-layout.json?t=' + Date.now());
@@ -634,29 +635,20 @@
         console.log('Loaded tile-layout.json:', layout);
         applyLayout(layout);
 
-        // Убираем оверлей плавно
-        loadingOverlay.style.transition = 'opacity 0.4s ease';
+        // Убираем оверлей
+        loadingOverlay.style.transition = 'opacity 0.3s ease';
         loadingOverlay.style.opacity = '0';
         setTimeout(() => {
           if (loadingOverlay.parentNode) {
             loadingOverlay.parentNode.removeChild(loadingOverlay);
           }
-        }, 400);
+        }, 300);
 
-        // Ждём ещё немного перед появлением плиток
-        await new Promise(r => setTimeout(r, 200));
-
-        // Создаём плитки с красивой анимацией
-        for (let index = 0; index < works.length; index++) {
-          const work = works[index];
+        // ✅ Создаём плитки СРАЗУ — без анимации, без задержек — на своих местах
+        works.forEach((work, index) => {
           const tile = document.createElement('div');
           tile.className = 'tile';
           tile.style.borderColor = frameColors[Math.floor(Math.random() * frameColors.length)];
-
-          // ✨ Анимация: начинаем с прозрачности и смещения
-          tile.style.opacity = '0';
-          tile.style.transform = 'translateY(40px) scale(0.95)';
-          tile.style.transition = 'all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
 
           let content;
 
@@ -684,12 +676,6 @@
 
               tile.style.width = `${width}px`;
               tile.style.height = `${height}px`;
-
-              // ✨ Запускаем анимацию появления
-              setTimeout(() => {
-                tile.style.opacity = '1';
-                tile.style.transform = 'translateY(0) scale(1)';
-              }, index * 50); // Задержка между плитками
             };
 
             content.onerror = function() {
@@ -701,11 +687,6 @@
               errorDiv.className = 'error-placeholder';
               errorDiv.textContent = `Loading error:\n${work.src}`;
               tile.appendChild(errorDiv);
-
-              setTimeout(() => {
-                tile.style.opacity = '1';
-                tile.style.transform = 'translateY(0) scale(1)';
-              }, index * 50);
             };
 
           } else if (work.type === 'video') {
@@ -760,12 +741,6 @@
 
               tile.style.width = `${width}px`;
               tile.style.height = `${height}px`;
-
-              // ✨ Запускаем анимацию появления
-              setTimeout(() => {
-                tile.style.opacity = '1';
-                tile.style.transform = 'translateY(0) scale(1)';
-              }, index * 50);
             };
 
             let fadeInterval = null;
@@ -827,18 +802,12 @@
               errorDiv.className = 'error-placeholder';
               errorDiv.textContent = `Loading error:\n${work.src}`;
               tile.appendChild(errorDiv);
-
-              setTimeout(() => {
-                tile.style.opacity = '1';
-                tile.style.transform = 'translateY(0) scale(1)';
-              }, index * 50);
             };
           }
 
           tile.appendChild(content);
 
-          // Если макет уже применён — позиция уже задана
-          // Если нет — используем дефолтное размещение
+          // Размещение плиток — если нет в layout — используем дефолт
           if (!layout || !layout[index]) {
             if (isMobile) {
               tile.style.width = '200px';
@@ -861,7 +830,7 @@
           }
 
           canvas.appendChild(tile);
-        }
+        });
 
       } catch (err) {
         console.error('Error loading tile-layout.json:', err);
