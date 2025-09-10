@@ -1158,7 +1158,7 @@ document.addEventListener('keydown', (e) => {
         let fadeInterval = null;
 
         const enableSound = () => {
-          if (!audioUnlocked || isMobile) return;
+          if (!audioUnlocked) return; // Убрали isMobile — теперь звук работает и на мобильных
 
           if (fadeInterval) clearInterval(fadeInterval);
 
@@ -1452,7 +1452,7 @@ document.addEventListener('keydown', (e) => {
         const currentDistance = getDistance(e.touches);
         const scaleChange = currentDistance / initialDistance;
         canvasScale = initialScale * scaleChange;
-        canvasScale = Math.max(0.3, Math.min(canvasScale, 4));
+        canvasScale = Math.max(0.1, Math.min(canvasScale, 4)); // 0.1 = в 3 раза больше отдаления чем 0.3
         updateCanvasTransform();
       }
     }, { passive: false });
