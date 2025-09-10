@@ -463,9 +463,37 @@
         text-shadow: 0 0 20px rgba(255, 255, 255, 0.3), 0 0 40px rgba(0, 0, 0, 0.5);
       }
     }
+
+    /* ✅ Стиль для LOADING... */
+    #loadingOverlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.95);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      color: #6ecf9f;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 32px;
+      letter-spacing: 4px;
+      text-shadow: 0 0 20px rgba(110, 207, 159, 0.7);
+      animation: loadingPulse 1.2s ease-in-out infinite;
+    }
+
+    @keyframes loadingPulse {
+      0%, 100% { opacity: 0.7; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.05); }
+    }
   </style>
 </head>
 <body>
+
+  <!-- LOADING... Overlay -->
+  <div id="loadingOverlay">LOADING...</div>
 
   <!-- Menu Button -->
   <div class="menu-button" id="menuButton">
@@ -604,28 +632,8 @@
       try { localStorage.setItem('tileLayout', JSON.stringify(layout)); } catch (e) {}
     }
 
-    // ✅ Загрузка с экраном LOADING... — БЕЗ анимации плиток
     (async function loadLayoutFromFile() {
       try {
-        // Показываем затемнение
-        const loadingOverlay = document.createElement('div');
-        loadingOverlay.style.position = 'fixed';
-        loadingOverlay.style.top = '0';
-        loadingOverlay.style.left = '0';
-        loadingOverlay.style.width = '100vw';
-        loadingOverlay.style.height = '100vh';
-        loadingOverlay.style.backgroundColor = 'rgba(0,0,0,0.8)';
-        loadingOverlay.style.zIndex = '9998';
-        loadingOverlay.style.display = 'flex';
-        loadingOverlay.style.justifyContent = 'center';
-        loadingOverlay.style.alignItems = 'center';
-        loadingOverlay.innerHTML = `<div style="color: #6ecf9f; font-family: 'Orbitron', sans-serif; font-size: 24px; letter-spacing: 2px;">LOADING...</div>`;
-        document.body.appendChild(loadingOverlay);
-
-        // ⚙️ НАСТРОЙКА: Измени это число (в миллисекундах), чтобы сделать экран LOADING... короче или дольше
-        // Сейчас: 300 мс = 0.3 секунды
-        await new Promise(r => setTimeout(r, 300));
-
         const res = await fetch('/tile-layout.json?t=' + Date.now());
         if (!res.ok) {
           console.warn('tile-layout.json fetch failed:', res.status);
@@ -635,252 +643,270 @@
         console.log('Loaded tile-layout.json:', layout);
         applyLayout(layout);
 
-        // Убираем оверлей
-        loadingOverlay.style.transition = 'opacity 0.3s ease';
-        loadingOverlay.style.opacity = '0';
+        // ✅ Показываем LOADING... на 0.5 секунды, затем плавно убираем
         setTimeout(() => {
-          if (loadingOverlay.parentNode) {
-            loadingOverlay.parentNode.removeChild(loadingOverlay);
+          const loadingOverlay = document.getElementById('loadingOverlay');
+          if (loadingOverlay) {
+            loadingOverlay.style.transition = 'opacity 0.4s ease';
+            loadingOverlay.style.opacity = '0';
+            setTimeout(() => {
+              if (loadingOverlay.parentNode) {
+                loadingOverlay.parentNode.removeChild(loadingOverlay);
+              }
+            }, 400);
           }
-        }, 300);
-
-        // ✅ Создаём плитки СРАЗУ — без анимации, без задержек — на своих местах
-        works.forEach((work, index) => {
-          const tile = document.createElement('div');
-          tile.className = 'tile';
-          tile.style.borderColor = frameColors[Math.floor(Math.random() * frameColors.length)];
-
-          let content;
-
-          if (work.type === 'image') {
-            content = document.createElement('img');
-            content.src = work.src;
-
-            content.onload = function() {
-              const aspectRatio = this.naturalWidth / this.naturalHeight;
-              const maxWidth = isMobile ? 250 : 400;
-              const maxHeight = isMobile ? 400 : 600;
-
-              let width, height;
-
-              if (aspectRatio > 1) {
-                width = Math.min(maxWidth, this.naturalWidth * (isMobile ? 0.4 : 0.5));
-                height = width / aspectRatio;
-              } else {
-                height = Math.min(maxHeight, this.naturalHeight * (isMobile ? 0.4 : 0.5));
-                width = height * aspectRatio;
-              }
-
-              width = Math.max(isMobile ? 150 : 200, width);
-              height = Math.max(isMobile ? 150 : 200, height);
-
-              tile.style.width = `${width}px`;
-              tile.style.height = `${height}px`;
-            };
-
-            content.onerror = function() {
-              console.error(`Failed to load image: ${work.src}`);
-              tile.style.width = isMobile ? '200px' : '300px';
-              tile.style.height = isMobile ? '200px' : '300px';
-              this.style.display = 'none';
-              const errorDiv = document.createElement('div');
-              errorDiv.className = 'error-placeholder';
-              errorDiv.textContent = `Loading error:\n${work.src}`;
-              tile.appendChild(errorDiv);
-            };
-
-          } else if (work.type === 'video') {
-            content = document.createElement('video');
-            content.src = work.src;
-            content.autoplay = false;
-            content.muted = true;
-            content.loop = true;
-            content.playsInline = true;
-
-            if (isMobile) {
-              tile.addEventListener('touchstart', (e) => {
-                e.preventDefault();
-                content.play().catch(e => console.log("Playback failed:", e));
-              });
-
-              tile.addEventListener('touchend', () => {
-                setTimeout(() => content.pause(), 100);
-              });
-            } else {
-              tile.addEventListener('mouseenter', () => {
-                content.play().catch(e => console.log("Playback failed:", e));
-              });
-
-              tile.addEventListener('mouseleave', () => {
-                content.pause();
-              });
-            }
-
-            const soundIndicator = document.createElement('div');
-            soundIndicator.className = 'sound-indicator';
-            soundIndicator.innerHTML = '🔊';
-            tile.appendChild(soundIndicator);
-
-            content.onloadedmetadata = function() {
-              const aspectRatio = this.videoWidth / this.videoHeight;
-              const maxWidth = isMobile ? 250 : 400;
-              const maxHeight = isMobile ? 400 : 600;
-
-              let width, height;
-
-              if (aspectRatio > 1) {
-                width = Math.min(maxWidth, this.videoWidth * (isMobile ? 0.25 : 0.3));
-                height = width / aspectRatio;
-              } else {
-                height = Math.min(maxHeight, this.videoHeight * (isMobile ? 0.25 : 0.3));
-                width = height * aspectRatio;
-              }
-
-              width = Math.max(isMobile ? 150 : 200, width);
-              height = Math.max(isMobile ? 150 : 200, height);
-
-              tile.style.width = `${width}px`;
-              tile.style.height = `${height}px`;
-            };
-
-            let fadeInterval = null;
-
-            const enableSound = () => {
-              if (!audioUnlocked) return;
-              if (fadeInterval) clearInterval(fadeInterval);
-              tile.classList.add('sound-on');
-              soundIndicator.style.display = 'flex';
-              try {
-                content.muted = false;
-                content.volume = 0;
-                let vol = 0;
-                fadeInterval = setInterval(() => {
-                  if (vol < 0.6) {
-                    vol += 0.04;
-                    content.volume = Math.min(vol, 0.6);
-                  } else {
-                    clearInterval(fadeInterval);
-                    fadeInterval = null;
-                  }
-                }, 25);
-              } catch (error) {
-                console.error('Error enabling sound:', error);
-              }
-            };
-
-            const disableSound = () => {
-              if (fadeInterval) clearInterval(fadeInterval);
-              tile.classList.remove('sound-on');
-              soundIndicator.style.display = 'none';
-              let vol = content.volume;
-              fadeInterval = setInterval(() => {
-                if (vol > 0) {
-                  vol -= 0.08;
-                  content.volume = Math.max(vol, 0);
-                } else {
-                  content.muted = true;
-                  clearInterval(fadeInterval);
-                  fadeInterval = null;
-                }
-              }, 25);
-            };
-
-            if (isMobile) {
-              tile.addEventListener('touchstart', enableSound);
-              tile.addEventListener('touchend', disableSound);
-            } else {
-              tile.addEventListener('mouseenter', enableSound);
-              tile.addEventListener('mouseleave', disableSound);
-            }
-
-            content.onerror = function() {
-              console.error(`Failed to load video: ${work.src}`);
-              tile.style.width = '300px';
-              tile.style.height = '300px';
-              this.style.display = 'none';
-              const errorDiv = document.createElement('div');
-              errorDiv.className = 'error-placeholder';
-              errorDiv.textContent = `Loading error:\n${work.src}`;
-              tile.appendChild(errorDiv);
-            };
-          }
-
-          tile.appendChild(content);
-
-          // Размещение плиток — если нет в layout — используем дефолт
-          if (!layout || !layout[index]) {
-            if (isMobile) {
-              tile.style.width = '200px';
-              tile.style.height = '200px';
-              tile.style.left = `${20 + (index % 2) * 210}px`;
-              tile.style.top = `${120 + Math.floor(index / 2) * 220}px`;
-            } else {
-              tile.style.width = '300px';
-              tile.style.height = '300px';
-              tile.style.left = `${nextX}px`;
-              tile.style.top = `${nextY}px`;
-              nextX += 225;
-              maxHeight = Math.max(maxHeight, 350);
-              if (nextX > window.innerWidth * 1.2) {
-                nextX = 40;
-                nextY += maxHeight + 30;
-                maxHeight = 0;
-              }
-            }
-          }
-
-          canvas.appendChild(tile);
-        });
+        }, 500); // ← ТУТ МОЖНО ИЗМЕНИТЬ ВРЕМЯ ПОКАЗА: 500 мс = 0.5 сек
 
       } catch (err) {
         console.error('Error loading tile-layout.json:', err);
+
+        // ✅ На всякий случай — убираем LOADING... даже если ошибка
+        setTimeout(() => {
+          const loadingOverlay = document.getElementById('loadingOverlay');
+          if (loadingOverlay) {
+            loadingOverlay.remove();
+          }
+        }, 500);
       }
     })();
 
-    // При нажатии S в режиме редактирования — выводим позиции плиток в консоль
-    document.addEventListener('keydown', (e) => {
-      if (isEditMode && (e.key === 's' || e.key === 'S')) {
-        e.preventDefault();
-        const tiles = document.querySelectorAll('.tile');
-        const layout = [];
-        tiles.forEach((tile, index) => {
-          const item = {
-            id: index + 1,
-            left: parseFloat(tile.style.left) || 0,
-            top: parseFloat(tile.style.top) || 0,
-            width: parseFloat(tile.style.width) || 200,
-            height: parseFloat(tile.style.height) || 200,
-          };
-          layout.push(item);
-        });
-        // Выводим в консоль красиво
-        console.clear();
-        console.log(`%c 🧱 [ISOLATED.PNG] Плитки сохранены (${layout.length} шт.) — скопируй этот массив:`, 
-                    'color: #ff6b6b; font-size: 16px; font-weight: bold;');
-        console.log(JSON.stringify(layout, null, 2));
-        console.log('%c ✅ Готово! Можешь вставить этот массив в tile-layout.json вручную.', 
-                    'color: #6ecf9f; font-weight: bold;');
-        // Показываем уведомление на экране
-        const notification = document.createElement('div');
-        notification.style.position = 'fixed';
-        notification.style.top = '20px';
-        notification.style.right = '20px';
-        notification.style.padding = '12px 20px';
-        notification.style.background = 'rgba(0,0,0,0.8)';
-        notification.style.color = '#6ecf9f';
-        notification.style.borderRadius = '8px';
-        notification.style.zIndex = '9999';
-        notification.style.fontFamily = 'monospace';
-        notification.style.fontSize = '14px';
-        notification.style.boxShadow = '0 4px 20px rgba(0,0,0,0.5)';
-        notification.innerHTML = '✅ Плитки сохранены в консоль (F12)';
-        document.body.appendChild(notification);
-        setTimeout(() => {
-          notification.style.opacity = '0';
-          notification.style.transition = 'opacity 0.5s ease';
-          setTimeout(() => notification.remove(), 500);
-        }, 3000);
+// При нажатии S в режиме редактирования — выводим позиции плиток в консоль
+document.addEventListener('keydown', (e) => {
+  if (isEditMode && (e.key === 's' || e.key === 'S')) {
+    e.preventDefault();
+    const tiles = document.querySelectorAll('.tile');
+    const layout = [];
+    tiles.forEach((tile, index) => {
+      const item = {
+        id: index + 1,
+        left: parseFloat(tile.style.left) || 0,
+        top: parseFloat(tile.style.top) || 0,
+        width: parseFloat(tile.style.width) || 200,
+        height: parseFloat(tile.style.height) || 200,
+      };
+      layout.push(item);
+    });
+    // Выводим в консоль красиво
+    console.clear();
+    console.log(`%c 🧱 [ISOLATED.PNG] Плитки сохранены (${layout.length} шт.) — скопируй этот массив:`, 
+                'color: #ff6b6b; font-size: 16px; font-weight: bold;');
+    console.log(JSON.stringify(layout, null, 2));
+    console.log('%c ✅ Готово! Можешь вставить этот массив в tile-layout.json вручную.', 
+                'color: #6ecf9f; font-weight: bold;');
+    // Показываем уведомление на экране
+    const notification = document.createElement('div');
+    notification.style.position = 'fixed';
+    notification.style.top = '20px';
+    notification.style.right = '20px';
+    notification.style.padding = '12px 20px';
+    notification.style.background = 'rgba(0,0,0,0.8)';
+    notification.style.color = '#6ecf9f';
+    notification.style.borderRadius = '8px';
+    notification.style.zIndex = '9999';
+    notification.style.fontFamily = 'monospace';
+    notification.style.fontSize = '14px';
+    notification.style.boxShadow = '0 4px 20px rgba(0,0,0,0.5)';
+    notification.innerHTML = '✅ Плитки сохранены в консоль (F12)';
+    document.body.appendChild(notification);
+    setTimeout(() => {
+      notification.style.opacity = '0';
+      notification.style.transition = 'opacity 0.5s ease';
+      setTimeout(() => notification.remove(), 500);
+    }, 3000);
+  }
+});
+
+    // ✅ УДАЛЕНО: createGlyphs(), createBubbles(), enterSite() — не нужны
+
+    works.forEach((work, index) => {
+      const tile = document.createElement('div');
+      tile.className = 'tile';
+      tile.style.borderColor = frameColors[Math.floor(Math.random() * frameColors.length)];
+
+      let content;
+
+      if (work.type === 'image') {
+        content = document.createElement('img');
+        content.src = work.src;
+
+        content.onload = function() {
+          const aspectRatio = this.naturalWidth / this.naturalHeight;
+          const maxWidth = isMobile ? 250 : 400;
+          const maxHeight = isMobile ? 400 : 600;
+
+          let width, height;
+
+          if (aspectRatio > 1) {
+            width = Math.min(maxWidth, this.naturalWidth * (isMobile ? 0.4 : 0.5));
+            height = width / aspectRatio;
+          } else {
+            height = Math.min(maxHeight, this.naturalHeight * (isMobile ? 0.4 : 0.5));
+            width = height * aspectRatio;
+          }
+
+          width = Math.max(isMobile ? 150 : 200, width);
+          height = Math.max(isMobile ? 150 : 200, height);
+
+          tile.style.width = `${width}px`;
+          tile.style.height = `${height}px`;
+        };
+
+        content.onerror = function() {
+          console.error(`Failed to load image: ${work.src}`);
+          tile.style.width = isMobile ? '200px' : '300px';
+          tile.style.height = isMobile ? '200px' : '300px';
+          this.style.display = 'none';
+          const errorDiv = document.createElement('div');
+          errorDiv.className = 'error-placeholder';
+          errorDiv.textContent = `Loading error:\n${work.src}`;
+          tile.appendChild(errorDiv);
+        };
+
+      } else if (work.type === 'video') {
+        content = document.createElement('video');
+        content.src = work.src;
+        content.autoplay = false;
+        content.muted = true;
+        content.loop = true;
+        content.playsInline = true;
+
+        // Mobile touch events for video
+        if (isMobile) {
+          tile.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            content.play().catch(e => console.log("Playback failed:", e));
+          });
+
+          tile.addEventListener('touchend', () => {
+            setTimeout(() => content.pause(), 100);
+          });
+        } else {
+          tile.addEventListener('mouseenter', () => {
+            content.play().catch(e => console.log("Playback failed:", e));
+          });
+
+          tile.addEventListener('mouseleave', () => {
+            content.pause();
+          });
+        }
+
+        const soundIndicator = document.createElement('div');
+        soundIndicator.className = 'sound-indicator';
+        soundIndicator.innerHTML = '🔊';
+        tile.appendChild(soundIndicator);
+
+        content.onloadedmetadata = function() {
+          const aspectRatio = this.videoWidth / this.videoHeight;
+          const maxWidth = isMobile ? 250 : 400;
+          const maxHeight = isMobile ? 400 : 600;
+
+          let width, height;
+
+          if (aspectRatio > 1) {
+            width = Math.min(maxWidth, this.videoWidth * (isMobile ? 0.25 : 0.3));
+            height = width / aspectRatio;
+          } else {
+            height = Math.min(maxHeight, this.videoHeight * (isMobile ? 0.25 : 0.3));
+            width = height * aspectRatio;
+          }
+
+          width = Math.max(isMobile ? 150 : 200, width);
+          height = Math.max(isMobile ? 150 : 200, height);
+
+          tile.style.width = `${width}px`;
+          tile.style.height = `${height}px`;
+        };
+
+        let fadeInterval = null;
+
+        const enableSound = () => {
+          if (!audioUnlocked) return;
+
+          if (fadeInterval) clearInterval(fadeInterval);
+
+          tile.classList.add('sound-on');
+          soundIndicator.style.display = 'flex';
+
+          try {
+            content.muted = false;
+            content.volume = 0;
+            let vol = 0;
+            fadeInterval = setInterval(() => {
+              if (vol < 0.6) {
+                vol += 0.04;
+                content.volume = Math.min(vol, 0.6);
+              } else {
+                clearInterval(fadeInterval);
+                fadeInterval = null;
+              }
+            }, 25);
+          } catch (error) {
+            console.error('Error enabling sound:', error);
+          }
+        };
+
+        const disableSound = () => {
+          if (fadeInterval) clearInterval(fadeInterval);
+
+          tile.classList.remove('sound-on');
+          soundIndicator.style.display = 'none';
+
+          let vol = content.volume;
+          fadeInterval = setInterval(() => {
+            if (vol > 0) {
+              vol -= 0.08;
+              content.volume = Math.max(vol, 0);
+            } else {
+              content.muted = true;
+              clearInterval(fadeInterval);
+              fadeInterval = null;
+            }
+          }, 25);
+        };
+
+        if (isMobile) {
+          tile.addEventListener('touchstart', enableSound);
+          tile.addEventListener('touchend', disableSound);
+        } else {
+          tile.addEventListener('mouseenter', enableSound);
+          tile.addEventListener('mouseleave', disableSound);
+        }
+
+        content.onerror = function() {
+          console.error(`Failed to load video: ${work.src}`);
+          tile.style.width = '300px';
+          tile.style.height = '300px';
+          this.style.display = 'none';
+          const errorDiv = document.createElement('div');
+          errorDiv.className = 'error-placeholder';
+          errorDiv.textContent = `Loading error:\n${work.src}`;
+          tile.appendChild(errorDiv);
+        };
       }
+
+      tile.appendChild(content);
+
+      // Размещение плиток
+      if (isMobile) {
+        tile.style.width = '200px';
+        tile.style.height = '200px';
+        tile.style.left = `${20 + (index % 2) * 210}px`;
+        tile.style.top = `${120 + Math.floor(index / 2) * 220}px`;
+      } else {
+        tile.style.width = '300px';
+        tile.style.height = '300px';
+        tile.style.left = `${nextX}px`;
+        tile.style.top = `${nextY}px`;
+        nextX += 225;
+        maxHeight = Math.max(maxHeight, 350);
+        if (nextX > window.innerWidth * 1.2) {
+          nextX = 40;
+          nextY += maxHeight + 30;
+          maxHeight = 0;
+        }
+      }
+
+      canvas.appendChild(tile);
     });
 
     // Enhanced mobile drag & zoom functionality
