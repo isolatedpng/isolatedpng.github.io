@@ -604,6 +604,17 @@
       }, 1000);
     }
 
+    // ✅ ДОБАВЛЕНО: функция loadTileLayout — чтобы не было ошибки
+    async function loadTileLayout() {
+      try {
+        const saved = localStorage.getItem('tileLayout');
+        return saved ? JSON.parse(saved) : null;
+      } catch (e) {
+        console.warn('Failed to load tile layout from localStorage:', e);
+        return null;
+      }
+    }
+
     // Загрузка расположения плиток при загрузке страницы
     document.addEventListener('DOMContentLoaded', async () => {
       const savedLayout = await loadTileLayout();
