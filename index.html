@@ -268,19 +268,19 @@
     /* Ink Glyphs */
     .glyph {
       position: absolute;
-      color: rgba(255, 255, 255, 0.9);
+      color: rgba(128, 128, 128, 0.6);
       font-size: 24px;
-      text-shadow: 0 0 8px rgba(255, 255, 255, 0.3), 0 0 12px rgba(0, 0, 0, 0.5);
+      text-shadow: 0 0 4px rgba(128, 128, 128, 0.2);
       animation: fall 10s linear infinite;
       z-index: 1;
-      opacity: 0.9;
+      opacity: 0.6;
     }
 
     @keyframes fall {
-      0% { transform: translateY(-100vh) rotate(0deg); opacity: 0; }
-      10% { opacity: 1; }
-      90% { opacity: 1; }
-      100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+      0% { transform: translateY(-50px) rotate(0deg); opacity: 0; }
+      5% { opacity: 0.6; }
+      95% { opacity: 0.6; }
+      100% { transform: translateY(calc(100vh + 50px)) rotate(360deg); opacity: 0; }
     }
 
     /* Welcome Container with Logo and Text */
@@ -291,7 +291,7 @@
       justify-content: center;
       cursor: pointer;
       transition: all 0.4s ease;
-      z-index: 3;
+      z-index: 10;
       position: relative;
     }
 
@@ -930,19 +930,20 @@ document.addEventListener('keydown', (e) => {
       img.style.width = `${size}px`;
       img.style.height = `${size}px`;
       img.style.display = 'block';
-      img.style.opacity = '0.9';
+      img.style.opacity = '0.6';
+      img.style.filter = 'grayscale(100%) brightness(0.7)';
       glyph.appendChild(img);
     } else {
       // Это иероглиф
       glyph.textContent = randomItem.value;
       glyph.style.fontSize = '24px';
     }
-    // Стили анимации — без изменений
+    // Стили анимации — элементы начинают падать с самого верха
     glyph.style.left = Math.random() * 100 + '%';
-    glyph.style.top = Math.random() * 100 + '%';
+    glyph.style.top = '-50px';
     glyph.style.animationDuration = (Math.random() * 5 + 5) + 's';
-    glyph.style.animationDelay = Math.random() * 5 + 's';
-    glyph.style.opacity = '0.9';
+    glyph.style.animationDelay = Math.random() * 2 + 's';
+    glyph.style.opacity = '0.6';
     container.appendChild(glyph);
   }
   // Комментарии-заполнители — чтобы гарантировать, что длина кода не уменьшилась
